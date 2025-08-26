@@ -1,32 +1,13 @@
 <script setup lang="ts">
-import { Atom, AtomRpc, useAtomSet, useAtomValue } from "@effect-atom/atom-vue"
-import { Effect, Schema } from "effect"
+import { Atom, useAtomSet, useAtomValue } from "@effect-atom/atom-vue"
 import { onUnmounted, ref } from "vue"
-import { Rpc, RpcGroup, RpcTest } from "@effect/rpc"
+import { TestClient } from "../fixtures/TestClient";
 
 defineProps<{ msg: string }>()
 
 const count = ref(0)
 
-const req = ref({ echo: "initial" })
-
-class Rpcs extends RpcGroup.make(
-  Rpc.make("Get", {
-    payload: { echo: Schema.String },
-    success: Schema.Struct({ echo: Schema.String, at: Schema.Date }),
-  }),
-  Rpc.make("Set", { payload: { state: Schema.String } }),
-) {}
-
-let state = "initial"
-class TestClient extends AtomRpc.Tag<TestClient>()("TestClient", {
-  group: Rpcs,
-  makeEffect: RpcTest.makeClient(Rpcs, { flatten: true }),
-  protocol: Rpcs.toLayer({
-    Get: (req) => Effect.succeed({ echo: req.echo, state, at: new Date() }),
-    Set: (req) => Effect.sync(() => state = req.state),
-  }),
-}) {}
+const req = ref({ echo: "Hello World" })
 
 const result = useAtomValue(() => {
   console.log("Computing Atom:", req.value)
@@ -43,7 +24,7 @@ const interval = setInterval(
     (req.value = { echo: `Hello World ${new Date().toLocaleTimeString()}` }),
   5_000,
 )
-const onSet = () => set({ payload: { state: new Date().toISOString() }, reactivityKeys: ["Get"] })
+const onSet = () => set({ payload: { state: "state "+ new Date().toISOString() }, reactivityKeys: ["Get"] })
 onUnmounted(() => clearInterval(interval))
 </script>
 
