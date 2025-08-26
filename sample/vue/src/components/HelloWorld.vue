@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Atom, AtomRpc, useAtomValue } from "@effect-atom/atom-vue"
+import { Atom, AtomRpc, useAtomSet, useAtomValue } from "@effect-atom/atom-vue"
 import { Effect, Schema } from "effect"
 import { onUnmounted, ref } from "vue"
 import { Rpc, RpcGroup, RpcTest } from "@effect/rpc"
@@ -15,22 +15,25 @@ class Rpcs extends RpcGroup.make(
     payload: { echo: Schema.String },
     success: Schema.Struct({ echo: Schema.String, at: Schema.Date }),
   }),
-  Rpc.make("Set", { payload: { echo: Schema.String } }),
+  Rpc.make("Set", { payload: { state: Schema.String } }),
 ) {}
 
+let state = "initial"
 class TestClient extends AtomRpc.Tag<TestClient>()("TestClient", {
   group: Rpcs,
   makeEffect: RpcTest.makeClient(Rpcs, { flatten: true }),
   protocol: Rpcs.toLayer({
-    Get: (req) => Effect.succeed({ echo: req.echo, at: new Date() }),
-    Set: () => Effect.void,
+    Get: (req) => Effect.succeed({ echo: req.echo, state, at: new Date() }),
+    Set: (req) => Effect.sync(() => state = req.state),
   }),
 }) {}
 
 const result = useAtomValue(() => {
   console.log("Computing Atom:", req.value)
-  return Atom.refreshOnWindowFocus(TestClient.query("Get", req.value))
+  return Atom.refreshOnWindowFocus(TestClient.query("Get", req.value, { reactivityKeys: ["Get"]}))
 })
+
+const set = useAtomSet(() => TestClient.mutation("Set"))
 
 const intervalEnabled = ref(false)
 
@@ -40,6 +43,7 @@ const interval = setInterval(
     (req.value = { echo: `Hello World ${new Date().toLocaleTimeString()}` }),
   5_000,
 )
+const onSet = () => set({ payload: { state: new Date().toISOString() }, reactivityKeys: ["Get"] })
 onUnmounted(() => clearInterval(interval))
 </script>
 
@@ -55,6 +59,8 @@ onUnmounted(() => clearInterval(interval))
     <div v-if="result.waiting">Waiting...</div>
     Success: {{ result.value }}
   </div>
+
+  <button @click="onSet">Set state</button>
 
   <button @click="intervalEnabled = !intervalEnabled">
     Toggle interval {{ !intervalEnabled ? "ON" : "OFF" }}
