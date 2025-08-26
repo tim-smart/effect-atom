@@ -16,6 +16,9 @@ export class TestClient extends AtomRpc.Tag<TestClient>()("TestClient", {
   makeEffect: RpcTest.makeClient(Rpcs, { flatten: true }),
   protocol: Rpcs.toLayer({
     Get: (req) => Effect.succeed({ echo: req.echo, state, at: new Date() }),
-    Set: (req) => Effect.sync(() => state = req.state)
+    Set: (req) =>
+      Effect.sync(() => {
+        state = req.state
+      })
   })
 }) {}
