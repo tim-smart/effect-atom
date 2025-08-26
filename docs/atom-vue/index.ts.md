@@ -59,7 +59,17 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export declare const useAtomSet: <R, W>(atom: () => Atom.Writable<R, W>) => (_: W) => void
+export declare const useAtomSet: <R, W, Mode extends "value" | "promise" | "promiseExit" = never>(
+  atom: () => Atom.Writable<R, W>,
+  options?: { readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined }
+) => "promise" extends Mode
+  ? (value: W, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<Result.Result.Success<R>>
+  : "promiseExit" extends Mode
+    ? (
+        value: W,
+        options?: { readonly signal?: AbortSignal | undefined } | undefined
+      ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+    : (value: W | ((value: R) => W)) => void
 ```
 
 Added in v1.0.0
