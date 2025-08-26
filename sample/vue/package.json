@@ -21,8 +21,8 @@
     "vue-tsc": "^3.0.5",
     "@effect-atom/atom-vue": "workspace:*",
     "@effect-atom/atom": "workspace:*",
-    "@effect/rpc": "^0.68.4",
-    "effect": "^3.17.7",
+    "@effect/rpc": "^0.69.1",
+    "effect": "^3.17.9",
     "vue": "^3.5.18"
   }
 }

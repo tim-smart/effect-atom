@@ -23,12 +23,12 @@
   "license": "MIT",
   "sideEffects": [],
   "devDependencies": {
-    "effect": "^3.17.7",
-    "vue": "^3.5.18"
+    "effect": "^3.17.9",
+    "vue": "^3.5.20"
   },
   "peerDependencies": {
     "effect": "^3.17",
-    "vue": "^3.4.12"
+    "vue": "^3.5.20"
   },
   "dependencies": {
     "@effect-atom/atom": "workspace:^"
