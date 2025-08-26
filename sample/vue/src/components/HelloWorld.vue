@@ -15,7 +15,7 @@ const result = useAtomValue(() => {
   return Atom.refreshOnWindowFocus(TestClient.query("Get", req.value, { reactivityKeys: ["Get"]}))
 })
 
-const set = useAtomSet(() => TestClient.mutation("Set"), { mode: "promiseExit"})
+const set = useAtomSet(() => TestClient.mutation("Set"), { mode: "promiseExit" })
 
 const intervalEnabled = ref(false)
 
