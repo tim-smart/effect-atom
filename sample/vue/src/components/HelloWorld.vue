@@ -2,6 +2,7 @@
 import { Atom, useAtomSet, useAtomValue } from "@effect-atom/atom-vue"
 import { onUnmounted, ref } from "vue"
 import { TestClient } from "../fixtures/TestClient";
+import { Exit } from "effect";
 
 defineProps<{ msg: string }>()
 
@@ -14,7 +15,7 @@ const result = useAtomValue(() => {
   return Atom.refreshOnWindowFocus(TestClient.query("Get", req.value, { reactivityKeys: ["Get"]}))
 })
 
-const set = useAtomSet(() => TestClient.mutation("Set"))
+const set = useAtomSet(() => TestClient.mutation("Set"), { mode: "promiseExit"})
 
 const intervalEnabled = ref(false)
 
@@ -25,6 +26,7 @@ const interval = setInterval(
   5_000,
 )
 const onSet = () => set({ payload: { state: "state "+ new Date().toISOString() }, reactivityKeys: ["Get"] })
+  .then(_ => console.log("finished", Exit.match(_, { onSuccess: _ => ({ success: _ }), onFailure: _ => ({ failure: _})})))
 onUnmounted(() => clearInterval(interval))
 </script>
 
