@@ -15,6 +15,7 @@ import * as Effect from "effect/Effect"
 import * as Either from "effect/Either"
 import * as Exit from "effect/Exit"
 import * as Fiber from "effect/Fiber"
+import * as FiberId from "effect/FiberId"
 import * as FiberRef from "effect/FiberRef"
 import type { LazyArg } from "effect/Function"
 import { constant, constVoid, dual, pipe } from "effect/Function"
@@ -204,6 +205,7 @@ const RuntimeProto = {
   fn(this: AtomRuntime<any, any>, arg: any, options?: {
     readonly initialValue?: unknown
     readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
+    readonly abortAsFailure?: boolean | undefined
   }) {
     if (arguments.length === 0) {
       return (arg: any, options?: {}) => makeFnRuntime(this, arg, options)
@@ -284,6 +286,7 @@ const makeFnRuntime = (
   options?: {
     readonly initialValue?: unknown
     readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
+    readonly abortAsFailure?: boolean | undefined
   }
 ) => {
   const [read, write, argAtom] = makeResultFn(
@@ -1011,15 +1014,19 @@ export type Reset = typeof Reset
 export const fn: {
   <Arg>(): <E, A>(fn: (arg: Arg, get: FnContext) => Effect.Effect<A, E, Scope.Scope | AtomRegistry>, options?: {
     readonly initialValue?: A | undefined
+    readonly abortAsFailure?: boolean | undefined
   }) => AtomResultFn<Arg, A, E>
   <E, A, Arg = void>(fn: (arg: Arg, get: FnContext) => Effect.Effect<A, E, Scope.Scope | AtomRegistry>, options?: {
     readonly initialValue?: A | undefined
+    readonly abortAsFailure?: boolean | undefined
   }): AtomResultFn<Arg, A, E>
   <Arg>(): <E, A>(fn: (arg: Arg, get: FnContext) => Stream.Stream<A, E, AtomRegistry>, options?: {
     readonly initialValue?: A | undefined
+    readonly abortAsFailure?: boolean | undefined
   }) => AtomResultFn<Arg, A, E | NoSuchElementException>
   <E, A, Arg = void>(fn: (arg: Arg, get: FnContext) => Stream.Stream<A, E, AtomRegistry>, options?: {
     readonly initialValue?: A | undefined
+    readonly abortAsFailure?: boolean | undefined
   }): AtomResultFn<Arg, A, E | NoSuchElementException>
 } = function(...args: ReadonlyArray<any>) {
   if (args.length === 0) {
@@ -1032,6 +1039,7 @@ const makeFn = <Arg, E, A>(
   f: (arg: Arg, get: FnContext) => Stream.Stream<A, E, AtomRegistry> | Effect.Effect<A, E, Scope.Scope | AtomRegistry>,
   options?: {
     readonly initialValue?: A | undefined
+    readonly abortAsFailure?: boolean | undefined
   }
 ): AtomResultFn<Arg, A, E | NoSuchElementException> => {
   const [read, write] = makeResultFn(f, options)
@@ -1042,17 +1050,22 @@ function makeResultFn<Arg, E, A>(
   f: (arg: Arg, get: FnContext) => Effect.Effect<A, E, Scope.Scope | AtomRegistry> | Stream.Stream<A, E, AtomRegistry>,
   options?: {
     readonly initialValue?: A
+    readonly abortAsFailure?: boolean | undefined
   }
 ) {
-  const argAtom = state<[number, Arg]>([0, undefined as any])
+  const argAtom = state<[counter: number, arg: Arg]>([0, undefined as any])
   const initialValue = options?.initialValue !== undefined
     ? Result.success<A, E>(options.initialValue)
     : Result.initial<A, E>()
 
   function read(get: Context, runtime?: Runtime.Runtime<any>): Result.Result<A, E | NoSuchElementException> {
     ;(get as any).isFn = true
+    const previous = get.self<Result.Result<A, E | NoSuchElementException>>()
     const [counter, arg] = get.get(argAtom)
     if (counter === 0) {
+      if (options?.abortAsFailure && previous._tag === "Some") {
+        return Result.failure(Cause.interrupt(FiberId.none))
+      }
       return initialValue
     }
     const value = f(arg, get)
@@ -1066,7 +1079,8 @@ function makeResultFn<Arg, E, A>(
       if (arg === Reset) {
         ctx.set(argAtom, [0, undefined as any])
       } else {
-        ctx.set(argAtom, [ctx.get(argAtom)[0] + 1, arg])
+        const [prev] = ctx.get(argAtom)
+        ctx.set(argAtom, [prev + 1, arg])
       }
       ctx.refreshSelf()
     })

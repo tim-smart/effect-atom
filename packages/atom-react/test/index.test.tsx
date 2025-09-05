@@ -2,11 +2,12 @@ import * as Atom from "@effect-atom/atom/Atom"
 import * as Registry from "@effect-atom/atom/Registry"
 import { act, render, screen, waitFor } from "@testing-library/react"
 import { Effect, Schema } from "effect"
+import * as Exit from "effect/Exit"
 import { Suspense } from "react"
 import { renderToString } from "react-dom/server"
 import { ErrorBoundary } from "react-error-boundary"
 import { beforeEach, describe, expect, it, test, vi } from "vitest"
-import { Hydration, RegistryContext, Result, useAtomSuspense, useAtomValue } from "../src/index.js"
+import { Hydration, RegistryContext, Result, useAtomSet, useAtomSuspense, useAtomValue } from "../src/index.js"
 import { HydrationBoundary } from "../src/ReactHydration.js"
 
 describe("atom-react", () => {
@@ -351,5 +352,50 @@ describe("atom-react", () => {
 
     expect(mockFetchData).toHaveBeenCalled()
     expect(screen.getByText("Success")).toBeInTheDocument()
+  })
+
+  test("useAtomSet promiseExit abort triggers interruption Failure and fails promise", async () => {
+    let count = 0
+    const opAtom = Atom.fn((_n: number) => Effect.gen(function* () {
+      yield* Effect.addFinalizer(() => Effect.sync(() => {
+        count++
+      }))
+      return yield* Effect.never
+    }), { abortAsFailure: true })
+
+    function View() {
+      const value = useAtomValue(opAtom)
+      return <div data-testid="value">{value._tag}</div>
+    }
+
+    let writer: ((v: number, opts?: { readonly signal?: AbortSignal }) => Promise<Exit.Exit<number, never>>) | undefined
+
+    function Controller({ onReady }: { onReady: (w: typeof writer) => void }) {
+      const w = useAtomSet(opAtom, { mode: "promiseExit" })
+      onReady(w)
+      return null
+    }
+
+    render(
+      <RegistryContext.Provider value={registry}>
+        <Controller onReady={(w) => { writer = w }} />
+        <View />
+      </RegistryContext.Provider>
+    )
+
+    expect(screen.getByTestId("value")).toHaveTextContent("Initial")
+
+    const ac = new AbortController()
+    const p = writer!(123, { signal: ac.signal })
+    ac.abort()
+
+    expect(await screen.findByTestId("value")).toHaveTextContent("Failure")
+    const exit = await p
+    expect(Exit.isInterrupted(exit)).toBe(true)
+
+    const result = registry.get(opAtom)
+    expect(Result.isInterrupted(result)).toBe(true)
+
+    expect(count).toBe(1)
   })
 })

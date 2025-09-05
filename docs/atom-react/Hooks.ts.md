@@ -34,23 +34,30 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export declare const useAtom: <R, W, const Mode extends "value" | "promise" | "promiseExit" = never>(
-  atom: Atom.Writable<R, W>,
-  options?: { readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined }
-) => readonly [
-  value: R,
-  write: "promise" extends Mode
-    ? (
-        value: W,
-        options?: { readonly signal?: AbortSignal | undefined } | undefined
-      ) => Promise<Result.Result.Success<R>>
-    : "promiseExit" extends Mode
-      ? (
-          value: W,
-          options?: { readonly signal?: AbortSignal | undefined } | undefined
-        ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
-      : (value: W | ((value: R) => W)) => void
-]
+export declare const useAtom: {
+  <Arg, A, E, const Mode extends "value" | "promise" | "promiseExit" = never>(
+    atom: Atom.AtomResultFn<Arg, A, E>,
+    options?: { readonly mode?: Mode | undefined }
+  ): readonly [
+    value: Result.Result<A, E>,
+    write: "promise" extends Mode
+      ? (value: Arg, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<A>
+      : "promiseExit" extends Mode
+        ? (value: Arg, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<Exit.Exit<A, E>>
+        : (value: Arg | ((value: Result.Result<A, E>) => Arg)) => void
+  ]
+  <R, W, const Mode extends "value" | "promise" | "promiseExit" = never>(
+    atom: Atom.Writable<R, W>,
+    options?: { readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined }
+  ): readonly [
+    value: R,
+    write: "promise" extends Mode
+      ? (value: W) => Promise<Result.Result.Success<R>>
+      : "promiseExit" extends Mode
+        ? (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+        : (value: W | ((value: R) => W)) => void
+  ]
+}
 ```
 
 Added in v1.0.0
@@ -120,17 +127,24 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export declare const useAtomSet: <R, W, Mode extends "value" | "promise" | "promiseExit" = never>(
-  atom: Atom.Writable<R, W>,
-  options?: { readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined }
-) => "promise" extends Mode
-  ? (value: W, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<Result.Result.Success<R>>
-  : "promiseExit" extends Mode
-    ? (
-        value: W,
-        options?: { readonly signal?: AbortSignal | undefined } | undefined
-      ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
-    : (value: W | ((value: R) => W)) => void
+export declare const useAtomSet: {
+  <Arg, A, E, Mode extends "value" | "promise" | "promiseExit" = never>(
+    atom: Atom.AtomResultFn<Arg, A, E>,
+    options?: { readonly mode?: Mode | undefined }
+  ): "promise" extends Mode
+    ? (value: Arg, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<A>
+    : "promiseExit" extends Mode
+      ? (value: Arg, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<Exit.Exit<A, E>>
+      : (value: Arg | ((value: Result.Result<A, E>) => Arg)) => void
+  <R, W, Mode extends "value" | "promise" | "promiseExit" = never>(
+    atom: Atom.Writable<R, W>,
+    options?: { readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined }
+  ): "promise" extends Mode
+    ? (value: W) => Promise<Result.Result.Success<R>>
+    : "promiseExit" extends Mode
+      ? (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+      : (value: W | ((value: R) => W)) => void
+}
 ```
 
 Added in v1.0.0

@@ -125,13 +125,26 @@ function setAtom<R, W, Mode extends "value" | "promise" | "promiseExit" = never>
   ((value: W | ((value: R) => W)) => void)
 {
   if (options?.mode === "promise" || options?.mode === "promiseExit") {
-    return React.useCallback((value: W, opts?: any) => {
+    return React.useCallback((value: W, opts?: { readonly signal?: AbortSignal }) => {
+      let removeAbortListener: (() => void) | undefined
+      const signal = opts?.signal
+      if (signal && typeof signal.addEventListener === "function") {
+        const onAbort = () => {
+          registry.set(atom, Atom.Reset as any)
+        }
+        signal.addEventListener("abort", onAbort, { once: true })
+        removeAbortListener = () => {
+          signal.removeEventListener("abort", onAbort)
+        }
+      }
       registry.set(atom, value)
       const promise = Effect.runPromiseExit(
         Registry.getResult(registry, atom as Atom.Atom<Result.Result<any, any>>, { suspendOnWaiting: true }),
         opts
       )
-      return options!.mode === "promise" ? promise.then(flattenExit) : promise
+      return (options!.mode === "promise" ? promise.then(flattenExit) : promise).finally(() => {
+        removeAbortListener?.()
+      })
     }, [registry, atom, options.mode]) as any
   }
   return React.useCallback((value: W | ((value: R) => W)) => {
@@ -157,37 +170,26 @@ export const useAtomMount = <A>(atom: Atom.Atom<A>): void => {
  * @since 1.0.0
  * @category hooks
  */
-export const useAtomSet = <
-  R,
-  W,
-  Mode extends "value" | "promise" | "promiseExit" = never
->(
-  atom: Atom.Writable<R, W>,
-  options?: {
-    readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined
-  }
-): "promise" extends Mode ? (
-    (
-      value: W,
-      options?: {
-        readonly signal?: AbortSignal | undefined
-      } | undefined
-    ) => Promise<Result.Result.Success<R>>
-  ) :
-  "promiseExit" extends Mode ? (
-      (
-        value: W,
-        options?: {
-          readonly signal?: AbortSignal | undefined
-        } | undefined
-      ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
-    ) :
-  ((value: W | ((value: R) => W)) => void) =>
-{
+export const useAtomSet: {
+  <Arg, A, E, Mode extends "value" | "promise" | "promiseExit" = never>(
+    atom: Atom.AtomResultFn<Arg, A, E>,
+    options?: { readonly mode?: Mode | undefined }
+  ): "promise" extends Mode
+    ? (value: Arg, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<A>
+    : "promiseExit" extends Mode
+      ? (value: Arg, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<Exit.Exit<A, E>>
+    : (value: Arg | ((value: Result.Result<A, E>) => Arg)) => void
+  <R, W, Mode extends "value" | "promise" | "promiseExit" = never>(
+    atom: Atom.Writable<R, W>,
+    options?: { readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined }
+  ): "promise" extends Mode ? (value: W) => Promise<Result.Result.Success<R>>
+    : "promiseExit" extends Mode ? (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+    : (value: W | ((value: R) => W)) => void
+} = ((atom: any, options?: any) => {
   const registry = React.useContext(RegistryContext)
   mountAtom(registry, atom)
   return setAtom(registry, atom, options)
-}
+}) as any
 
 /**
  * @since 1.0.0
@@ -205,37 +207,32 @@ export const useAtomRefresh = <A>(atom: Atom.Atom<A>): () => void => {
  * @since 1.0.0
  * @category hooks
  */
-export const useAtom = <R, W, const Mode extends "value" | "promise" | "promiseExit" = never>(
-  atom: Atom.Writable<R, W>,
-  options?: {
-    readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined
-  }
-): readonly [
-  value: R,
-  write: "promise" extends Mode ? (
-      (
-        value: W,
-        options?: {
-          readonly signal?: AbortSignal | undefined
-        } | undefined
-      ) => Promise<Result.Result.Success<R>>
-    ) :
-    "promiseExit" extends Mode ? (
-        (
-          value: W,
-          options?: {
-            readonly signal?: AbortSignal | undefined
-          } | undefined
-        ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
-      ) :
-    ((value: W | ((value: R) => W)) => void)
-] => {
+export const useAtom: {
+  <Arg, A, E, const Mode extends "value" | "promise" | "promiseExit" = never>(
+    atom: Atom.AtomResultFn<Arg, A, E>,
+    options?: { readonly mode?: Mode | undefined }
+  ): readonly [
+    value: Result.Result<A, E>,
+    write: "promise" extends Mode
+      ? (value: Arg, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<A>
+      : "promiseExit" extends Mode
+        ? (value: Arg, options?: { readonly signal?: AbortSignal | undefined } | undefined) => Promise<Exit.Exit<A, E>>
+      : (value: Arg | ((value: Result.Result<A, E>) => Arg)) => void
+  ]
+  <R, W, const Mode extends "value" | "promise" | "promiseExit" = never>(
+    atom: Atom.Writable<R, W>,
+    options?: { readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined }
+  ): readonly [
+    value: R,
+    write: "promise" extends Mode ? (value: W) => Promise<Result.Result.Success<R>>
+      : "promiseExit" extends Mode
+        ? (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+      : (value: W | ((value: R) => W)) => void
+  ]
+} = ((atom: any, options?: any) => {
   const registry = React.useContext(RegistryContext)
-  return [
-    useStore(registry, atom),
-    setAtom(registry, atom, options)
-  ] as const
-}
+  return [useStore(registry, atom), setAtom(registry, atom, options)] as const
+}) as any
 
 const atomPromiseMap = globalValue(
   "@effect-atom/atom-react/atomPromiseMap",
