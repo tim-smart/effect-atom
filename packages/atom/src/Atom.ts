@@ -15,6 +15,7 @@ import * as Effect from "effect/Effect"
 import * as Either from "effect/Either"
 import * as Exit from "effect/Exit"
 import * as Fiber from "effect/Fiber"
+import * as FiberId from "effect/FiberId"
 import * as FiberRef from "effect/FiberRef"
 import type { LazyArg } from "effect/Function"
 import { constant, constVoid, dual, pipe } from "effect/Function"
@@ -477,8 +478,7 @@ function makeEffect<A, E>(
   effect: Effect.Effect<A, E, Scope.Scope | AtomRegistry>,
   initialValue: Result.Result<A, E>,
   runtime = Runtime.defaultRuntime,
-  uninterruptible = false,
-  abortSignal?: AbortSignal
+  uninterruptible = false
 ): Result.Result<A, E> {
   const previous = ctx.self<Result.Result<A, E>>()
 
@@ -504,8 +504,7 @@ function makeEffect<A, E>(
         ctx.setSelf(syncResult)
       }
     },
-    uninterruptible,
-    abortSignal
+    uninterruptible
   )
   isAsync = true
   if (cancel !== undefined) {
@@ -741,8 +740,7 @@ function makeStream<A, E>(
   ctx: Context,
   stream: Stream.Stream<A, E, AtomRegistry>,
   initialValue: Result.Result<A, E | NoSuchElementException>,
-  runtime = Runtime.defaultRuntime,
-  abortSignal?: AbortSignal
+  runtime = Runtime.defaultRuntime
 ): Result.Result<A, E | NoSuchElementException> {
   const previous = ctx.self<Result.Result<A, E | NoSuchElementException>>()
 
@@ -786,8 +784,7 @@ function makeStream<A, E>(
   const cancel = runCallbackSync(registryRuntime)(
     Channel.runDrain(Channel.pipeTo(Stream.toChannel(stream), writer)),
     constVoid,
-    false,
-    abortSignal
+    false
   )
   if (cancel !== undefined) {
     ctx.addFinalizer(cancel)
@@ -1063,35 +1060,33 @@ function makeResultFn<Arg, E, A>(
     readonly initialValue?: A
   }
 ) {
-  const argAtom = state<[number, Arg, AbortController]>([0, undefined as any, new AbortController()])
+  const argAtom = state<[number, Arg | Interrupt]>([0, undefined as any])
   const initialValue = options?.initialValue !== undefined
     ? Result.success<A, E>(options.initialValue)
     : Result.initial<A, E>()
 
   function read(get: Context, runtime?: Runtime.Runtime<any>): Result.Result<A, E | NoSuchElementException> {
     ;(get as any).isFn = true
-    const [counter, arg, controller] = get.get(argAtom)
+    const [counter, arg] = get.get(argAtom)
     if (counter === 0) {
       return initialValue
+    } else if (arg === Interrupt) {
+      return Result.failureWithPrevious(Cause.interrupt(FiberId.none), { previous: get.self() })
     }
     const value = f(arg, get)
     if (Effect.EffectTypeId in value) {
-      return makeEffect(get, value, initialValue, runtime, false, controller.signal)
+      return makeEffect(get, value, initialValue, runtime, false)
     }
-    return makeStream(get, value, initialValue, runtime, controller.signal)
+    return makeStream(get, value, initialValue, runtime)
   }
   function write(ctx: WriteContext<Result.Result<A, E | NoSuchElementException>>, arg: Arg | Reset | Interrupt) {
-    const current = ctx.get(argAtom)
-    if (arg === Interrupt) {
-      current[2].abort()
-      current[2] = new AbortController()
-      return
-    }
     batch(() => {
       if (arg === Reset) {
-        ctx.set(argAtom, [0, undefined as any, current[2]])
+        ctx.set(argAtom, [0, undefined as any])
+      } else if (arg === Interrupt) {
+        ctx.set(argAtom, [ctx.get(argAtom)[0] + 1, Interrupt])
       } else {
-        ctx.set(argAtom, [ctx.get(argAtom)[0] + 1, arg, current[2]])
+        ctx.set(argAtom, [ctx.get(argAtom)[0] + 1, arg])
       }
       ctx.refreshSelf()
     })
