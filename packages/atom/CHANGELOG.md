@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.1.22
+
+### Patch Changes
+
+- [`c58c423`](https://github.com/tim-smart/effect-atom/commit/c58c423ab565a2d434550fb24b4aecb7221e9867) Thanks [@tim-smart](https://github.com/tim-smart)! - change Atom.Interrupt behaviour
+
 ## 0.1.21
 
 ### Patch Changes
