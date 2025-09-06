@@ -1,5 +1,14 @@
 # @effect-rx/rx-vue
 
+## 0.1.19
+
+### Patch Changes
+
+- [`723b651`](https://github.com/tim-smart/effect-atom/commit/723b651ac54f367460a33e922da1644ebf1f20de) Thanks [@tim-smart](https://github.com/tim-smart)! - support sending Atom.Interrupt to Atom.fn
+
+- Updated dependencies [[`723b651`](https://github.com/tim-smart/effect-atom/commit/723b651ac54f367460a33e922da1644ebf1f20de)]:
+  - @effect-atom/atom@0.1.21
+
 ## 0.1.18
 
 ### Patch Changes

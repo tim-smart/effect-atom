@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.1.21
+
+### Patch Changes
+
+- [`723b651`](https://github.com/tim-smart/effect-atom/commit/723b651ac54f367460a33e922da1644ebf1f20de) Thanks [@tim-smart](https://github.com/tim-smart)! - support sending Atom.Interrupt to Atom.fn
+
 ## 0.1.20
 
 ### Patch Changes

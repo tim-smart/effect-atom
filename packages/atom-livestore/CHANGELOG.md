@@ -1,5 +1,14 @@
 # @effect-rx/rx-livestore
 
+## 0.1.17
+
+### Patch Changes
+
+- [`723b651`](https://github.com/tim-smart/effect-atom/commit/723b651ac54f367460a33e922da1644ebf1f20de) Thanks [@tim-smart](https://github.com/tim-smart)! - support sending Atom.Interrupt to Atom.fn
+
+- Updated dependencies [[`723b651`](https://github.com/tim-smart/effect-atom/commit/723b651ac54f367460a33e922da1644ebf1f20de)]:
+  - @effect-atom/atom@0.1.21
+
 ## 0.1.16
 
 ### Patch Changes
