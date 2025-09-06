@@ -63,6 +63,7 @@ Added in v1.0.0
   - [isInterrupted](#isinterrupted)
   - [isNotInitial](#isnotinitial)
   - [isSuccess](#issuccess)
+  - [isWaiting](#iswaiting)
 - [type ids](#type-ids)
   - [TypeId](#typeid)
   - [TypeId (type alias)](#typeid-type-alias)
@@ -717,6 +718,16 @@ Added in v1.0.0
 
 ```ts
 export declare const isSuccess: <A, E>(result: Result<A, E>) => result is Success<A, E>
+```
+
+Added in v1.0.0
+
+## isWaiting
+
+**Signature**
+
+```ts
+export declare const isWaiting: <A, E>(result: Result<A, E>) => boolean
 ```
 
 Added in v1.0.0

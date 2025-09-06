@@ -477,7 +477,8 @@ function makeEffect<A, E>(
   effect: Effect.Effect<A, E, Scope.Scope | AtomRegistry>,
   initialValue: Result.Result<A, E>,
   runtime = Runtime.defaultRuntime,
-  uninterruptible = false
+  uninterruptible = false,
+  abortSignal?: AbortSignal
 ): Result.Result<A, E> {
   const previous = ctx.self<Result.Result<A, E>>()
 
@@ -499,9 +500,12 @@ function makeEffect<A, E>(
     effect,
     function(exit) {
       syncResult = Result.fromExitWithPrevious(exit, previous)
-      if (isAsync) ctx.setSelf(syncResult)
+      if (isAsync) {
+        ctx.setSelf(syncResult)
+      }
     },
-    uninterruptible
+    uninterruptible,
+    abortSignal
   )
   isAsync = true
   if (cancel !== undefined) {
@@ -737,7 +741,8 @@ function makeStream<A, E>(
   ctx: Context,
   stream: Stream.Stream<A, E, AtomRegistry>,
   initialValue: Result.Result<A, E | NoSuchElementException>,
-  runtime = Runtime.defaultRuntime
+  runtime = Runtime.defaultRuntime,
+  abortSignal?: AbortSignal
 ): Result.Result<A, E | NoSuchElementException> {
   const previous = ctx.self<Result.Result<A, E | NoSuchElementException>>()
 
@@ -780,7 +785,9 @@ function makeStream<A, E>(
 
   const cancel = runCallbackSync(registryRuntime)(
     Channel.runDrain(Channel.pipeTo(Stream.toChannel(stream), writer)),
-    constVoid
+    constVoid,
+    false,
+    abortSignal
   )
   if (cancel !== undefined) {
     ctx.addFinalizer(cancel)
@@ -990,7 +997,7 @@ const makeFnSync = <Arg, A>(f: (arg: Arg, get: FnContext) => A, options?: {
  * @since 1.0.0
  * @category models
  */
-export interface AtomResultFn<Arg, A, E = never> extends Writable<Result.Result<A, E>, Arg | Reset> {}
+export interface AtomResultFn<Arg, A, E = never> extends Writable<Result.Result<A, E>, Arg | Reset | Interrupt> {}
 
 /**
  * @since 1.0.0
@@ -1003,6 +1010,18 @@ export const Reset = Symbol.for("@effect-atom/atom/Atom/Reset")
  * @category symbols
  */
 export type Reset = typeof Reset
+
+/**
+ * @since 1.0.0
+ * @category symbols
+ */
+export const Interrupt = Symbol.for("@effect-atom/atom/Atom/Interrupt")
+
+/**
+ * @since 1.0.0
+ * @category symbols
+ */
+export type Interrupt = typeof Interrupt
 
 /**
  * @since 1.0.0
@@ -1044,29 +1063,35 @@ function makeResultFn<Arg, E, A>(
     readonly initialValue?: A
   }
 ) {
-  const argAtom = state<[number, Arg]>([0, undefined as any])
+  const argAtom = state<[number, Arg, AbortController]>([0, undefined as any, new AbortController()])
   const initialValue = options?.initialValue !== undefined
     ? Result.success<A, E>(options.initialValue)
     : Result.initial<A, E>()
 
   function read(get: Context, runtime?: Runtime.Runtime<any>): Result.Result<A, E | NoSuchElementException> {
     ;(get as any).isFn = true
-    const [counter, arg] = get.get(argAtom)
+    const [counter, arg, controller] = get.get(argAtom)
     if (counter === 0) {
       return initialValue
     }
     const value = f(arg, get)
     if (Effect.EffectTypeId in value) {
-      return makeEffect(get, value, initialValue, runtime)
+      return makeEffect(get, value, initialValue, runtime, false, controller.signal)
     }
-    return makeStream(get, value, initialValue, runtime)
+    return makeStream(get, value, initialValue, runtime, controller.signal)
   }
-  function write(ctx: WriteContext<Result.Result<A, E | NoSuchElementException>>, arg: Arg | Reset) {
+  function write(ctx: WriteContext<Result.Result<A, E | NoSuchElementException>>, arg: Arg | Reset | Interrupt) {
+    const current = ctx.get(argAtom)
+    if (arg === Interrupt) {
+      current[2].abort()
+      current[2] = new AbortController()
+      return
+    }
     batch(() => {
       if (arg === Reset) {
-        ctx.set(argAtom, [0, undefined as any])
+        ctx.set(argAtom, [0, undefined as any, current[2]])
       } else {
-        ctx.set(argAtom, [ctx.get(argAtom)[0] + 1, arg])
+        ctx.set(argAtom, [ctx.get(argAtom)[0] + 1, arg, current[2]])
       }
       ctx.refreshSelf()
     })

@@ -88,6 +88,8 @@ Added in v1.0.0
 - [refinements](#refinements)
   - [isWritable](#iswritable)
 - [symbols](#symbols)
+  - [Interrupt](#interrupt)
+  - [Interrupt (type alias)](#interrupt-type-alias)
   - [Reset](#reset)
   - [Reset (type alias)](#reset-type-alias)
 - [type ids](#type-ids)
@@ -925,7 +927,7 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export interface AtomResultFn<Arg, A, E = never> extends Writable<Result.Result<A, E>, Arg | Reset> {}
+export interface AtomResultFn<Arg, A, E = never> extends Writable<Result.Result<A, E>, Arg | Reset | Interrupt> {}
 ```
 
 Added in v1.0.0
@@ -1110,6 +1112,26 @@ export declare const isWritable: <R, W>(atom: Atom<R>) => atom is Writable<R, W>
 Added in v1.0.0
 
 # symbols
+
+## Interrupt
+
+**Signature**
+
+```ts
+export declare const Interrupt: typeof Interrupt
+```
+
+Added in v1.0.0
+
+## Interrupt (type alias)
+
+**Signature**
+
+```ts
+export type Interrupt = typeof Interrupt
+```
+
+Added in v1.0.0
 
 ## Reset
 

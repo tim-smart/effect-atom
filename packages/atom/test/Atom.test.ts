@@ -1252,6 +1252,22 @@ describe("Atom", () => {
       assert.strictEqual(r.get(atom), 3)
     })
   })
+
+  it("Atom.Interrupt", async () => {
+    const r = Registry.make()
+    const atom = Atom.fn(() => Effect.never)
+    r.mount(atom)
+    expect(r.get(atom)).toEqual(Result.initial())
+    expect(r.get(atom).waiting).toBeFalsy()
+    r.set(atom, void 0)
+    expect(r.get(atom)).toEqual(Result.initial(true))
+    expect(r.get(atom).waiting).toBeTruthy()
+
+    r.set(atom, Atom.Interrupt)
+    await Effect.runPromise(Effect.yieldNow())
+    const result = r.get(atom)
+    expect(Result.isInterrupted(result)).toBeTruthy()
+  })
 })
 
 interface BuildCounter {

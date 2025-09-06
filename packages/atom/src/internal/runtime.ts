@@ -37,7 +37,8 @@ export const runCallbackSync = <R, ER = never>(runtime: Runtime.Runtime<R>) => {
   return <A, E>(
     effect: Effect.Effect<A, E, R>,
     onExit: (exit: Exit.Exit<A, E | ER>) => void,
-    uninterruptible = false
+    uninterruptible = false,
+    abortSignal?: AbortSignal
   ): (() => void) | undefined => {
     const op = fastPath(effect)
     if (op) {
@@ -53,11 +54,20 @@ export const runCallbackSync = <R, ER = never>(runtime: Runtime.Runtime<R>) => {
       return undefined
     }
     fiberRuntime.addObserver(onExit)
-    return function() {
+    let onAbort: (() => void) | undefined
+    function cancel() {
+      if (abortSignal) {
+        abortSignal.removeEventListener("abort", onAbort!)
+      }
       fiberRuntime.removeObserver(onExit)
       if (!uninterruptible) {
         fiberRuntime.unsafeInterruptAsFork(FiberId.none)
       }
     }
+    if (abortSignal) {
+      onAbort = () => fiberRuntime.unsafeInterruptAsFork(FiberId.none)
+      abortSignal.addEventListener("abort", onAbort!)
+    }
+    return cancel
   }
 }

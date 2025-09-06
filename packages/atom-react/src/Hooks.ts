@@ -107,29 +107,18 @@ function setAtom<R, W, Mode extends "value" | "promise" | "promiseExit" = never>
     readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined
   }
 ): "promise" extends Mode ? (
-    (
-      value: W,
-      options?: {
-        readonly signal?: AbortSignal | undefined
-      } | undefined
-    ) => Promise<Result.Result.Success<R>>
+    (value: W) => Promise<Result.Result.Success<R>>
   ) :
   "promiseExit" extends Mode ? (
-      (
-        value: W,
-        options?: {
-          readonly signal?: AbortSignal | undefined
-        } | undefined
-      ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+      (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
     ) :
   ((value: W | ((value: R) => W)) => void)
 {
   if (options?.mode === "promise" || options?.mode === "promiseExit") {
-    return React.useCallback((value: W, opts?: any) => {
+    return React.useCallback((value: W) => {
       registry.set(atom, value)
       const promise = Effect.runPromiseExit(
-        Registry.getResult(registry, atom as Atom.Atom<Result.Result<any, any>>, { suspendOnWaiting: true }),
-        opts
+        Registry.getResult(registry, atom as Atom.Atom<Result.Result<any, any>>, { suspendOnWaiting: true })
       )
       return options!.mode === "promise" ? promise.then(flattenExit) : promise
     }, [registry, atom, options.mode]) as any
@@ -167,20 +156,10 @@ export const useAtomSet = <
     readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined
   }
 ): "promise" extends Mode ? (
-    (
-      value: W,
-      options?: {
-        readonly signal?: AbortSignal | undefined
-      } | undefined
-    ) => Promise<Result.Result.Success<R>>
+    (value: W) => Promise<Result.Result.Success<R>>
   ) :
   "promiseExit" extends Mode ? (
-      (
-        value: W,
-        options?: {
-          readonly signal?: AbortSignal | undefined
-        } | undefined
-      ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+      (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
     ) :
   ((value: W | ((value: R) => W)) => void) =>
 {
@@ -213,20 +192,10 @@ export const useAtom = <R, W, const Mode extends "value" | "promise" | "promiseE
 ): readonly [
   value: R,
   write: "promise" extends Mode ? (
-      (
-        value: W,
-        options?: {
-          readonly signal?: AbortSignal | undefined
-        } | undefined
-      ) => Promise<Result.Result.Success<R>>
+      (value: W) => Promise<Result.Result.Success<R>>
     ) :
     "promiseExit" extends Mode ? (
-        (
-          value: W,
-          options?: {
-            readonly signal?: AbortSignal | undefined
-          } | undefined
-        ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+        (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
       ) :
     ((value: W | ((value: R) => W)) => void)
 ] => {
