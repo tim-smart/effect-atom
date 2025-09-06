@@ -1,36 +1,21 @@
 <script setup lang="ts">
-import { Atom, AtomRpc, useAtomValue } from "@effect-atom/atom-vue"
-import { Effect, Schema } from "effect"
+import { Atom, useAtomSet, useAtomValue } from "@effect-atom/atom-vue"
 import { onUnmounted, ref } from "vue"
-import { Rpc, RpcGroup, RpcTest } from "@effect/rpc"
+import { TestClient } from "../fixtures/TestClient";
+import { Exit } from "effect";
 
 defineProps<{ msg: string }>()
 
 const count = ref(0)
 
-const req = ref({ echo: "initial" })
-
-class Rpcs extends RpcGroup.make(
-  Rpc.make("Get", {
-    payload: { echo: Schema.String },
-    success: Schema.Struct({ echo: Schema.String, at: Schema.Date }),
-  }),
-  Rpc.make("Set", { payload: { echo: Schema.String } }),
-) {}
-
-class TestClient extends AtomRpc.Tag<TestClient>()("TestClient", {
-  group: Rpcs,
-  makeEffect: RpcTest.makeClient(Rpcs, { flatten: true }),
-  protocol: Rpcs.toLayer({
-    Get: (req) => Effect.succeed({ echo: req.echo, at: new Date() }),
-    Set: () => Effect.void,
-  }),
-}) {}
+const req = ref({ echo: "Hello World" })
 
 const result = useAtomValue(() => {
   console.log("Computing Atom:", req.value)
-  return Atom.refreshOnWindowFocus(TestClient.query("Get", req.value))
+  return Atom.refreshOnWindowFocus(TestClient.query("Get", req.value, { reactivityKeys: ["Get"]}))
 })
+
+const set = useAtomSet(() => TestClient.mutation("Set"), { mode: "promiseExit" })
 
 const intervalEnabled = ref(false)
 
@@ -40,6 +25,8 @@ const interval = setInterval(
     (req.value = { echo: `Hello World ${new Date().toLocaleTimeString()}` }),
   5_000,
 )
+const onSet = () => set({ payload: { state: "state "+ new Date().toISOString() }, reactivityKeys: ["Get"] })
+  .then(_ => console.log("finished", Exit.match(_, { onSuccess: _ => ({ success: _ }), onFailure: _ => ({ failure: _})})))
 onUnmounted(() => clearInterval(interval))
 </script>
 
@@ -55,6 +42,8 @@ onUnmounted(() => clearInterval(interval))
     <div v-if="result.waiting">Waiting...</div>
     Success: {{ result.value }}
   </div>
+
+  <button @click="onSet">Set state</button>
 
   <button @click="intervalEnabled = !intervalEnabled">
     Toggle interval {{ !intervalEnabled ? "ON" : "OFF" }}
