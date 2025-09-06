@@ -1,5 +1,14 @@
 # @effect-rx/rx-vue
 
+## 0.1.20
+
+### Patch Changes
+
+- [`c58c423`](https://github.com/tim-smart/effect-atom/commit/c58c423ab565a2d434550fb24b4aecb7221e9867) Thanks [@tim-smart](https://github.com/tim-smart)! - change Atom.Interrupt behaviour
+
+- Updated dependencies [[`c58c423`](https://github.com/tim-smart/effect-atom/commit/c58c423ab565a2d434550fb24b4aecb7221e9867)]:
+  - @effect-atom/atom@0.1.22
+
 ## 0.1.19
 
 ### Patch Changes
