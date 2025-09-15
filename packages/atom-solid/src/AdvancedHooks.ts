@@ -7,7 +7,7 @@ import type * as Registry from "@effect-atom/atom/Registry"
 import type * as Result from "@effect-atom/atom/Result"
 import * as Cause from "effect/Cause"
 import { globalValue } from "effect/GlobalValue"
-import { type Accessor, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
+import { type Accessor, createEffect, createMemo, createResource, createSignal, onCleanup } from "solid-js"
 import { useRegistry } from "./Context.js"
 
 const atomPromiseMap = globalValue(
@@ -46,7 +46,7 @@ function atomResultOrSuspend<A, E>(
   registry: Registry.Registry,
   atom: Atom.Atom<Result.Result<A, E>>,
   suspendOnWaiting: boolean
-): Accessor<Result.Result<A, E>> {
+): Result.Result<A, E> {
   const [value, setValue] = createSignal(registry.get(atom))
 
   createEffect(() => {
@@ -56,14 +56,12 @@ function atomResultOrSuspend<A, E>(
     onCleanup(unsubscribe)
   })
 
-  createEffect(() => {
-    const current = value()
-    if (current._tag === "Initial" || (suspendOnWaiting && current.waiting)) {
-      throw atomToPromise(registry, atom, suspendOnWaiting)
-    }
-  })
+  const current = value()
+  if (current._tag === "Initial" || (suspendOnWaiting && current.waiting)) {
+    throw atomToPromise(registry, atom, suspendOnWaiting)
+  }
 
-  return value
+  return current
 }
 
 /**
@@ -79,15 +77,52 @@ export const useAtomSuspense = <A, E, const IncludeFailure extends boolean = fal
 ): Accessor<Result.Success<A, E> | (IncludeFailure extends true ? Result.Failure<A, E> : never)> => {
   const registry = useRegistry()
   const atomRef = createMemo(atomFactory)
-  const result = atomResultOrSuspend(registry, atomRef(), options?.suspendOnWaiting ?? false)
 
-  return createMemo(() => {
-    const current = result()
-    if (current._tag === "Failure" && !options?.includeFailure) {
-      throw Cause.squash(current.cause)
+  // Use createResource for proper SolidJS suspense integration
+  const [resource] = createResource(
+    () => ({
+      atom: atomRef(),
+      suspendOnWaiting: options?.suspendOnWaiting ?? false,
+      includeFailure: options?.includeFailure ?? false
+    }),
+    async ({ atom, suspendOnWaiting }) => {
+      const current = registry.get(atom)
+
+      // If should suspend on waiting and is waiting, wait for resolution
+      if (current._tag === "Initial" || (suspendOnWaiting && current.waiting)) {
+        return new Promise<Result.Result<A, E>>((resolve) => {
+          const unsubscribe = registry.subscribe(atom, (result) => {
+            if (result._tag !== "Initial" && !(suspendOnWaiting && result.waiting)) {
+              unsubscribe()
+              resolve(result)
+            }
+          })
+        })
+      }
+
+      return current
     }
-    return current as any
-  })
+  )
+
+  // Return the resource directly as an accessor
+  return () => {
+    const result = resource()
+
+    // If resource is undefined, it means we're still loading
+    // createResource handles suspense automatically
+    if (result === undefined) {
+      // Let createResource handle the suspense - we should not reach here
+      // if suspense is working correctly
+      const current = registry.get(atomRef())
+      return current as any
+    }
+
+    if (result._tag === "Failure" && !options?.includeFailure) {
+      throw Cause.squash(result.cause)
+    }
+
+    return result as any
+  }
 }
 
 /**

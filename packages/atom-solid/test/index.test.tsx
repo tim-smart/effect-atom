@@ -1,15 +1,15 @@
 import * as Atom from "@effect-atom/atom/Atom"
 import * as Registry from "@effect-atom/atom/Registry"
 import { render, screen, fireEvent, waitFor } from "@solidjs/testing-library"
-import { Effect, Schema } from "effect"
-import { Suspense, ErrorBoundary } from "solid-js"
-import { beforeEach, describe, expect, it, test, vi } from "vitest"
-import { 
-  Hydration, 
-  RegistryContext, 
+import * as Effect from "effect/Effect"
+import { Suspense, ErrorBoundary, createResource } from "solid-js"
+import { beforeEach, describe, expect, test, vi } from "vitest"
+import {
+  Hydration,
+  RegistryContext,
   RegistryProvider,
-  Result, 
-  useAtomSuspense, 
+  Result,
+  useAtomSuspense,
   useAtomValue,
   useAtom,
   useAtomSet,
@@ -359,6 +359,108 @@ describe("atom-solid", () => {
       await waitFor(() => {
         expect(screen.getByTestId("error")).toBeInTheDocument()
       })
+    })
+  })
+
+  describe("useAtomSuspense", () => {
+    test("basic createResource suspense test", async () => {
+      // First, let's test that basic SolidJS suspense works in our test environment
+      const [resource] = createResource(async () => {
+        await new Promise(resolve => setTimeout(resolve, 50))
+        return "loaded"
+      })
+
+      function TestComponent() {
+        return <div data-testid="value">{resource()}</div>
+      }
+
+      render(() => (
+        <Suspense fallback={<div data-testid="loading">Loading...</div>}>
+          <TestComponent />
+        </Suspense>
+      ))
+
+      // Initially should show loading
+      expect(screen.getByTestId("loading")).toBeInTheDocument()
+
+      // After resource resolves, should show value
+      await waitFor(() => {
+        expect(screen.getByTestId("value")).toHaveTextContent("loaded")
+      }, { timeout: 1000 })
+    })
+
+    test("useAtomSuspense with resolved atom", async () => {
+      const atom = Atom.make(Effect.succeed("test-value"))
+
+      function TestComponent() {
+        const value = useAtomSuspense(() => atom)
+        return <div data-testid="value">{value().value}</div>
+      }
+
+      render(() => (
+        <Suspense fallback={<div data-testid="loading">Loading...</div>}>
+          <TestComponent />
+        </Suspense>
+      ))
+
+      // Should show the value immediately since atom is already resolved
+      await waitFor(() => {
+        expect(screen.getByTestId("value")).toHaveTextContent("test-value")
+      })
+    })
+
+    test("useAtomSuspense with async atom", async () => {
+      const atom = Atom.make(Effect.sleep(50).pipe(Effect.map(() => "async-value")))
+
+      function TestComponent() {
+        const value = useAtomSuspense(() => atom)
+        return <div data-testid="value">{value().value}</div>
+      }
+
+      render(() => (
+        <Suspense fallback={<div data-testid="loading">Loading...</div>}>
+          <TestComponent />
+        </Suspense>
+      ))
+
+      // Initially should show loading
+      expect(screen.getByTestId("loading")).toBeInTheDocument()
+
+      // After effect resolves, should show value
+      await waitFor(() => {
+        expect(screen.getByTestId("value")).toHaveTextContent("async-value")
+      }, { timeout: 1000 })
+    })
+
+    test("useAtomSuspense with error", async () => {
+      const atom = Atom.make(Effect.fail(new Error("test-error")))
+
+      function TestComponent() {
+        const value = useAtomSuspense(() => atom)
+        return <div data-testid="value">{value()._tag}</div>
+      }
+
+      function ErrorFallback(error: any) {
+        return <div data-testid="error">Error caught</div>
+      }
+
+      render(() => (
+        <ErrorBoundary fallback={ErrorFallback}>
+          <Suspense fallback={<div data-testid="loading">Loading...</div>}>
+            <TestComponent />
+          </Suspense>
+        </ErrorBoundary>
+      ))
+
+      // Wait for the error to be thrown and caught
+      await waitFor(() => {
+        expect(screen.getByTestId("error")).toBeInTheDocument()
+      }, { timeout: 1000 })
+    })
+
+    test("useAtomSuspense is exported and callable", () => {
+      // Basic test to ensure the hook is exported and can be called
+      expect(typeof useAtomSuspense).toBe("function")
     })
   })
 })
