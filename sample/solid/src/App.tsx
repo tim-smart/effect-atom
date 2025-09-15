@@ -86,7 +86,7 @@ function AsyncData() {
         }
         return <p>Status: {current.data}</p>
       })()}
-      <button onClick={() => refreshData(null)}>
+      <button onClick={() => refreshData(void 0)}>
         Refresh Data
       </button>
     </div>
