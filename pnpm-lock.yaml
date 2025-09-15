@@ -191,6 +191,9 @@ importers:
       '@testing-library/jest-dom':
         specifier: ^6.7.0
         version: 6.7.0
+      '@types/node':
+        specifier: ^24.2.1
+        version: 24.2.1
       effect:
         specifier: ^3.17.7
         version: 3.17.7
@@ -200,9 +203,12 @@ importers:
       solid-js:
         specifier: ^1.9.9
         version: 1.9.9
+      tsx:
+        specifier: ^4.20.5
+        version: 4.20.5
       vite-plugin-solid:
         specifier: ^2.10.2
-        version: 2.11.8(@testing-library/jest-dom@6.7.0)(solid-js@1.9.9)(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1))
+        version: 2.11.8(@testing-library/jest-dom@6.7.0)(solid-js@1.9.9)(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1))
     publishDirectory: dist
 
   packages/atom-vue:
@@ -242,10 +248,10 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.1.0
-        version: 7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1)
+        version: 7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1)
       vite-plugin-solid:
         specifier: ^2.10.2
-        version: 2.11.8(@testing-library/jest-dom@6.7.0)(solid-js@1.9.9)(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1))
+        version: 2.11.8(@testing-library/jest-dom@6.7.0)(solid-js@1.9.9)(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1))
 
   sample/vue:
     devDependencies:
@@ -260,7 +266,7 @@ importers:
         version: 0.68.4(@effect/platform@0.90.3(effect@3.17.7))(effect@3.17.7)
       '@vitejs/plugin-vue':
         specifier: ^6.0.1
-        version: 6.0.1(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1))(vue@3.5.18(typescript@5.8.3))
+        version: 6.0.1(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1))(vue@3.5.18(typescript@5.8.3))
       '@vue/tsconfig':
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
@@ -272,7 +278,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.1.0
-        version: 7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1)
+        version: 7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1)
       vue:
         specifier: ^3.5.18
         version: 3.5.18(typescript@5.8.3)
@@ -2390,6 +2396,7 @@ packages:
   eslint-plugin-markdown@4.0.1:
     resolution: {integrity: sha512-5/MnGvYU0i8MbHH5cg8S+Vl3DL+bqRNYshk1xUO86DilNBaxtTkhH+5FD0/yO03AmlI6+lfNFdk2yOw72EPzpA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: Please use @eslint/markdown instead
     peerDependencies:
       eslint: '>=8'
 
@@ -4100,6 +4107,11 @@ packages:
 
   tsx@4.20.4:
     resolution: {integrity: sha512-yyxBKfORQ7LuRt/BQKBXrpcq59ZvSW0XxwfjAt3w2/8PmdxaFzijtMhTawprSHhpzeM5BgU2hXHG3lklIERZXg==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
+  tsx@4.20.5:
+    resolution: {integrity: sha512-+wKjMNU9w/EaQayHXb7WA7ZaHY6hN8WgfvHNQ3t1PnU91/7O8TcTnIhCDYTZwnt8JsO9IBqZ30Ln1r7pPF52Aw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -5855,10 +5867,10 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  '@vitejs/plugin-vue@6.0.1(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1))(vue@3.5.18(typescript@5.8.3))':
+  '@vitejs/plugin-vue@6.0.1(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1))(vue@3.5.18(typescript@5.8.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.29
-      vite: 7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1)
+      vite: 7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1)
       vue: 3.5.18(typescript@5.8.3)
 
   '@vitest/coverage-v8@3.2.4(vitest@3.2.4(@types/node@24.2.1)(jsdom@26.1.0)(tsx@4.20.4)(yaml@2.8.1))':
@@ -8658,6 +8670,13 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
+  tsx@4.20.5:
+    dependencies:
+      esbuild: 0.25.9
+      get-tsconfig: 4.10.1
+    optionalDependencies:
+      fsevents: 2.3.3
+
   type-check@0.4.0:
     dependencies:
       prelude-ls: 1.2.1
@@ -8790,7 +8809,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-solid@2.11.8(@testing-library/jest-dom@6.7.0)(solid-js@1.9.9)(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1)):
+  vite-plugin-solid@2.11.8(@testing-library/jest-dom@6.7.0)(solid-js@1.9.9)(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1)):
     dependencies:
       '@babel/core': 7.28.3
       '@types/babel__core': 7.20.5
@@ -8798,8 +8817,8 @@ snapshots:
       merge-anything: 5.1.7
       solid-js: 1.9.9
       solid-refresh: 0.6.3(solid-js@1.9.9)
-      vite: 7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1)
-      vitefu: 1.1.1(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1))
+      vite: 7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1)
+      vitefu: 1.1.1(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1))
     optionalDependencies:
       '@testing-library/jest-dom': 6.7.0
     transitivePeerDependencies:
@@ -8819,9 +8838,23 @@ snapshots:
       tsx: 4.20.4
       yaml: 2.8.1
 
-  vitefu@1.1.1(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1)):
+  vite@7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1):
+    dependencies:
+      esbuild: 0.25.9
+      fdir: 6.4.6(picomatch@4.0.3)
+      picomatch: 4.0.3
+      postcss: 8.5.6
+      rollup: 4.46.2
+      tinyglobby: 0.2.14
     optionalDependencies:
-      vite: 7.1.0(@types/node@24.2.1)(tsx@4.20.4)(yaml@2.8.1)
+      '@types/node': 24.2.1
+      fsevents: 2.3.3
+      tsx: 4.20.5
+      yaml: 2.8.1
+
+  vitefu@1.1.1(vite@7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1)):
+    optionalDependencies:
+      vite: 7.1.0(@types/node@24.2.1)(tsx@4.20.5)(yaml@2.8.1)
 
   vitest@3.2.4(@types/node@24.2.1)(jsdom@26.1.0)(tsx@4.20.4)(yaml@2.8.1):
     dependencies:

@@ -61,3 +61,9 @@ export * from "./Context.js"
  * @category hooks
  */
 export * from "./AdvancedHooks.js"
+
+/**
+ * @since 1.0.0
+ * @category components
+ */
+export * from "./SolidHydration.js"

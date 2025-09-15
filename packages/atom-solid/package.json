@@ -18,7 +18,8 @@
     "build-cjs": "babel build/esm --plugins @babel/transform-export-namespace-from --plugins @babel/transform-modules-commonjs --out-dir build/cjs --source-maps",
     "build-annotate": "babel build --plugins annotate-pure-calls --out-dir build --source-maps",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "benchmark": "tsx benchmark/index.ts"
   },
   "keywords": [
     "effect",
@@ -34,9 +35,11 @@
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.6",
     "@testing-library/jest-dom": "^6.7.0",
+    "@types/node": "^24.2.1",
     "effect": "^3.17.7",
     "jsdom": "^26.1.0",
     "solid-js": "^1.9.9",
+    "tsx": "^4.20.5",
     "vite-plugin-solid": "^2.10.2"
   },
   "peerDependencies": {

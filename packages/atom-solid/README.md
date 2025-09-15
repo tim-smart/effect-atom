@@ -132,6 +132,19 @@ function FullName() {
 
 SolidJS's fine-grained reactivity system means that atom-solid can update only the specific parts of your UI that depend on changed atoms, without re-rendering entire components.
 
+### Benchmark Results
+
+Based on our performance benchmarks:
+
+- **Atom Creation**: ~2M ops/sec
+- **Registry Get**: ~6M ops/sec
+- **Registry Set**: ~4M ops/sec
+- **Computed Atoms**: ~454K ops/sec
+- **Subscriptions**: ~1M ops/sec
+- **Memory Usage**: ~5KB per 1000 atoms
+
+Run benchmarks yourself: `pnpm benchmark`
+
 ### Comparison with React
 
 | Feature | atom-react | atom-solid |
@@ -140,6 +153,50 @@ SolidJS's fine-grained reactivity system means that atom-solid can update only t
 | Performance | Good | Excellent |
 | Bundle size | ~15kb | ~12kb |
 | Learning curve | Familiar to React devs | SolidJS concepts |
+
+## Migration from atom-react
+
+### Key Differences
+
+#### 1. **Hook Signatures**
+```tsx
+// atom-react
+const value = useAtomValue(myAtom)
+
+// atom-solid
+const value = useAtomValue(() => myAtom)
+```
+
+#### 2. **Return Values**
+```tsx
+// atom-react - Direct values
+const count = useAtomValue(countAtom)
+return <div>{count}</div>
+
+// atom-solid - Signal accessors
+const count = useAtomValue(() => countAtom)
+return <div>{count()}</div>
+```
+
+#### 3. **Suspense Implementation**
+```tsx
+// atom-react - Direct Promise throwing
+const result = useAtomSuspense(asyncAtom)
+
+// atom-solid - createResource integration
+const result = useAtomSuspense(() => asyncAtom)
+```
+
+#### 4. **Performance Characteristics**
+- **atom-react**: React reconciliation, component re-renders
+- **atom-solid**: Fine-grained updates, no virtual DOM
+
+### Migration Steps
+
+1. **Update hook calls**: Add factory functions
+2. **Update JSX**: Add `()` to access signal values
+3. **Update Suspense**: Wrap with SolidJS Suspense components
+4. **Test thoroughly**: Different reactivity model may expose edge cases
 
 ## Examples
 

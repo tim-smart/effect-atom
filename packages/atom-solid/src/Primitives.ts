@@ -10,7 +10,7 @@ import { Effect } from "effect"
 import * as Cause from "effect/Cause"
 import * as Exit from "effect/Exit"
 import { globalValue } from "effect/GlobalValue"
-import { type Accessor, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
+import { type Accessor, batch, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
 import { useRegistry } from "./Context.js"
 
 interface AtomStore<A> {
@@ -51,18 +51,53 @@ function makeStore<A>(registry: Registry.Registry, atom: Atom.Atom<A>): AtomStor
   return newStore
 }
 
+// Cache for store signals to avoid recreating them
+const storeSignals = new WeakMap<any, Accessor<any>>()
+
+// Optimization: Track active subscriptions to enable lazy cleanup
+const activeSubscriptions = new WeakMap<any, Set<() => void>>()
+
 function useStore<A>(registry: Registry.Registry, atom: Atom.Atom<A>): Accessor<A> {
   const store = makeStore(registry, atom)
+
+  // Optimization: Reuse signals for the same atom to avoid unnecessary subscriptions
+  if (storeSignals.has(atom)) {
+    return storeSignals.get(atom)!
+  }
+
   const [value, setValue] = createSignal(store.snapshot())
 
   createEffect(() => {
     const unsubscribe = store.subscribe(() => {
       const newValue = store.snapshot()
-      setValue(() => newValue)
+      // Use batch to avoid unnecessary updates during rapid changes
+      batch(() => setValue(() => newValue))
     })
-    onCleanup(unsubscribe)
+
+    // Track active subscription for lazy cleanup
+    let subscriptions = activeSubscriptions.get(atom)
+    if (!subscriptions) {
+      subscriptions = new Set()
+      activeSubscriptions.set(atom, subscriptions)
+    }
+    subscriptions.add(unsubscribe)
+
+    onCleanup(() => {
+      unsubscribe()
+      // Clean up tracking
+      const subs = activeSubscriptions.get(atom)
+      if (subs) {
+        subs.delete(unsubscribe)
+        if (subs.size === 0) {
+          activeSubscriptions.delete(atom)
+          storeSignals.delete(atom)
+        }
+      }
+    })
   })
 
+  // Cache the signal accessor
+  storeSignals.set(atom, value)
   return value
 }
 

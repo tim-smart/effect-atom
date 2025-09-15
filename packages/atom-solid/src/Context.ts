@@ -5,7 +5,7 @@
 import type * as Atom from "@effect-atom/atom/Atom"
 import * as Registry from "@effect-atom/atom/Registry"
 import { globalValue } from "effect/GlobalValue"
-import { createContext, useContext, type JSX } from "solid-js"
+import { createContext, type JSX, useContext } from "solid-js"
 
 /**
  * @since 1.0.0
@@ -27,10 +27,11 @@ export const RegistryContext = createContext<Registry.Registry>()
  */
 export const defaultRegistry: Registry.Registry = globalValue(
   "@effect-atom/atom-solid/defaultRegistry",
-  () => Registry.make({
-    scheduleTask,
-    defaultIdleTTL: 400
-  })
+  () =>
+    Registry.make({
+      scheduleTask,
+      defaultIdleTTL: 400
+    })
 )
 
 /**
@@ -53,7 +54,7 @@ export interface RegistryProviderProps {
   readonly children?: any
   readonly registry?: Registry.Registry
   readonly initialValues?: Iterable<readonly [Atom.Atom<any>, any]>
-  readonly scheduleTask?: ((f: () => void) => void)
+  readonly scheduleTask?: (f: () => void) => void
   readonly timeoutResolution?: number
   readonly defaultIdleTTL?: number
 }
