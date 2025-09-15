@@ -2,8 +2,45 @@
  * @since 1.0.0
  */
 import * as Hydration from "@effect-atom/atom/Hydration"
+import * as Result from "@effect-atom/atom/Result"
 import { createEffect, createMemo, type JSX } from "solid-js"
 import { useRegistry } from "./Context.js"
+
+/**
+ * Check if hydration data is newer than the existing node value
+ *
+ * @since 1.0.0
+ * @category utils
+ */
+function isHydrationDataNewer(
+  existingNode: any,
+  dehydratedAtom: Hydration.DehydratedAtom
+): boolean {
+  try {
+    const currentValue = existingNode.value()
+
+    // If current value is a Success Result, compare timestamps
+    if (Result.isResult(currentValue) && Result.isSuccess(currentValue)) {
+      return dehydratedAtom.dehydratedAt > currentValue.timestamp
+    }
+
+    // For Failure Results, check if there's a previousSuccess with timestamp
+    if (Result.isResult(currentValue) && Result.isFailure(currentValue)) {
+      const previousSuccess = currentValue.previousSuccess
+      if (previousSuccess._tag === "Some" && Result.isSuccess(previousSuccess.value)) {
+        return dehydratedAtom.dehydratedAt > previousSuccess.value.timestamp
+      }
+    }
+
+    // For Initial Results or non-Result values, we can't determine age reliably
+    // Default to hydrating if the dehydrated data is recent (within last 5 minutes)
+    const fiveMinutesAgo = Date.now() - (5 * 60 * 1000)
+    return dehydratedAtom.dehydratedAt > fiveMinutesAgo
+  } catch {
+    // If we can't get the current value, default to hydrating
+    return true
+  }
+}
 
 /**
  * @since 1.0.0
@@ -52,9 +89,14 @@ export function HydrationBoundary(props: HydrationBoundaryProps) {
           // This is a new Atom value, safe to hydrate immediately
           newDehydratedAtoms.push(dehydratedAtom)
         } else {
-          // This Atom value already exists, queue it for later hydration
-          // TODO: Add logic to check if hydration data is newer
-          existingDehydratedAtoms.push(dehydratedAtom)
+          // This Atom value already exists, check if hydration data is newer
+          const shouldHydrate = isHydrationDataNewer(existingNode, dehydratedAtom)
+
+          if (shouldHydrate) {
+            // Hydration data is newer, queue it for later hydration
+            existingDehydratedAtoms.push(dehydratedAtom)
+          }
+          // If hydration data is older or same age, ignore it
         }
       }
 

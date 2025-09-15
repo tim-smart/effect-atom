@@ -1,6 +1,6 @@
-import { Atom, useAtomValue, useAtom, useAtomSet, useAtomSuspenseResult } from '@effect-atom/atom-solid'
+import { Atom, useAtomValue, useAtom, useAtomSet, useAtomSuspenseResult, Result } from '@effect-atom/atom-solid'
 import { Effect } from 'effect'
-import { createSignal, For } from 'solid-js'
+import { createSignal, For, ErrorBoundary, createMemo } from 'solid-js'
 
 // Basic counter atom
 const counterAtom = Atom.make(0)
@@ -154,6 +154,96 @@ function TodoList() {
   )
 }
 
+// Error handling example
+const errorAtom = Atom.fn(() =>
+  Effect.gen(function* () {
+    const shouldError = Math.random() > 0.5
+    if (shouldError) {
+      yield* Effect.fail(new Error("Random error occurred!"))
+    }
+    yield* Effect.sleep(500)
+    return "Success! No error this time."
+  })
+)
+
+function ErrorHandlingExample() {
+  const result = useAtomValue(() => errorAtom)
+
+  return (
+    <div class="card">
+      <h2>Error Handling</h2>
+      <ErrorBoundary
+        fallback={(err) => (
+          <div style="color: red; padding: 10px; border: 1px solid red; border-radius: 4px;">
+            <strong>Error:</strong> {err.message}
+            <br />
+            <button onClick={() => errorAtom.refresh?.(() => {})}>
+              Try Again
+            </button>
+          </div>
+        )}
+      >
+        <div>
+          <p>Status: {result()._tag}</p>
+          {result()._tag === 'Success' && <p>Result: {(result() as any).value}</p>}
+          {result()._tag === 'Failure' && <p style="color: orange;">Error handled gracefully</p>}
+          {result()._tag === 'Initial' && <p>Loading...</p>}
+          <button onClick={() => errorAtom.refresh?.(() => {})}>
+            Trigger Random Error
+          </button>
+        </div>
+      </ErrorBoundary>
+    </div>
+  )
+}
+
+// Performance monitoring example
+const performanceAtom = Atom.make(0)
+const heavyComputationAtom = Atom.make((get) => {
+  const value = get(performanceAtom)
+  // Simulate heavy computation
+  let result = 0
+  for (let i = 0; i < value * 100000; i++) {
+    result += Math.sqrt(i)
+  }
+  return result
+})
+
+function PerformanceExample() {
+  const [value, setValue] = useAtom(() => performanceAtom)
+  const computation = useAtomValue(() => heavyComputationAtom)
+
+  // Performance monitoring
+  const renderTime = createMemo(() => {
+    const start = performance.now()
+    const result = computation()
+    const end = performance.now()
+    return { result, time: end - start }
+  })
+
+  return (
+    <div class="card">
+      <h2>Performance Monitoring</h2>
+      <p>Input value: {value()}</p>
+      <p>Computation result: {renderTime().result.toFixed(2)}</p>
+      <p>Render time: {renderTime().time.toFixed(2)}ms</p>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={value()}
+        onInput={(e) => setValue(parseInt(e.target.value))}
+      />
+      <div style="margin-top: 10px;">
+        <small>
+          Move the slider to see how SolidJS's fine-grained reactivity
+          only updates the affected parts of the UI.
+        </small>
+      </div>
+    </div>
+  )
+}
+
 
 
 function App() {
@@ -170,6 +260,8 @@ function App() {
       <SharedMessage />
       <AsyncData />
       <TodoList />
+      <ErrorHandlingExample />
+      <PerformanceExample />
       
       <div class="card">
         <p>

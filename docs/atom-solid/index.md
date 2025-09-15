@@ -228,6 +228,16 @@ return <div>{value()}</div>  // Note the function call
 4. **Clean up subscriptions**: Use `useAtomSubscribe` for side effects
 5. **Optimize renders**: Take advantage of fine-grained reactivity
 
+## Documentation
+
+### Comprehensive Guides
+
+- [Usage Guides](./guides.md) - Comprehensive usage patterns and best practices
+- [Examples](./examples.md) - Complete examples including Todo App and Shopping Cart
+- [SSR Guide](./ssr-guide.md) - Server-side rendering with SolidStart
+- [Debugging Guide](./debugging-guide.md) - Advanced debugging techniques and tools
+- [Troubleshooting](./troubleshooting.md) - Common problems and solutions
+
 ## Troubleshooting
 
 ### Common Issues
@@ -237,6 +247,8 @@ return <div>{value()}</div>  // Note the function call
 **Memory leaks**: Ensure you're using `RegistryProvider` and not creating registries manually.
 
 **TypeScript errors**: Check that you have the correct peer dependencies installed.
+
+For more detailed troubleshooting, see the [Troubleshooting Guide](./troubleshooting.md).
 
 ## Contributing
 
