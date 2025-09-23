@@ -1,11 +1,5 @@
 # @effect-rx/rx
 
-## 0.2.1
-
-### Patch Changes
-
-- fix stream failure/done to include `previousSuccess`
-
 ## 0.2.0
 
 ### Minor Changes
