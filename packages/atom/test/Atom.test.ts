@@ -782,6 +782,21 @@ describe("Atom", () => {
     cancel()
   })
 
+  it("stream failure keeps previousSuccess", async () => {
+    const atom = Atom.make(() => Stream.succeed(1).pipe(Stream.concat(Stream.fail("boom"))))
+    const r = Registry.make()
+    const cancel = r.mount(atom)
+
+    await new Promise((resolve) => resolve(null))
+    const afterFail = r.get(atom)
+    assert(Result.isFailure(afterFail))
+    const prev = Result.value(afterFail)
+    assert(Option.isSome(prev))
+    assert.strictEqual(prev.value, 1)
+
+    cancel()
+  })
+
   it("Option is not an Effect", async () => {
     const atom = Atom.make(Option.none<string>())
     const r = Registry.make()
