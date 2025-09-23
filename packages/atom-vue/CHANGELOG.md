@@ -1,5 +1,16 @@
 # @effect-rx/rx-vue
 
+## 0.2.0
+
+### Minor Changes
+
+- [`37fdc0b`](https://github.com/tim-smart/effect-atom/commit/37fdc0bab960262c8664a2b8ae6c4426af5693ce) Thanks [@tim-smart](https://github.com/tim-smart)! - update effect
+
+### Patch Changes
+
+- Updated dependencies [[`37fdc0b`](https://github.com/tim-smart/effect-atom/commit/37fdc0bab960262c8664a2b8ae6c4426af5693ce)]:
+  - @effect-atom/atom@0.2.0
+
 ## 0.1.20
 
 ### Patch Changes
