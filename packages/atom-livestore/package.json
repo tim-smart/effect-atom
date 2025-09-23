@@ -25,7 +25,7 @@
   "sideEffects": [],
   "devDependencies": {
     "@livestore/livestore": "^0.3.1",
-    "effect": "^3.17.7"
+    "effect": "^3.17.14"
   },
   "peerDependencies": {
     "@livestore/livestore": "*",
