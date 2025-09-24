@@ -758,7 +758,9 @@ function makeStream<A, E>(
     },
     onFailure(cause: Cause.Cause<E>) {
       return Channel.sync(() => {
-        ctx.setSelf(Result.failureWithPrevious(cause, { previous }))
+        ctx.setSelf(Result.failureWithPrevious(cause, {
+          previous: ctx.self<Result.Result<A, E | NoSuchElementException>>()
+        }))
       })
     },
     onDone(_done: unknown) {
@@ -767,7 +769,12 @@ function makeStream<A, E>(
           ctx.self<Result.Result<A, E | NoSuchElementException>>(),
           Option.flatMap(Result.value),
           Option.match({
-            onNone: () => ctx.setSelf(Result.failWithPrevious(new NoSuchElementException(), { previous })),
+            onNone: () =>
+              ctx.setSelf(
+                Result.failWithPrevious(new NoSuchElementException(), {
+                  previous: ctx.self<Result.Result<A, E | NoSuchElementException>>()
+                })
+              ),
             onSome: (a) => ctx.setSelf(Result.success(a))
           })
         )
