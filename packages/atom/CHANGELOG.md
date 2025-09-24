@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.2.1
+
+### Patch Changes
+
+- [#341](https://github.com/tim-smart/effect-atom/pull/341) [`dcb3386`](https://github.com/tim-smart/effect-atom/commit/dcb3386c1e2931b0813050be84b4e7ec38dd76c2) Thanks [@lucas-barake](https://github.com/lucas-barake)! - fix stream failure/done to include previousSuccess
+
 ## 0.2.0
 
 ### Minor Changes
