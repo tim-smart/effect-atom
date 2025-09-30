@@ -1523,6 +1523,9 @@ export const optimistic = <A>(self: Atom<A>): Writable<A, Atom<Result.Result<A, 
       let needsRefresh = false
       get.subscribe(self, (value) => {
         lastValue = value
+        if (transitions.size > 0) {
+          return
+        }
         needsRefresh = false
         if (!Result.isResult(value)) {
           return get.setSelf(value)
