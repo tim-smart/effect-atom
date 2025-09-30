@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.3.0
+
+### Minor Changes
+
+- [`ed0994d`](https://github.com/tim-smart/effect-atom/commit/ed0994dc12977291caa0e8fa01f81b00e02740b3) Thanks [@tim-smart](https://github.com/tim-smart)! - update effect
+
 ## 0.2.1
 
 ### Patch Changes
