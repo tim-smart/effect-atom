@@ -1,5 +1,16 @@
 # @effect-rx/rx-livestore
 
+## 0.3.0
+
+### Minor Changes
+
+- [`ed0994d`](https://github.com/tim-smart/effect-atom/commit/ed0994dc12977291caa0e8fa01f81b00e02740b3) Thanks [@tim-smart](https://github.com/tim-smart)! - update effect
+
+### Patch Changes
+
+- Updated dependencies [[`ed0994d`](https://github.com/tim-smart/effect-atom/commit/ed0994dc12977291caa0e8fa01f81b00e02740b3)]:
+  - @effect-atom/atom@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes
