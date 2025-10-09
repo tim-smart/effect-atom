@@ -125,34 +125,34 @@ export interface Writable<R, W = R> extends Atom<R> {
  */
 export interface Context {
   <A>(atom: Atom<A>): A
-  readonly get: <A>(atom: Atom<A>) => A
-  readonly result: <A, E>(atom: Atom<Result.Result<A, E>>, options?: {
+  get<A>(this: Context, atom: Atom<A>): A
+  result<A, E>(this: Context, atom: Atom<Result.Result<A, E>>, options?: {
     readonly suspendOnWaiting?: boolean | undefined
-  }) => Effect.Effect<A, E>
-  readonly resultOnce: <A, E>(atom: Atom<Result.Result<A, E>>, options?: {
+  }): Effect.Effect<A, E>
+  resultOnce<A, E>(this: Context, atom: Atom<Result.Result<A, E>>, options?: {
     readonly suspendOnWaiting?: boolean | undefined
-  }) => Effect.Effect<A, E>
-  readonly once: <A>(atom: Atom<A>) => A
-  readonly addFinalizer: (f: () => void) => void
-  readonly mount: <A>(atom: Atom<A>) => void
-  readonly refresh: <A>(atom: Atom<A>) => void
-  readonly refreshSelf: () => void
-  readonly self: <A>() => Option.Option<A>
-  readonly setSelf: <A>(a: A) => void
-  readonly set: <R, W>(atom: Writable<R, W>, value: W) => void
-  readonly some: <A>(atom: Atom<Option.Option<A>>) => Effect.Effect<A>
-  readonly someOnce: <A>(atom: Atom<Option.Option<A>>) => Effect.Effect<A>
-  readonly stream: <A>(atom: Atom<A>, options?: {
+  }): Effect.Effect<A, E>
+  once<A>(this: Context, atom: Atom<A>): A
+  addFinalizer(this: Context, f: () => void): void
+  mount<A>(this: Context, atom: Atom<A>): void
+  refresh<A>(this: Context, atom: Atom<A>): void
+  refreshSelf(this: Context): void
+  self<A>(this: Context): Option.Option<A>
+  setSelf<A>(this: Context, a: A): void
+  set<R, W>(this: Context, atom: Writable<R, W>, value: W): void
+  some<A>(this: Context, atom: Atom<Option.Option<A>>): Effect.Effect<A>
+  someOnce<A>(this: Context, atom: Atom<Option.Option<A>>): Effect.Effect<A>
+  stream<A>(this: Context, atom: Atom<A>, options?: {
     readonly withoutInitialValue?: boolean
     readonly bufferSize?: number
-  }) => Stream.Stream<A>
-  readonly streamResult: <A, E>(atom: Atom<Result.Result<A, E>>, options?: {
+  }): Stream.Stream<A>
+  streamResult<A, E>(this: Context, atom: Atom<Result.Result<A, E>>, options?: {
     readonly withoutInitialValue?: boolean
     readonly bufferSize?: number
-  }) => Stream.Stream<A, E>
-  readonly subscribe: <A>(atom: Atom<A>, f: (_: A) => void, options?: {
+  }): Stream.Stream<A, E>
+  subscribe<A>(this: Context, atom: Atom<A>, f: (_: A) => void, options?: {
     readonly immediate?: boolean
-  }) => void
+  }): void
   readonly registry: Registry.Registry
 }
 
@@ -161,10 +161,10 @@ export interface Context {
  * @category context
  */
 export interface WriteContext<A> {
-  readonly get: <A>(atom: Atom<A>) => A
-  readonly refreshSelf: () => void
-  readonly setSelf: (a: A) => void
-  readonly set: <R, W>(atom: Writable<R, W>, value: W) => void
+  get<T>(this: WriteContext<A>, atom: Atom<T>): T
+  refreshSelf(this: WriteContext<A>): void
+  setSelf(this: WriteContext<A>, a: A): void
+  set<R, W>(this: WriteContext<A>, atom: Writable<R, W>, value: W): void
 }
 
 const AtomProto = {
@@ -205,6 +205,7 @@ const RuntimeProto = {
   fn(this: AtomRuntime<any, any>, arg: any, options?: {
     readonly initialValue?: unknown
     readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
+    readonly concurrent?: boolean | undefined
   }) {
     if (arguments.length === 0) {
       return (arg: any, options?: {}) => makeFnRuntime(this, arg, options)
@@ -556,6 +557,7 @@ export interface AtomRuntime<R, ER = never> extends Atom<Result.Result<Runtime.R
         options?: {
           readonly initialValue?: A | undefined
           readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
+          readonly concurrent?: boolean | undefined
         }
       ): AtomResultFn<Arg, A, E | ER>
       <E, A>(
@@ -563,6 +565,7 @@ export interface AtomRuntime<R, ER = never> extends Atom<Result.Result<Runtime.R
         options?: {
           readonly initialValue?: A | undefined
           readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
+          readonly concurrent?: boolean | undefined
         }
       ): AtomResultFn<Arg, A, E | ER | NoSuchElementException>
     }
@@ -571,6 +574,7 @@ export interface AtomRuntime<R, ER = never> extends Atom<Result.Result<Runtime.R
       options?: {
         readonly initialValue?: A | undefined
         readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
+        readonly concurrent?: boolean | undefined
       }
     ): AtomResultFn<Arg, A, E | ER>
     <E, A, Arg = void>(
@@ -578,6 +582,7 @@ export interface AtomRuntime<R, ER = never> extends Atom<Result.Result<Runtime.R
       options?: {
         readonly initialValue?: A | undefined
         readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
+        readonly concurrent?: boolean | undefined
       }
     ): AtomResultFn<Arg, A, E | ER | NoSuchElementException>
   }
@@ -884,7 +889,7 @@ export const subscriptionRef: {
         : makeEffect(get, value, Result.initial(true))
     }),
     readSubscribable
-  )
+  ) as any
 
 // -----------------------------------------------------------------------------
 // constructors - subscribable
@@ -945,8 +950,30 @@ const makeSubscribable = (
  * @since 1.0.0
  * @category models
  */
-export interface FnContext extends Omit<Context, "get" | "once" | "resultOnce" | "someOnce" | "refreshSelf"> {
+export interface FnContext {
   <A>(atom: Atom<A>): A
+  result<A, E>(this: FnContext, atom: Atom<Result.Result<A, E>>, options?: {
+    readonly suspendOnWaiting?: boolean | undefined
+  }): Effect.Effect<A, E>
+  addFinalizer(this: FnContext, f: () => void): void
+  mount<A>(this: FnContext, atom: Atom<A>): void
+  refresh<A>(this: FnContext, atom: Atom<A>): void
+  self<A>(this: FnContext): Option.Option<A>
+  setSelf<A>(this: FnContext, a: A): void
+  set<R, W>(this: FnContext, atom: Writable<R, W>, value: W): void
+  some<A>(this: FnContext, atom: Atom<Option.Option<A>>): Effect.Effect<A>
+  stream<A>(this: FnContext, atom: Atom<A>, options?: {
+    readonly withoutInitialValue?: boolean
+    readonly bufferSize?: number
+  }): Stream.Stream<A>
+  streamResult<A, E>(this: FnContext, atom: Atom<Result.Result<A, E>>, options?: {
+    readonly withoutInitialValue?: boolean
+    readonly bufferSize?: number
+  }): Stream.Stream<A, E>
+  subscribe<A>(this: FnContext, atom: Atom<A>, f: (_: A) => void, options?: {
+    readonly immediate?: boolean
+  }): void
+  readonly registry: Registry.Registry
 }
 
 /**
@@ -1034,15 +1061,19 @@ export type Interrupt = typeof Interrupt
 export const fn: {
   <Arg>(): <E, A>(fn: (arg: Arg, get: FnContext) => Effect.Effect<A, E, Scope.Scope | AtomRegistry>, options?: {
     readonly initialValue?: A | undefined
+    readonly concurrent?: boolean | undefined
   }) => AtomResultFn<Arg, A, E>
   <E, A, Arg = void>(fn: (arg: Arg, get: FnContext) => Effect.Effect<A, E, Scope.Scope | AtomRegistry>, options?: {
     readonly initialValue?: A | undefined
+    readonly concurrent?: boolean | undefined
   }): AtomResultFn<Arg, A, E>
   <Arg>(): <E, A>(fn: (arg: Arg, get: FnContext) => Stream.Stream<A, E, AtomRegistry>, options?: {
     readonly initialValue?: A | undefined
+    readonly concurrent?: boolean | undefined
   }) => AtomResultFn<Arg, A, E | NoSuchElementException>
   <E, A, Arg = void>(fn: (arg: Arg, get: FnContext) => Stream.Stream<A, E, AtomRegistry>, options?: {
     readonly initialValue?: A | undefined
+    readonly concurrent?: boolean | undefined
   }): AtomResultFn<Arg, A, E | NoSuchElementException>
 } = function(...args: ReadonlyArray<any>) {
   if (args.length === 0) {
@@ -1055,6 +1086,7 @@ const makeFn = <Arg, E, A>(
   f: (arg: Arg, get: FnContext) => Stream.Stream<A, E, AtomRegistry> | Effect.Effect<A, E, Scope.Scope | AtomRegistry>,
   options?: {
     readonly initialValue?: A | undefined
+    readonly concurrent?: boolean | undefined
   }
 ): AtomResultFn<Arg, A, E | NoSuchElementException> => {
   const [read, write] = makeResultFn(f, options)
@@ -1065,14 +1097,19 @@ function makeResultFn<Arg, E, A>(
   f: (arg: Arg, get: FnContext) => Effect.Effect<A, E, Scope.Scope | AtomRegistry> | Stream.Stream<A, E, AtomRegistry>,
   options?: {
     readonly initialValue?: A
+    readonly concurrent?: boolean | undefined
   }
 ) {
   const argAtom = state<[number, Arg | Interrupt]>([0, undefined as any])
   const initialValue = options?.initialValue !== undefined
     ? Result.success<A, E>(options.initialValue)
     : Result.initial<A, E>()
+  const scopeAtom = options?.concurrent
+    ? make(Scope.Scope as Effect.Effect<Scope.Scope, never, Scope.Scope>)
+    : undefined
 
   function read(get: Context, runtime?: Runtime.Runtime<any>): Result.Result<A, E | NoSuchElementException> {
+    const scope = scopeAtom ? Result.getOrThrow(get(scopeAtom)) : undefined
     ;(get as any).isFn = true
     const [counter, arg] = get.get(argAtom)
     if (counter === 0) {
@@ -1080,8 +1117,11 @@ function makeResultFn<Arg, E, A>(
     } else if (arg === Interrupt) {
       return Result.failureWithPrevious(Cause.interrupt(FiberId.none), { previous: get.self() })
     }
-    const value = f(arg, get)
+    let value = f(arg, get)
     if (Effect.EffectTypeId in value) {
+      if (scope) {
+        value = Effect.flatMap(Effect.forkIn(value, scope), Fiber.join)
+      }
       return makeEffect(get, value, initialValue, runtime, false)
     }
     return makeStream(get, value, initialValue, runtime)
@@ -1117,7 +1157,7 @@ export type PullResult<A, E = never> = Result.Result<{
 export const pull = <A, E>(
   create: ((get: Context) => Stream.Stream<A, E, AtomRegistry>) | Stream.Stream<A, E, AtomRegistry>,
   options?: {
-    readonly disableAccumulation?: boolean
+    readonly disableAccumulation?: boolean | undefined
   }
 ): Writable<PullResult<A, E>, void> => {
   const pullSignal = state(0)

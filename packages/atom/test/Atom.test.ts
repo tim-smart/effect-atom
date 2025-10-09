@@ -4,6 +4,7 @@ import * as Registry from "@effect-atom/atom/Registry"
 import * as Result from "@effect-atom/atom/Result"
 import { addEqualityTesters, afterEach, assert, beforeEach, describe, expect, it, test, vitest } from "@effect/vitest"
 import { Cause, Either, Equal, FiberRef, Schema, Struct, Subscribable, SubscriptionRef } from "effect"
+import * as Arr from "effect/Array"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
 import * as Hash from "effect/Hash"
@@ -174,6 +175,41 @@ describe("Atom", () => {
     result = r.get(count)
     assert(Result.isSuccess(result))
     expect(result.value).toEqual(2)
+  })
+
+  it("effectFn concurrent", async () => {
+    const latches = Arr.empty<Effect.Latch>()
+    let done = 0
+    const count = Atom.fn((_: number) => {
+      const latch = Effect.unsafeMakeLatch()
+      latches.push(latch)
+      return latch.await.pipe(
+        Effect.tap(() => done++)
+      )
+    }, { concurrent: true })
+
+    const r = Registry.make()
+    r.mount(count)
+
+    let result = r.get(count)
+    assert(Result.isInitial(result))
+
+    r.set(count, 1)
+    result = r.get(count)
+    assert(Result.isInitial(result) && result.waiting)
+
+    r.set(count, 1)
+    r.set(count, 1)
+    assert(Result.isInitial(result) && result.waiting)
+    assert.strictEqual(latches.length, 3)
+    assert.strictEqual(done, 0)
+
+    latches.forEach((latch) => latch.unsafeOpen())
+    await Effect.runPromise(Effect.yieldNow())
+    assert.strictEqual(done, 3)
+
+    result = r.get(count)
+    assert(Result.isSuccess(result))
   })
 
   it("effectFn initial", async () => {
