@@ -1,5 +1,14 @@
 # @effect-rx/rx-vue
 
+## 0.3.2
+
+### Patch Changes
+
+- [`2321aa5`](https://github.com/tim-smart/effect-atom/commit/2321aa50f4376c6dde535e9c6cf8b2ff5d8db66b) Thanks [@tim-smart](https://github.com/tim-smart)! - wait for all fibers for concurrent mode
+
+- Updated dependencies [[`2321aa5`](https://github.com/tim-smart/effect-atom/commit/2321aa50f4376c6dde535e9c6cf8b2ff5d8db66b)]:
+  - @effect-atom/atom@0.3.2
+
 ## 0.3.1
 
 ### Patch Changes
