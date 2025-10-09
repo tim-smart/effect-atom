@@ -1689,9 +1689,12 @@ export const optimisticFn: {
       ))
       : options.fn
     get.set(fn, arg)
-    return Effect.onExit(get.result(fn, { suspendOnWaiting: true }), (exit) => {
-      get.set(transition, Result.fromExit(Exit.as(exit, value)))
-      return Effect.void
+    return Effect.async<XA, XE>((resume) => {
+      get.subscribe(fn, (result) => {
+        if (result._tag === "Initial" || result.waiting) return
+        get.set(transition, Result.map(result, () => value))
+        resume(Result.toExit(result) as any)
+      }, { immediate: true })
     })
   })
 })
