@@ -1104,12 +1104,16 @@ function makeResultFn<Arg, E, A>(
   const initialValue = options?.initialValue !== undefined
     ? Result.success<A, E>(options.initialValue)
     : Result.initial<A, E>()
-  const scopeAtom = options?.concurrent
-    ? make(Scope.Scope as Effect.Effect<Scope.Scope, never, Scope.Scope>)
+  const fibersAtom = options?.concurrent
+    ? make((get) => {
+      const fibers = new Set<Fiber.RuntimeFiber<any, any>>()
+      get.addFinalizer(() => fibers.forEach((f) => f.unsafeInterruptAsFork(FiberId.none)))
+      return fibers
+    })
     : undefined
 
   function read(get: Context, runtime?: Runtime.Runtime<any>): Result.Result<A, E | NoSuchElementException> {
-    const scope = scopeAtom ? Result.getOrThrow(get(scopeAtom)) : undefined
+    const fibers = fibersAtom ? get(fibersAtom) : undefined
     ;(get as any).isFn = true
     const [counter, arg] = get.get(argAtom)
     if (counter === 0) {
@@ -1119,10 +1123,16 @@ function makeResultFn<Arg, E, A>(
     }
     let value = f(arg, get)
     if (Effect.EffectTypeId in value) {
-      if (scope) {
-        value = Effect.flatMap(Effect.forkIn(value, scope), Fiber.join)
+      if (fibers) {
+        const eff = value
+        value = Effect.flatMap(Effect.runtime<any>(), (r) => {
+          const fiber = Runtime.runFork(r, eff)
+          fibers.add(fiber)
+          fiber.addObserver(() => fibers.delete(fiber))
+          return fibers.size === 0 ? fiber.unsafePoll()! : joinAll(fibers)
+        })
       }
-      return makeEffect(get, value, initialValue, runtime, false)
+      return makeEffect(get, value as any, initialValue, runtime, false)
     }
     return makeStream(get, value, initialValue, runtime)
   }
@@ -1140,6 +1150,41 @@ function makeResultFn<Arg, E, A>(
   }
   return [read, write, argAtom] as const
 }
+
+const joinAll = <A, E>(fibers: Iterable<Fiber.RuntimeFiber<A, E>>) =>
+  Effect.async<A, E>((resume) => {
+    const iterator = fibers[Symbol.iterator]()
+    let s = iterator.next()
+    let cause: Cause.Cause<E> | undefined
+    let exit: Exit.Exit<A, E> | undefined
+    function onExit(exit_: Exit.Exit<A, E>, inLoop = false) {
+      if (exit_._tag === "Failure") {
+        cause = cause ? Cause.parallel(exit_.cause, cause) : exit_.cause
+      } else if (!cause) {
+        exit = exit_
+      }
+      if (inLoop) return
+      s = iterator.next()
+      loop()
+    }
+    function loop() {
+      while (!s.done) {
+        const exit = s.value.unsafePoll()
+        if (!exit) {
+          s.value.addObserver(onExit)
+          return
+        }
+        onExit(exit, true)
+        s = iterator.next()
+      }
+      resume(cause ? Exit.failCause(cause) : exit ? exit : Exit.failCause(Cause.empty))
+    }
+    loop()
+    return Effect.sync(() => {
+      if (s.done) return
+      s.value.removeObserver(onExit)
+    })
+  })
 
 /**
  * @since 1.0.0
