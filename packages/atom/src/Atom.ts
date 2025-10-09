@@ -1128,8 +1128,9 @@ function makeResultFn<Arg, E, A>(
         value = Effect.flatMap(Effect.runtime<any>(), (r) => {
           const fiber = Runtime.runFork(r, eff)
           fibers.add(fiber)
+          const arr = Array.from(fibers)
           fiber.addObserver(() => fibers.delete(fiber))
-          return fibers.size === 0 ? fiber.unsafePoll()! : joinAll(fibers)
+          return joinAll(arr)
         })
       }
       return makeEffect(get, value as any, initialValue, runtime, false)
@@ -1151,10 +1152,9 @@ function makeResultFn<Arg, E, A>(
   return [read, write, argAtom] as const
 }
 
-const joinAll = <A, E>(fibers: Iterable<Fiber.RuntimeFiber<A, E>>) =>
+const joinAll = <A, E>(fibers: ReadonlyArray<Fiber.RuntimeFiber<A, E>>) =>
   Effect.async<A, E>((resume) => {
-    const iterator = fibers[Symbol.iterator]()
-    let s = iterator.next()
+    let i = 0
     let cause: Cause.Cause<E> | undefined
     let exit: Exit.Exit<A, E> | undefined
     function onExit(exit_: Exit.Exit<A, E>, inLoop = false) {
@@ -1163,26 +1163,23 @@ const joinAll = <A, E>(fibers: Iterable<Fiber.RuntimeFiber<A, E>>) =>
       } else if (!cause) {
         exit = exit_
       }
-      if (inLoop) return
-      s = iterator.next()
-      loop()
+      i++
+      if (!inLoop) loop()
     }
     function loop() {
-      while (!s.done) {
-        const exit = s.value.unsafePoll()
-        if (!exit) {
-          s.value.addObserver(onExit)
-          return
-        }
+      while (i < fibers.length) {
+        const fiber = fibers[i]
+        const exit = fiber.unsafePoll()
+        if (!exit) return fiber.addObserver(onExit)
         onExit(exit, true)
-        s = iterator.next()
       }
       resume(cause ? Exit.failCause(cause) : exit ? exit : Exit.failCause(Cause.empty))
     }
     loop()
     return Effect.sync(() => {
-      if (s.done) return
-      s.value.removeObserver(onExit)
+      if (i < fibers.length) {
+        fibers[i].removeObserver(onExit)
+      }
     })
   })
 
