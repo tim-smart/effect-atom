@@ -1,5 +1,16 @@
 # @effect-rx/rx-react
 
+## 0.3.1
+
+### Patch Changes
+
+- [`b0f28b9`](https://github.com/tim-smart/effect-atom/commit/b0f28b9e2ba8121a53981f2c6063bd903dfa2a36) Thanks [@tim-smart](https://github.com/tim-smart)! - add `concurrent` option to .fn
+
+- [`b0f28b9`](https://github.com/tim-smart/effect-atom/commit/b0f28b9e2ba8121a53981f2c6063bd903dfa2a36) Thanks [@tim-smart](https://github.com/tim-smart)! - improve type safety of context interfaces
+
+- Updated dependencies [[`b0f28b9`](https://github.com/tim-smart/effect-atom/commit/b0f28b9e2ba8121a53981f2c6063bd903dfa2a36), [`b0f28b9`](https://github.com/tim-smart/effect-atom/commit/b0f28b9e2ba8121a53981f2c6063bd903dfa2a36)]:
+  - @effect-atom/atom@0.3.1
+
 ## 0.3.0
 
 ### Minor Changes
