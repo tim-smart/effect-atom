@@ -109,16 +109,16 @@ importers:
     devDependencies:
       '@effect/experimental':
         specifier: ^0.56.0
-        version: 0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
+        version: 0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
       '@effect/platform':
-        specifier: ^0.92.0
-        version: 0.92.0(effect@3.18.0)
+        specifier: ^0.92.1
+        version: 0.92.1(effect@3.18.4)
       '@effect/rpc':
         specifier: ^0.71.0
-        version: 0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
+        version: 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
       effect:
-        specifier: ^3.18.0
-        version: 3.18.0
+        specifier: ^3.18.4
+        version: 3.18.4
     publishDirectory: dist
 
   packages/atom-livestore:
@@ -129,10 +129,10 @@ importers:
     devDependencies:
       '@livestore/livestore':
         specifier: ^0.3.1
-        version: 0.3.1(8592d6d415b3634f2e3293c282a7d3aa)
+        version: 0.3.1(87c088f146b864a592fc6423e08cfb47)
       effect:
         specifier: ^3.18.0
-        version: 3.18.0
+        version: 3.18.4
     publishDirectory: dist
 
   packages/atom-react:
@@ -160,8 +160,8 @@ importers:
         specifier: ^0.26.0
         version: 0.26.0
       effect:
-        specifier: ^3.18.0
-        version: 3.18.0
+        specifier: ^3.18.4
+        version: 3.18.4
       jsdom:
         specifier: ^27.0.0
         version: 27.0.0(postcss@8.5.6)
@@ -186,8 +186,8 @@ importers:
         version: link:../atom/dist
     devDependencies:
       effect:
-        specifier: ^3.18.0
-        version: 3.18.0
+        specifier: ^3.18.4
+        version: 3.18.4
       vue:
         specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
@@ -203,28 +203,28 @@ importers:
         version: link:../../packages/atom-vue/dist
       '@effect/rpc':
         specifier: ^0.71.0
-        version: 0.71.0(@effect/platform@0.92.0(effect@3.18.4))(effect@3.18.4)
+        version: 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
       '@vitejs/plugin-vue':
         specifier: ^6.0.1
-        version: 6.0.1(vite@7.1.9(@types/node@24.6.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
+        version: 6.0.1(vite@7.1.9(@types/node@24.6.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.8.3))
       '@vue/tsconfig':
         specifier: ^0.7.0
-        version: 0.7.0(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+        version: 0.7.0(typescript@5.8.3)(vue@3.5.22(typescript@5.8.3))
       effect:
         specifier: ^3.18.4
         version: 3.18.4
       typescript:
-        specifier: ~5.9.3
-        version: 5.9.3
+        specifier: ~5.8.3
+        version: 5.8.3
       vite:
         specifier: ^7.1.9
         version: 7.1.9(@types/node@24.6.0)(tsx@4.20.6)(yaml@2.8.1)
       vue:
         specifier: ^3.5.22
-        version: 3.5.22(typescript@5.9.3)
+        version: 3.5.22(typescript@5.8.3)
       vue-tsc:
         specifier: ^3.1.1
-        version: 3.1.1(typescript@5.9.3)
+        version: 3.1.1(typescript@5.8.3)
 
 packages:
 
@@ -305,11 +305,6 @@ packages:
     resolution: {integrity: sha512-HFN59MmQXGHVyYadKLVumYsA9dBFun/ldYxipEjzA4196jpLZd8UjEEBLkbEkvfYreDqJhZxYAWFPtrfhNpj4w==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/parser@7.28.3':
-    resolution: {integrity: sha512-7+Ey1mAgYqFAx2h0RuoxcQT5+MlG3GTV0TQrgr7/ZliKsm/MNDxVVutlWaziMq7wJNAz8MTqz55XLpWvva6StA==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
-
   '@babel/parser@7.28.4':
     resolution: {integrity: sha512-yZbBqeM6TkpP9du/I2pUZnJsRMGGvOuIrhjzC1AwHwW+6he4mni6Bp/m8ijn0iOuZuPI2BfkCoSRunpyjnrQKg==}
     engines: {node: '>=6.0.0'}
@@ -327,10 +322,6 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
-  '@babel/runtime@7.28.2':
-    resolution: {integrity: sha512-KHp2IflsnGywDjBWDkR9iEqiWSpc8GIi0lgTT3mOElT0PP1tG26P4tmFI2YvAdzgq9RGyoHZQEIEdZy6Ec5xCA==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/runtime@7.28.4':
     resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
     engines: {node: '>=6.9.0'}
@@ -339,16 +330,8 @@ packages:
     resolution: {integrity: sha512-LPDZ85aEJyYSd18/DkjNh4/y1ntkE5KwUHWTiqgRxruuZL2F1yuHligVHLvcHY2vMHXttKFpJn6LwfI7cw7ODw==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/traverse@7.28.3':
-    resolution: {integrity: sha512-7w4kZYHneL3A6NP2nxzHvT3HCZ7puDZZjFMqDpBPECub79sTtSO5CGXDkKrTQq8ksAwfD/XI2MRFX23njdDaIQ==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/traverse@7.28.4':
     resolution: {integrity: sha512-YEzuboP2qvQavAcjgQNVgsvHIDv6ZpwXvcvjmyySP2DIMuByS/6ioU5G9pYrWHM6T2YDfc7xga9iNzYOs12CFQ==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/types@7.28.2':
-    resolution: {integrity: sha512-ruv7Ae4J5dUYULmeXw1gmb7rYRz57OWCPM57pHojnLq/3Z1CK2lNSLTCVjxVk1F/TZHwOZZrOWi0ur95BbLxNQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/types@7.28.4':
@@ -581,10 +564,10 @@ packages:
       '@effect/sql': ^0.46.0
       effect: ^3.18.0
 
-  '@effect/platform@0.92.0':
-    resolution: {integrity: sha512-WfkDWEGSEVVU+eb9I9onqK22FcdbPdydTNCi8UV/2+++rPrk1mIG33QUVO9sNDsO9nXR1bHwHS1o0d3QRx54Fw==}
+  '@effect/platform@0.92.1':
+    resolution: {integrity: sha512-XXWCBVwyhaKZISN7aM1fv/3fWDGyxr84ObywnUrL8aHvJLoIeskWFAP/fqw3c5MFCrJ3ZV97RWLbv6JiBQugdg==}
     peerDependencies:
-      effect: ^3.18.0
+      effect: ^3.18.1
 
   '@effect/printer-ansi@0.46.0':
     resolution: {integrity: sha512-b+wCoCtmEF/Duobsid2N1JoGvZLiA9Fkcz1G1x/dhXVtsZqaGPa6jNYctopmzBhyuS53kK9XpqnFhEbF6+/5Ug==}
@@ -794,12 +777,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@eslint-community/eslint-utils@4.7.0':
-    resolution: {integrity: sha512-dyybb3AcajC7uha6CvhdVRJqaKyn7w2YKqKyAN37NKYgZT36w+iRb0Dymmc5qEJ549c/S31cMMSFd75bteCpCw==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
-
   '@eslint-community/eslint-utils@4.9.0':
     resolution: {integrity: sha512-ayVFHdtZ+hsq1t2Dy24wCmGXGe4q9Gu3smhLYALJrr473ZH27MsnSL+LKUlimp4BWJqMDMLmPpx/Q9R3OAlL4g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -916,9 +893,6 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
-
-  '@jridgewell/trace-mapping@0.3.30':
-    resolution: {integrity: sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q==}
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
@@ -1998,15 +1972,6 @@ packages:
       supports-color:
         optional: true
 
-  debug@4.4.1:
-    resolution: {integrity: sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
     engines: {node: '>=6.0'}
@@ -2163,9 +2128,6 @@ packages:
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
-
-  effect@3.18.0:
-    resolution: {integrity: sha512-Hr0hVrnibYbheOUnbTwaV88NyyMTW7CrLCiOSJxMWns73pEiT29HJcsEx7pgs9E8rUa6z20775byVzXw0omPjw==}
 
   effect@3.18.4:
     resolution: {integrity: sha512-b1LXQJLe9D11wfnOKAk3PKxuqYshQ0Heez+y5pnkd3jLj1yx9QhM72zZ9uUrOQyNvrs2GZZd/3maL0ZV18YuDA==}
@@ -2440,14 +2402,6 @@ packages:
 
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
-
-  fdir@6.4.6:
-    resolution: {integrity: sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==}
-    peerDependencies:
-      picomatch: ^3 || ^4
-    peerDependenciesMeta:
-      picomatch:
-        optional: true
 
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
@@ -3108,10 +3062,6 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lru-cache@11.1.0:
-    resolution: {integrity: sha512-QIXZUBJUx+2zHUdQujWejBkcD9+cs94tLn0+YL8UrCh+D5sCXZ4c7LaEH48pNwRY3MLDgqUFyhlCyjJPf1WP0A==}
-    engines: {node: 20 || >=22}
-
   lru-cache@11.2.1:
     resolution: {integrity: sha512-r8LA6i4LP4EeWOhqBaZZjDWwehd1xUJPCJd9Sv300H0ZmcUER4+JPh7bqqZeqs1o5pgtgvXm+d9UGrB5zZGDiQ==}
     engines: {node: 20 || >=22}
@@ -3132,9 +3082,6 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
-
-  magic-string@0.30.17:
-    resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
   magic-string@0.30.19:
     resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
@@ -3943,10 +3890,6 @@ packages:
   tinyexec@0.3.2:
     resolution: {integrity: sha512-KQQR9yN7R5+OSwaK0XQoj22pwHoTlgYqmUscPYoknOoWCWfj/5/ABTMRi69FrKU5ffPVh5QcFikpWJI/P1ocHA==}
 
-  tinyglobby@0.2.14:
-    resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
-    engines: {node: '>=12.0.0'}
-
   tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
@@ -4321,7 +4264,7 @@ snapshots:
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
 
   '@asamuzakjp/css-color@4.0.4':
     dependencies:
@@ -4343,7 +4286,7 @@ snapshots:
   '@babel/cli@7.28.3(@babel/core@7.28.4)':
     dependencies:
       '@babel/core': 7.28.4
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       commander: 6.2.1
       convert-source-map: 2.0.0
       fs-readdir-recursive: 1.1.0
@@ -4402,8 +4345,8 @@ snapshots:
 
   '@babel/helper-module-imports@7.27.1':
     dependencies:
-      '@babel/traverse': 7.28.3
-      '@babel/types': 7.28.2
+      '@babel/traverse': 7.28.4
+      '@babel/types': 7.28.4
     transitivePeerDependencies:
       - supports-color
 
@@ -4429,10 +4372,6 @@ snapshots:
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
 
-  '@babel/parser@7.28.3':
-    dependencies:
-      '@babel/types': 7.28.4
-
   '@babel/parser@7.28.4':
     dependencies:
       '@babel/types': 7.28.4
@@ -4450,8 +4389,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/runtime@7.28.2': {}
-
   '@babel/runtime@7.28.4': {}
 
   '@babel/template@7.27.2':
@@ -4459,18 +4396,6 @@ snapshots:
       '@babel/code-frame': 7.27.1
       '@babel/parser': 7.28.4
       '@babel/types': 7.28.4
-
-  '@babel/traverse@7.28.3':
-    dependencies:
-      '@babel/code-frame': 7.27.1
-      '@babel/generator': 7.28.3
-      '@babel/helper-globals': 7.28.0
-      '@babel/parser': 7.28.4
-      '@babel/template': 7.27.2
-      '@babel/types': 7.28.4
-      debug: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
 
   '@babel/traverse@7.28.4':
     dependencies:
@@ -4483,11 +4408,6 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
-
-  '@babel/types@7.28.2':
-    dependencies:
-      '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
 
   '@babel/types@7.28.4':
     dependencies:
@@ -4693,23 +4613,23 @@ snapshots:
       micromatch: 4.0.8
       pkg-entry-points: 1.1.1
 
-  '@effect/cli@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/printer-ansi@0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0))(@effect/printer@0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)':
+  '@effect/cli@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/printer-ansi@0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4))(@effect/printer@0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      '@effect/printer': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/printer-ansi': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      '@effect/printer': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4)
+      '@effect/printer-ansi': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4)
+      effect: 3.18.4
       ini: 4.1.3
       toml: 3.0.0
       yaml: 2.8.1
 
-  '@effect/cluster@0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)':
+  '@effect/cluster@0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      '@effect/rpc': 0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/workflow': 0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      '@effect/rpc': 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/workflow': 0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      effect: 3.18.4
 
   '@effect/docgen@0.5.2(tsx@4.20.6)(typescript@5.8.3)':
     dependencies:
@@ -4726,10 +4646,10 @@ snapshots:
       '@dprint/typescript': 0.91.8
       prettier-linter-helpers: 1.0.0
 
-  '@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)':
+  '@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      effect: 3.18.4
       uuid: 11.1.0
 
   '@effect/language-service@0.41.1': {}
@@ -4749,56 +4669,56 @@ snapshots:
       repeat-string: 1.6.1
       strip-color: 0.1.0
 
-  '@effect/opentelemetry@0.58.0(@effect/platform@0.92.0(effect@3.18.0))(@opentelemetry/api@1.9.0)(@opentelemetry/resources@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.37.0)(effect@3.18.0)':
+  '@effect/opentelemetry@0.58.0(@effect/platform@0.92.1(effect@3.18.4))(@opentelemetry/api@1.9.0)(@opentelemetry/resources@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.37.0)(effect@3.18.4)':
     dependencies:
-      '@effect/platform': 0.92.0(effect@3.18.0)
+      '@effect/platform': 0.92.1(effect@3.18.4)
       '@opentelemetry/semantic-conventions': 1.37.0
-      effect: 3.18.0
+      effect: 3.18.4
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/resources': 2.1.0(@opentelemetry/api@1.9.0)
 
-  '@effect/platform-browser@0.72.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)':
+  '@effect/platform-browser@0.72.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      effect: 3.18.4
       multipasta: 0.2.7
 
-  '@effect/platform-bun@0.81.0(@effect/cluster@0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)':
+  '@effect/platform-bun@0.81.0(@effect/cluster@0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/cluster': 0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      '@effect/platform-node-shared': 0.51.4(@effect/cluster@0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/rpc': 0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/cluster': 0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      '@effect/platform-node-shared': 0.51.4(@effect/cluster@0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/rpc': 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      effect: 3.18.4
       multipasta: 0.2.7
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@effect/platform-node-shared@0.51.4(@effect/cluster@0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)':
+  '@effect/platform-node-shared@0.51.4(@effect/cluster@0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/cluster': 0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      '@effect/rpc': 0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
+      '@effect/cluster': 0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      '@effect/rpc': 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
       '@parcel/watcher': 2.5.1
-      effect: 3.18.0
+      effect: 3.18.4
       multipasta: 0.2.7
       ws: 8.18.3
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@effect/platform-node@0.98.0(@effect/cluster@0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)':
+  '@effect/platform-node@0.98.0(@effect/cluster@0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/cluster': 0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      '@effect/platform-node-shared': 0.51.4(@effect/cluster@0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/rpc': 0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/cluster': 0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      '@effect/platform-node-shared': 0.51.4(@effect/cluster@0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/rpc': 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      effect: 3.18.4
       mime: 3.0.0
       undici: 7.16.0
       ws: 8.18.3
@@ -4806,64 +4726,51 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@effect/platform@0.92.0(effect@3.18.0)':
-    dependencies:
-      effect: 3.18.0
-      find-my-way-ts: 0.1.6
-      msgpackr: 1.11.5
-      multipasta: 0.2.7
-
-  '@effect/platform@0.92.0(effect@3.18.4)':
+  '@effect/platform@0.92.1(effect@3.18.4)':
     dependencies:
       effect: 3.18.4
       find-my-way-ts: 0.1.6
       msgpackr: 1.11.5
       multipasta: 0.2.7
 
-  '@effect/printer-ansi@0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0)':
+  '@effect/printer-ansi@0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/printer': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/typeclass': 0.37.0(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/printer': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4)
+      '@effect/typeclass': 0.37.0(effect@3.18.4)
+      effect: 3.18.4
 
-  '@effect/printer@0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0)':
+  '@effect/printer@0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/typeclass': 0.37.0(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/typeclass': 0.37.0(effect@3.18.4)
+      effect: 3.18.4
 
-  '@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)':
+  '@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      effect: 3.18.0
-      msgpackr: 1.11.5
-
-  '@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.4))(effect@3.18.4)':
-    dependencies:
-      '@effect/platform': 0.92.0(effect@3.18.4)
+      '@effect/platform': 0.92.1(effect@3.18.4)
       effect: 3.18.4
       msgpackr: 1.11.5
 
-  '@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)':
+  '@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/experimental': 0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/experimental': 0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      effect: 3.18.4
       uuid: 11.1.0
 
-  '@effect/typeclass@0.37.0(effect@3.18.0)':
+  '@effect/typeclass@0.37.0(effect@3.18.4)':
     dependencies:
-      effect: 3.18.0
+      effect: 3.18.4
 
   '@effect/vitest@0.26.0(effect@3.18.4)(vitest@3.2.4(@types/node@24.6.0)(jsdom@27.0.0(postcss@8.5.6))(tsx@4.20.6)(yaml@2.8.1))':
     dependencies:
       effect: 3.18.4
       vitest: 3.2.4(@types/node@24.6.0)(jsdom@27.0.0(postcss@8.5.6))(tsx@4.20.6)(yaml@2.8.1)
 
-  '@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)':
+  '@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)':
     dependencies:
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      '@effect/rpc': 0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      effect: 3.18.0
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      '@effect/rpc': 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      effect: 3.18.4
 
   '@emnapi/core@1.4.5':
     dependencies:
@@ -4959,11 +4866,6 @@ snapshots:
   '@esbuild/win32-x64@0.25.10':
     optional: true
 
-  '@eslint-community/eslint-utils@4.7.0(eslint@9.36.0)':
-    dependencies:
-      eslint: 9.36.0
-      eslint-visitor-keys: 3.4.3
-
   '@eslint-community/eslint-utils@4.9.0(eslint@9.36.0)':
     dependencies:
       eslint: 9.36.0
@@ -4998,7 +4900,7 @@ snapshots:
   '@eslint/eslintrc@3.3.1':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.1
+      debug: 4.4.3
       espree: 10.4.0
       globals: 14.0.0
       ignore: 5.3.2
@@ -5084,20 +4986,15 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@jridgewell/trace-mapping@0.3.30':
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.5
-
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@livestore/common@0.3.1(8592d6d415b3634f2e3293c282a7d3aa)':
+  '@livestore/common@0.3.1(87c088f146b864a592fc6423e08cfb47)':
     dependencies:
-      '@livestore/utils': 0.3.1(589f0470f91fadf1fd8ea3a96957ae5e)
-      '@livestore/webmesh': 0.3.1(589f0470f91fadf1fd8ea3a96957ae5e)
+      '@livestore/utils': 0.3.1(3cd2b53583747a7f71c3eaa545d3e764)
+      '@livestore/webmesh': 0.3.1(3cd2b53583747a7f71c3eaa545d3e764)
       '@opentelemetry/api': 1.9.0
       graphology: 0.26.0-alpha1(graphology-types@0.24.8)
       graphology-dag: 0.4.1(graphology-types@0.24.8)
@@ -5119,10 +5016,10 @@ snapshots:
       - '@opentelemetry/resources'
       - effect
 
-  '@livestore/livestore@0.3.1(8592d6d415b3634f2e3293c282a7d3aa)':
+  '@livestore/livestore@0.3.1(87c088f146b864a592fc6423e08cfb47)':
     dependencies:
-      '@livestore/common': 0.3.1(8592d6d415b3634f2e3293c282a7d3aa)
-      '@livestore/utils': 0.3.1(589f0470f91fadf1fd8ea3a96957ae5e)
+      '@livestore/common': 0.3.1(87c088f146b864a592fc6423e08cfb47)
+      '@livestore/utils': 0.3.1(3cd2b53583747a7f71c3eaa545d3e764)
       '@opentelemetry/api': 1.9.0
     transitivePeerDependencies:
       - '@effect/cli'
@@ -5141,32 +5038,32 @@ snapshots:
       - '@opentelemetry/resources'
       - effect
 
-  '@livestore/utils@0.3.1(589f0470f91fadf1fd8ea3a96957ae5e)':
+  '@livestore/utils@0.3.1(3cd2b53583747a7f71c3eaa545d3e764)':
     dependencies:
-      '@effect/cli': 0.71.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/printer-ansi@0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0))(@effect/printer@0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/cluster': 0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/experimental': 0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/opentelemetry': 0.58.0(@effect/platform@0.92.0(effect@3.18.0))(@opentelemetry/api@1.9.0)(@opentelemetry/resources@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.37.0)(effect@3.18.0)
-      '@effect/platform': 0.92.0(effect@3.18.0)
-      '@effect/platform-browser': 0.72.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/platform-bun': 0.81.0(@effect/cluster@0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/platform-node': 0.98.0(@effect/cluster@0.50.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/workflow@0.11.0(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(@effect/rpc@0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(effect@3.18.0)
-      '@effect/printer': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/printer-ansi': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/rpc': 0.71.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0))(@effect/platform@0.92.0(effect@3.18.0))(effect@3.18.0)
-      '@effect/typeclass': 0.37.0(effect@3.18.0)
+      '@effect/cli': 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/printer-ansi@0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4))(@effect/printer@0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/cluster': 0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/experimental': 0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/opentelemetry': 0.58.0(@effect/platform@0.92.1(effect@3.18.4))(@opentelemetry/api@1.9.0)(@opentelemetry/resources@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.37.0)(effect@3.18.4)
+      '@effect/platform': 0.92.1(effect@3.18.4)
+      '@effect/platform-browser': 0.72.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/platform-bun': 0.81.0(@effect/cluster@0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/platform-node': 0.98.0(@effect/cluster@0.50.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/workflow@0.11.0(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(@effect/rpc@0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/sql@0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(effect@3.18.4)
+      '@effect/printer': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4)
+      '@effect/printer-ansi': 0.46.0(@effect/typeclass@0.37.0(effect@3.18.4))(effect@3.18.4)
+      '@effect/rpc': 0.71.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/sql': 0.46.0(@effect/experimental@0.56.0(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4))(@effect/platform@0.92.1(effect@3.18.4))(effect@3.18.4)
+      '@effect/typeclass': 0.37.0(effect@3.18.4)
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/resources': 2.1.0(@opentelemetry/api@1.9.0)
       '@standard-schema/spec': 1.0.0
-      effect: 3.18.0
+      effect: 3.18.4
       msgpackr: 1.11.2
       nanoid: 5.1.3
       pretty-bytes: 6.1.1
 
-  '@livestore/webmesh@0.3.1(589f0470f91fadf1fd8ea3a96957ae5e)':
+  '@livestore/webmesh@0.3.1(3cd2b53583747a7f71c3eaa545d3e764)':
     dependencies:
-      '@livestore/utils': 0.3.1(589f0470f91fadf1fd8ea3a96957ae5e)
+      '@livestore/utils': 0.3.1(3cd2b53583747a7f71c3eaa545d3e764)
     transitivePeerDependencies:
       - '@effect/cli'
       - '@effect/cluster'
@@ -5398,7 +5295,7 @@ snapshots:
   '@testing-library/dom@10.4.1':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/runtime': 7.28.2
+      '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
       dom-accessibility-api: 0.5.16
@@ -5417,7 +5314,7 @@ snapshots:
 
   '@testing-library/react@16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.1.9(@types/react@19.1.15))(@types/react@19.1.15)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
-      '@babel/runtime': 7.28.2
+      '@babel/runtime': 7.28.4
       '@testing-library/dom': 10.4.1
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
@@ -5584,15 +5481,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/project-service@8.45.0(typescript@5.9.3)':
-    dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.45.0(typescript@5.9.3)
-      '@typescript-eslint/types': 8.45.0
-      debug: 4.4.3
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - supports-color
-
   '@typescript-eslint/scope-manager@7.18.0':
     dependencies:
       '@typescript-eslint/types': 7.18.0
@@ -5606,10 +5494,6 @@ snapshots:
   '@typescript-eslint/tsconfig-utils@8.45.0(typescript@5.8.3)':
     dependencies:
       typescript: 5.8.3
-
-  '@typescript-eslint/tsconfig-utils@8.45.0(typescript@5.9.3)':
-    dependencies:
-      typescript: 5.9.3
 
   '@typescript-eslint/type-utils@8.45.0(eslint@9.36.0)(typescript@5.8.3)':
     dependencies:
@@ -5658,25 +5542,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/typescript-estree@8.45.0(typescript@5.9.3)':
-    dependencies:
-      '@typescript-eslint/project-service': 8.45.0(typescript@5.9.3)
-      '@typescript-eslint/tsconfig-utils': 8.45.0(typescript@5.9.3)
-      '@typescript-eslint/types': 8.45.0
-      '@typescript-eslint/visitor-keys': 8.45.0
-      debug: 4.4.3
-      fast-glob: 3.3.3
-      is-glob: 4.0.3
-      minimatch: 9.0.5
-      semver: 7.7.2
-      ts-api-utils: 2.1.0(typescript@5.9.3)
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - supports-color
-
   '@typescript-eslint/utils@7.18.0(eslint@9.36.0)(typescript@5.8.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.7.0(eslint@9.36.0)
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.36.0)
       '@typescript-eslint/scope-manager': 7.18.0
       '@typescript-eslint/types': 7.18.0
       '@typescript-eslint/typescript-estree': 7.18.0(typescript@5.8.3)
@@ -5765,23 +5633,23 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  '@vitejs/plugin-vue@6.0.1(vite@7.1.9(@types/node@24.6.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.1(vite@7.1.9(@types/node@24.6.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.8.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.29
       vite: 7.1.9(@types/node@24.6.0)(tsx@4.20.6)(yaml@2.8.1)
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@5.8.3)
 
   '@vitest/coverage-v8@3.2.4(vitest@3.2.4(@types/node@24.6.0)(jsdom@27.0.0(postcss@8.5.6))(tsx@4.20.6)(yaml@2.8.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
       ast-v8-to-istanbul: 0.3.4
-      debug: 4.4.1
+      debug: 4.4.3
       istanbul-lib-coverage: 3.2.2
       istanbul-lib-report: 3.0.1
       istanbul-lib-source-maps: 5.0.6
       istanbul-reports: 3.1.7
-      magic-string: 0.30.17
+      magic-string: 0.30.19
       magicast: 0.3.5
       std-env: 3.9.0
       test-exclude: 7.0.1
@@ -5802,7 +5670,7 @@ snapshots:
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
-      magic-string: 0.30.17
+      magic-string: 0.30.19
     optionalDependencies:
       vite: 7.1.9(@types/node@24.6.0)(tsx@4.20.6)(yaml@2.8.1)
 
@@ -5819,7 +5687,7 @@ snapshots:
   '@vitest/snapshot@3.2.4':
     dependencies:
       '@vitest/pretty-format': 3.2.4
-      magic-string: 0.30.17
+      magic-string: 0.30.19
       pathe: 2.0.3
 
   '@vitest/spy@3.2.4':
@@ -5874,7 +5742,7 @@ snapshots:
       '@vue/compiler-dom': 3.5.22
       '@vue/shared': 3.5.22
 
-  '@vue/language-core@3.1.1(typescript@5.9.3)':
+  '@vue/language-core@3.1.1(typescript@5.8.3)':
     dependencies:
       '@volar/language-core': 2.4.23
       '@vue/compiler-dom': 3.5.22
@@ -5884,7 +5752,7 @@ snapshots:
       path-browserify: 1.0.1
       picomatch: 4.0.3
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 5.8.3
 
   '@vue/reactivity@3.5.22':
     dependencies:
@@ -5902,6 +5770,12 @@ snapshots:
       '@vue/shared': 3.5.22
       csstype: 3.1.3
 
+  '@vue/server-renderer@3.5.22(vue@3.5.22(typescript@5.8.3))':
+    dependencies:
+      '@vue/compiler-ssr': 3.5.22
+      '@vue/shared': 3.5.22
+      vue: 3.5.22(typescript@5.8.3)
+
   '@vue/server-renderer@3.5.22(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@vue/compiler-ssr': 3.5.22
@@ -5910,10 +5784,10 @@ snapshots:
 
   '@vue/shared@3.5.22': {}
 
-  '@vue/tsconfig@0.7.0(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))':
+  '@vue/tsconfig@0.7.0(typescript@5.8.3)(vue@3.5.22(typescript@5.8.3))':
     optionalDependencies:
-      typescript: 5.9.3
-      vue: 3.5.22(typescript@5.9.3)
+      typescript: 5.8.3
+      vue: 3.5.22(typescript@5.8.3)
 
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
@@ -6030,7 +5904,7 @@ snapshots:
 
   ast-v8-to-istanbul@0.3.4:
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       estree-walker: 3.0.3
       js-tokens: 9.0.1
 
@@ -6286,10 +6160,6 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
-  debug@4.4.1:
-    dependencies:
-      ms: 2.1.3
-
   debug@4.4.3:
     dependencies:
       ms: 2.1.3
@@ -6325,7 +6195,7 @@ snapshots:
       commander: 12.1.0
       filing-cabinet: 5.0.3
       precinct: 12.2.0
-      typescript: 5.9.3
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -6372,16 +6242,16 @@ snapshots:
 
   detective-stylus@5.0.1: {}
 
-  detective-typescript@14.0.0(typescript@5.9.3):
+  detective-typescript@14.0.0(typescript@5.8.3):
     dependencies:
-      '@typescript-eslint/typescript-estree': 8.45.0(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.45.0(typescript@5.8.3)
       ast-module-types: 6.0.1
       node-source-walk: 7.0.1
-      typescript: 5.9.3
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
-  detective-vue2@2.2.0(typescript@5.9.3):
+  detective-vue2@2.2.0(typescript@5.8.3):
     dependencies:
       '@dependents/detective-less': 5.0.1
       '@vue/compiler-sfc': 3.5.22
@@ -6389,8 +6259,8 @@ snapshots:
       detective-sass: 6.0.1
       detective-scss: 5.0.1
       detective-stylus: 5.0.1
-      detective-typescript: 14.0.0(typescript@5.9.3)
-      typescript: 5.9.3
+      detective-typescript: 14.0.0(typescript@5.8.3)
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -6441,11 +6311,6 @@ snapshots:
       gopd: 1.2.0
 
   eastasianwidth@0.2.0: {}
-
-  effect@3.18.0:
-    dependencies:
-      '@standard-schema/spec': 1.0.0
-      fast-check: 3.23.2
 
   effect@3.18.4:
     dependencies:
@@ -6625,13 +6490,13 @@ snapshots:
 
   eslint-import-resolver-typescript@4.4.4(eslint-plugin-import@2.32.0)(eslint@9.36.0):
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       eslint: 9.36.0
       eslint-import-context: 0.1.9(unrs-resolver@1.11.1)
       get-tsconfig: 4.10.1
       is-bun-module: 2.0.0
       stable-hash-x: 0.2.0
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.45.0(eslint@9.36.0)(typescript@5.8.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.36.0)
@@ -6867,10 +6732,6 @@ snapshots:
     dependencies:
       reusify: 1.1.0
 
-  fdir@6.4.6(picomatch@4.0.3):
-    optionalDependencies:
-      picomatch: 4.0.3
-
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
@@ -6891,7 +6752,7 @@ snapshots:
       sass-lookup: 6.1.0
       stylus-lookup: 6.1.0
       tsconfig-paths: 4.2.0
-      typescript: 5.9.3
+      typescript: 5.8.3
 
   fill-range@2.2.4:
     dependencies:
@@ -7391,7 +7252,7 @@ snapshots:
 
   istanbul-lib-source-maps@5.0.6:
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       debug: 4.4.3
       istanbul-lib-coverage: 3.2.2
     transitivePeerDependencies:
@@ -7574,8 +7435,6 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  lru-cache@11.1.0: {}
-
   lru-cache@11.2.1: {}
 
   lru-cache@5.1.1:
@@ -7589,7 +7448,7 @@ snapshots:
       chalk: 4.1.2
       commander: 7.2.0
       commondir: 1.0.1
-      debug: 4.4.1
+      debug: 4.4.3
       dependency-tree: 11.2.0
       ora: 5.4.1
       pluralize: 8.0.0
@@ -7603,18 +7462,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  magic-string@0.30.17:
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
-
   magic-string@0.30.19:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   magicast@0.3.5:
     dependencies:
-      '@babel/parser': 7.28.3
-      '@babel/types': 7.28.2
+      '@babel/parser': 7.28.4
+      '@babel/types': 7.28.4
       source-map-js: 1.2.1
 
   make-dir@2.1.0:
@@ -7930,7 +7785,7 @@ snapshots:
 
   path-scurry@2.0.0:
     dependencies:
-      lru-cache: 11.1.0
+      lru-cache: 11.2.1
       minipass: 7.1.2
 
   path-type@4.0.0: {}
@@ -7977,12 +7832,12 @@ snapshots:
       detective-sass: 6.0.1
       detective-scss: 5.0.1
       detective-stylus: 5.0.1
-      detective-typescript: 14.0.0(typescript@5.9.3)
-      detective-vue2: 2.2.0(typescript@5.9.3)
+      detective-typescript: 14.0.0(typescript@5.8.3)
+      detective-vue2: 2.2.0(typescript@5.8.3)
       module-definition: 6.0.1
       node-source-walk: 7.0.1
       postcss: 8.5.6
-      typescript: 5.9.3
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -8048,7 +7903,7 @@ snapshots:
 
   react-error-boundary@6.0.0(react@19.1.1):
     dependencies:
-      '@babel/runtime': 7.28.2
+      '@babel/runtime': 7.28.4
       react: 19.1.1
 
   react-is@17.0.2: {}
@@ -8470,11 +8325,6 @@ snapshots:
 
   tinyexec@0.3.2: {}
 
-  tinyglobby@0.2.14:
-    dependencies:
-      fdir: 6.4.6(picomatch@4.0.3)
-      picomatch: 4.0.3
-
   tinyglobby@0.2.15:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.3)
@@ -8519,10 +8369,6 @@ snapshots:
   ts-api-utils@2.1.0(typescript@5.8.3):
     dependencies:
       typescript: 5.8.3
-
-  ts-api-utils@2.1.0(typescript@5.9.3):
-    dependencies:
-      typescript: 5.9.3
 
   ts-graphviz@2.1.6:
     dependencies:
@@ -8598,7 +8444,8 @@ snapshots:
 
   typescript@5.8.3: {}
 
-  typescript@5.9.3: {}
+  typescript@5.9.3:
+    optional: true
 
   unbox-primitive@1.1.0:
     dependencies:
@@ -8708,15 +8555,15 @@ snapshots:
       '@vitest/spy': 3.2.4
       '@vitest/utils': 3.2.4
       chai: 5.2.1
-      debug: 4.4.1
+      debug: 4.4.3
       expect-type: 1.2.2
-      magic-string: 0.30.17
+      magic-string: 0.30.19
       pathe: 2.0.3
       picomatch: 4.0.3
       std-env: 3.9.0
       tinybench: 2.9.0
       tinyexec: 0.3.2
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
       vite: 7.1.9(@types/node@24.6.0)(tsx@4.20.6)(yaml@2.8.1)
@@ -8741,11 +8588,21 @@ snapshots:
 
   vscode-uri@3.1.0: {}
 
-  vue-tsc@3.1.1(typescript@5.9.3):
+  vue-tsc@3.1.1(typescript@5.8.3):
     dependencies:
       '@volar/typescript': 2.4.23
-      '@vue/language-core': 3.1.1(typescript@5.9.3)
-      typescript: 5.9.3
+      '@vue/language-core': 3.1.1(typescript@5.8.3)
+      typescript: 5.8.3
+
+  vue@3.5.22(typescript@5.8.3):
+    dependencies:
+      '@vue/compiler-dom': 3.5.22
+      '@vue/compiler-sfc': 3.5.22
+      '@vue/runtime-dom': 3.5.22
+      '@vue/server-renderer': 3.5.22(vue@3.5.22(typescript@5.8.3))
+      '@vue/shared': 3.5.22
+    optionalDependencies:
+      typescript: 5.8.3
 
   vue@3.5.22(typescript@5.9.3):
     dependencies:
