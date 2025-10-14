@@ -1,5 +1,11 @@
 # @effect-rx/rx-vue
 
+## 0.3.3
+
+### Patch Changes
+
+- [#331](https://github.com/tim-smart/effect-atom/pull/331) [`b68ecaf`](https://github.com/tim-smart/effect-atom/commit/b68ecafcf490bd71033601f79047e95ce979a439) Thanks [@patroza](https://github.com/patroza)! - align Vue `useAtomSet` to the React version
+
 ## 0.3.2
 
 ### Patch Changes
