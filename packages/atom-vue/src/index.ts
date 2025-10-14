@@ -4,8 +4,12 @@
 import type * as Atom from "@effect-atom/atom/Atom"
 import type * as AtomRef from "@effect-atom/atom/AtomRef"
 import * as Registry from "@effect-atom/atom/Registry"
+import type * as Result from "@effect-atom/atom/Result"
+import * as Cause from "effect/Cause"
+import * as Effect from "effect/Effect"
+import * as Exit from "effect/Exit"
 import { globalValue } from "effect/GlobalValue"
-import type { InjectionKey, Ref } from "vue"
+import type { ComputedRef, InjectionKey, Ref } from "vue"
 import { computed, inject, ref, watchEffect } from "vue"
 
 /**
@@ -83,9 +87,23 @@ const useAtomValueRef = <A extends Atom.Atom<any>>(atom: () => A) => {
  * @since 1.0.0
  * @category composables
  */
-export const useAtom = <R, W>(atom: () => Atom.Writable<R, W>): readonly [Readonly<Ref<R>>, (_: W) => void] => {
+export const useAtom = <R, W, Mode extends "value" | "promise" | "promiseExit" = never>(
+  atom: () => Atom.Writable<R, W>,
+  options?: {
+    readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined
+  }
+): readonly [
+  Readonly<Ref<R>>,
+  write: "promise" extends Mode ? (
+      (value: W) => Promise<Result.Result.Success<R>>
+    ) :
+    "promiseExit" extends Mode ? (
+        (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+      ) :
+    ((value: W | ((value: R) => W)) => void)
+] => {
   const [value, atomRef, registry] = useAtomValueRef(atom)
-  return [value as Readonly<Ref<R>>, (_) => registry.set(atomRef.value, _)]
+  return [value as Readonly<Ref<R>>, setAtom(registry, atomRef, options)]
 }
 
 /**
@@ -94,17 +112,87 @@ export const useAtom = <R, W>(atom: () => Atom.Writable<R, W>): readonly [Readon
  */
 export const useAtomValue = <A>(atom: () => Atom.Atom<A>): Readonly<Ref<A>> => useAtomValueRef(atom)[0]
 
+const flattenExit = <A, E>(exit: Exit.Exit<A, E>): A => {
+  if (Exit.isSuccess(exit)) return exit.value
+  throw Cause.squash(exit.cause)
+}
+
+function setAtom<R, W, Mode extends "value" | "promise" | "promiseExit" = never>(
+  registry: Registry.Registry,
+  atomRef: ComputedRef<Atom.Writable<R, W>>,
+  options?: {
+    readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined
+  }
+): "promise" extends Mode ? (
+    (
+      value: W,
+      options?: {
+        readonly signal?: AbortSignal | undefined
+      } | undefined
+    ) => Promise<Result.Result.Success<R>>
+  ) :
+  "promiseExit" extends Mode ? (
+      (
+        value: W,
+        options?: {
+          readonly signal?: AbortSignal | undefined
+        } | undefined
+      ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+    ) :
+  ((value: W | ((value: R) => W)) => void)
+{
+  if (options?.mode === "promise" || options?.mode === "promiseExit") {
+    return ((value: W, opts?: any) => {
+      registry.set(atomRef.value, value)
+      const promise = Effect.runPromiseExit(
+        Registry.getResult(registry, atomRef.value as Atom.Atom<Result.Result<any, any>>, { suspendOnWaiting: true }),
+        opts
+      )
+      return options!.mode === "promise" ? promise.then(flattenExit) : promise
+    }) as any
+  }
+  return ((value: W | ((value: R) => W)) => {
+    registry.set(atomRef.value, typeof value === "function" ? (value as any)(registry.get(atomRef.value)) : value)
+  }) as any
+}
+
 /**
  * @since 1.0.0
  * @category composables
  */
-export const useAtomSet = <R, W>(atom: () => Atom.Writable<R, W>): (_: W) => void => {
+export const useAtomSet = <
+  R,
+  W,
+  Mode extends "value" | "promise" | "promiseExit" = never
+>(
+  atom: () => Atom.Writable<R, W>,
+  options?: {
+    readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined
+  }
+): "promise" extends Mode ? (
+    (
+      value: W,
+      options?: {
+        readonly signal?: AbortSignal | undefined
+      } | undefined
+    ) => Promise<Result.Result.Success<R>>
+  ) :
+  "promiseExit" extends Mode ? (
+      (
+        value: W,
+        options?: {
+          readonly signal?: AbortSignal | undefined
+        } | undefined
+      ) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+    ) :
+  ((value: W | ((value: R) => W)) => void) =>
+{
   const registry = injectRegistry()
   const atomRef = computed(atom)
   watchEffect((onCleanup) => {
     onCleanup(registry.mount(atomRef.value))
   })
-  return (_) => registry.set(atomRef.value, _)
+  return setAtom(registry, atomRef, options)
 }
 
 /**

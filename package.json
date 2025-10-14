@@ -13,8 +13,9 @@
     "test": "vitest",
     "coverage": "vitest --coverage",
     "check": "tsc -b tsconfig.json",
-    "indexgen": "pnpm -r exec build-utils prepare-v2",
-    "docgen": "pnpm -r exec docgen && pnpm docgen-cp",
+    "packages": "pnpm -r --filter !*sample*",
+    "indexgen": "pnpm packages exec build-utils prepare-v2",
+    "docgen": "pnpm packages exec docgen && pnpm docgen-cp",
     "docgen-cp": "node scripts/docs-cp.js"
   },
   "devDependencies": {

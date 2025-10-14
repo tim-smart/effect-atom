@@ -25,14 +25,14 @@
   "sideEffects": [],
   "devDependencies": {
     "@effect/experimental": "^0.56.0",
-    "@effect/platform": "^0.92.0",
+    "@effect/platform": "^0.92.1",
     "@effect/rpc": "^0.71.0",
-    "effect": "^3.18.0"
+    "effect": "^3.18.4"
   },
   "peerDependencies": {
     "@effect/experimental": "^0.56.0",
-    "@effect/platform": "^0.92.0",
+    "@effect/platform": "^0.92.1",
     "@effect/rpc": "^0.71.0",
-    "effect": "^3.18.0"
+    "effect": "^3.18.4"
   }
 }

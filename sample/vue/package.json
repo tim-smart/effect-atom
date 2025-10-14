@@ -1,5 +1,5 @@
 {
-  "name": "vue",
+  "name": "@effect-atom/sample-vue",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,15 +14,15 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@effect-atom/atom": "workspace:*",
+    "@effect-atom/atom-vue": "workspace:*",
+    "@effect/rpc": "^0.71.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.7.0",
+    "effect": "^3.18.4",
     "typescript": "~5.8.3",
-    "vite": "^7.1.0",
-    "vue-tsc": "^3.0.5",
-    "@effect-atom/atom-vue": "workspace:*",
-    "@effect-atom/atom": "workspace:*",
-    "@effect/rpc": "^0.68.4",
-    "effect": "^3.17.7",
-    "vue": "^3.5.18"
+    "vite": "^7.1.9",
+    "vue": "^3.5.22",
+    "vue-tsc": "^3.1.1"
   }
 }
