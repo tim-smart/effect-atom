@@ -1,5 +1,14 @@
 # @effect-rx/rx-react
 
+## 0.3.3
+
+### Patch Changes
+
+- [`9efeff9`](https://github.com/tim-smart/effect-atom/commit/9efeff90b560556d787877e0f321f14c65d5abcc) Thanks [@tim-smart](https://github.com/tim-smart)! - only use authoritive result when not waiting
+
+- Updated dependencies [[`9efeff9`](https://github.com/tim-smart/effect-atom/commit/9efeff90b560556d787877e0f321f14c65d5abcc)]:
+  - @effect-atom/atom@0.3.3
+
 ## 0.3.2
 
 ### Patch Changes
