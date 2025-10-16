@@ -1622,7 +1622,7 @@ export const optimistic = <A>(self: Atom<A>): Writable<A, Atom<Result.Result<A, 
           }
           case "Success": {
             if (Result.isSuccess(current)) {
-              if (value.timestamp >= current.timestamp) {
+              if (!value.waiting && value.timestamp >= current.timestamp) {
                 get.setSelf(value)
               }
             } else {
