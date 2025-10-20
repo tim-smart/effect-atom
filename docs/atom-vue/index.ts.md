@@ -39,7 +39,17 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export declare const useAtom: <R, W>(atom: () => Atom.Writable<R, W>) => readonly [Readonly<Ref<R>>, (_: W) => void]
+export declare const useAtom: <R, W, Mode extends "value" | "promise" | "promiseExit" = never>(
+  atom: () => Atom.Writable<R, W>,
+  options?: { readonly mode?: ([R] extends [Result.Result<any, any>] ? Mode : "value") | undefined }
+) => readonly [
+  Readonly<Ref<R>>,
+  write: "promise" extends Mode
+    ? (value: W) => Promise<Result.Result.Success<R>>
+    : "promiseExit" extends Mode
+      ? (value: W) => Promise<Exit.Exit<Result.Result.Success<R>, Result.Result.Failure<R>>>
+      : (value: W | ((value: R) => W)) => void
+]
 ```
 
 Added in v1.0.0

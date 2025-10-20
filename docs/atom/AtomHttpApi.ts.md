@@ -97,7 +97,10 @@ export interface AtomHttpApiClient<Self, Id extends string, Groups extends HttpA
     ? Atom.AtomResultFn<
         Simplify<
           HttpApiEndpoint.HttpApiEndpoint.ClientRequest<_Path, _UrlParams, _Payload, _Headers, false> & {
-            readonly reactivityKeys?: ReadonlyArray<unknown> | undefined
+            readonly reactivityKeys?:
+              | ReadonlyArray<unknown>
+              | ReadonlyRecord<string, ReadonlyArray<unknown>>
+              | undefined
           }
         >,
         _Success,

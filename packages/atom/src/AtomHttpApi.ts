@@ -21,6 +21,7 @@ import type * as ParseResult from "effect/ParseResult"
 import type { ReadonlyRecord } from "effect/Record"
 import type { Mutable, NoInfer, Simplify } from "effect/Types"
 import * as Atom from "./Atom.js"
+import { wrapReactivityKeys } from "./internal/data.js"
 import type * as Result from "./Result.js"
 
 /**
@@ -62,7 +63,7 @@ export interface AtomHttpApiClient<Self, Id extends string, Groups extends HttpA
   ] ? Atom.AtomResultFn<
       Simplify<
         HttpApiEndpoint.HttpApiEndpoint.ClientRequest<_Path, _UrlParams, _Payload, _Headers, false> & {
-          readonly reactivityKeys?: ReadonlyArray<unknown> | undefined
+          readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
         }
       >,
       _Success,
@@ -173,7 +174,7 @@ export const Tag =
         urlParams: any
         headers: any
         payload: any
-        reactivityKeys?: ReadonlyArray<unknown> | undefined
+        reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
       }>()(
         Effect.fnUntraced(function*(opts) {
           const client = (yield* self) as any
@@ -218,7 +219,7 @@ export const Tag =
         readonly urlParams?: any
         readonly payload?: any
         readonly headers?: any
-        readonly reactivityKeys?: ReadonlyArray<unknown> | undefined
+        readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
         readonly timeToLive?: Duration.DurationInput | undefined
       }
     ) =>
@@ -231,7 +232,7 @@ export const Tag =
           payload: request.payload && Data.struct(request.payload),
           headers: request.headers && Data.struct(request.headers),
           reactivityKeys: request.reactivityKeys
-            ? Data.array(request.reactivityKeys)
+            ? wrapReactivityKeys(request.reactivityKeys)
             : undefined,
           timeToLive: request.timeToLive
             ? Duration.decode(request.timeToLive)
@@ -264,7 +265,7 @@ class QueryKey extends Data.Class<{
   urlParams: any
   headers: any
   payload: any
-  reactivityKeys?: ReadonlyArray<unknown> | undefined
+  reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
   timeToLive?: Duration.Duration | undefined
 }> {
   [Equal.symbol](that: QueryKey) {

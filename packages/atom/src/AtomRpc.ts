@@ -22,6 +22,7 @@ import type { Scope } from "effect/Scope"
 import * as Stream from "effect/Stream"
 import type { Mutable, NoInfer } from "effect/Types"
 import * as Atom from "./Atom.js"
+import { wrapReactivityKeys } from "./internal/data.js"
 import type * as Result from "./Result.js"
 
 /**
@@ -66,7 +67,7 @@ export interface AtomRpcClient<Self, Id extends string, Rpcs extends Rpc.Any, E>
     payload: Rpc.PayloadConstructor<Rpc.ExtractTag<Rpcs, Tag>>,
     options?: {
       readonly headers?: Headers.Input | undefined
-      readonly reactivityKeys?: ReadonlyArray<unknown> | undefined
+      readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
       readonly timeToLive?: Duration.DurationInput | undefined
     }
   ) => Rpc.ExtractTag<Rpcs, Tag> extends Rpc.Rpc<
@@ -182,7 +183,7 @@ export const Tag = <Self>() =>
     payload: Rpc.PayloadConstructor<Rpc.ExtractTag<Rpcs, Tag>>,
     options?: {
       readonly headers?: Headers.Input | undefined
-      readonly reactivityKeys?: ReadonlyArray<unknown> | undefined
+      readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
       readonly timeToLive?: Duration.DurationInput | undefined
     }
   ) =>
@@ -194,7 +195,7 @@ export const Tag = <Self>() =>
           ? Data.unsafeStruct(Headers.fromInput(options.headers))
           : undefined,
         reactivityKeys: options?.reactivityKeys
-          ? Data.array(options.reactivityKeys)
+          ? wrapReactivityKeys(options.reactivityKeys)
           : undefined,
         timeToLive: options?.timeToLive
           ? Duration.decode(options.timeToLive)
@@ -209,7 +210,7 @@ class QueryKey extends Data.Class<{
   tag: string
   payload: any
   headers?: Headers.Headers | undefined
-  reactivityKeys?: ReadonlyArray<unknown> | undefined
+  reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
   timeToLive?: Duration.Duration | undefined
 }> {
   [Equal.symbol](that: QueryKey) {
