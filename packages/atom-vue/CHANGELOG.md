@@ -1,5 +1,14 @@
 # @effect-rx/rx-vue
 
+## 0.3.5
+
+### Patch Changes
+
+- [`28de1bd`](https://github.com/tim-smart/effect-atom/commit/28de1bdf2ef8c5177c5c430b32b43ee6e6f04bd7) Thanks [@tim-smart](https://github.com/tim-smart)! - support object notation for AtomRpc/HttpApi reactivity keys
+
+- Updated dependencies [[`28de1bd`](https://github.com/tim-smart/effect-atom/commit/28de1bdf2ef8c5177c5c430b32b43ee6e6f04bd7)]:
+  - @effect-atom/atom@0.3.4
+
 ## 0.3.4
 
 ### Patch Changes

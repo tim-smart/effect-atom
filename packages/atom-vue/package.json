@@ -1,6 +1,6 @@
 {
   "name": "@effect-atom/atom-vue",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Reactive toolkit for Effect",
   "type": "module",
   "publishConfig": {
