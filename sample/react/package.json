@@ -1,0 +1,32 @@
+{
+  "name": "@effect-atom/sample-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tim-smart/effect-atom.git"
+  },
+  "homepage": "https://github.com/tim-smart/effect-atom",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@effect-atom/atom": "workspace:*",
+    "@effect-atom/atom-react": "workspace:*",
+    "@effect/rpc": "^0.71.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "effect": "^3.18.4",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.9",
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9"
+  }
+}
