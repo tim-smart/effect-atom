@@ -66,7 +66,7 @@ const countAtom = Atom.make(0)
 // You can use the `get` function to get the value of another Atom.
 //
 // The type of `get` is `Atom.Context`, which also has a bunch of other methods
-// on it to manage Atom's.
+// on it to manage Atoms.
 //
 const doubleCountAtom = Atom.make((get) => get(countAtom) * 2)
 
@@ -78,7 +78,7 @@ const tripleCountAtom = Atom.map(countAtom, (count) => count * 3)
 
 You can also pass effects to the `Atom.make` function.
 
-When working with effectful Atom's, you will get back a `Result` type.
+When working with effectful Atoms, you will get back a `Result` type.
 
 You can see all the ways to work with `Result` here: https://tim-smart.github.io/effect-atom/atom/Result.ts.html
 
@@ -89,7 +89,7 @@ const countAtom: Atom<Result<number>> = Atom.make(Effect.succeed(0))
 
 // You can also pass a function to get access to the `Atom.Context`
 //
-// `get.result` can be used in Effect's to get the value of an Atom<Result>.
+// `get.result` can be used in Effects to get the value of an Atom<Result>.
 const resultWithContextAtom: Atom<Result<number>> = Atom.make(
   Effect.fnUntraced(function* (get: Atom.Context) {
     const count = yield* get.result(countAtom)
@@ -100,7 +100,7 @@ const resultWithContextAtom: Atom<Result<number>> = Atom.make(
 
 ## Working with scoped Effects
 
-All Atom's that use effects are provided with a `Scope`, so you can add finalizers
+All Atoms that use effects are provided with a `Scope`, so you can add finalizers
 that will be run when the Atom is no longer used.
 
 ```ts
@@ -117,7 +117,7 @@ export const resultAtom = Atom.make(
 )
 ```
 
-## Working with Effect Services / Layer's
+## Working with Effect Services / Layers
 
 ```ts
 import { Atom } from "@effect-atom/atom-react"
@@ -137,7 +137,7 @@ class Users extends Effect.Service<Users>()("app/Users", {
 // Create a AtomRuntime from a Layer
 const runtimeAtom: Atom.AtomRuntime<Users, never> = Atom.runtime(Users.Default)
 
-// You can then use the AtomRuntime to make Atom's that use the services from the Layer
+// You can then use the AtomRuntime to make Atoms that use the services from the Layer
 export const usersAtom = runtimeAtom.atom(
   Effect.gen(function* () {
     const users = yield* Users
@@ -146,9 +146,9 @@ export const usersAtom = runtimeAtom.atom(
 )
 ```
 
-## Adding global Layers to AtomRuntime's
+## Adding global Layers to AtomRuntimes
 
-This is useful for setting up Tracer's, Logger's, ConfigProvider's, etc.
+This is useful for setting up Tracers, Loggers, ConfigProviders, etc.
 
 ```ts
 import { Atom } from "@effect-atom/atom-react"
@@ -159,7 +159,7 @@ Atom.runtime.addGlobalLayer(
 )
 ```
 
-## Working with Stream's
+## Working with Streams
 
 ```tsx
 import { Result, Atom, useAtom } from "@effect-atom/atom-react"
@@ -211,7 +211,7 @@ export function CountPullAtomComponent() {
 }
 ```
 
-## Working with sets of Atom's
+## Working with sets of Atoms
 
 ```ts
 import { Atom } from "@effect-atom/atom-react"
@@ -227,8 +227,8 @@ class Users extends Effect.Service<Users>()("app/Users", {
 // Create a AtomRuntime from a Layer
 const runtimeAtom: Atom.AtomRuntime<Users, never> = Atom.runtime(Users.Default)
 
-// Atom's work by reference, so we need to use Atom.family to dynamically create a
-// set of Atom's from a key.
+// Atoms work by reference, so we need to use Atom.family to dynamically create a
+// set of Atoms from a key.
 //
 // Atom.family will ensure that we get a stable reference to the Atom for each key.
 //
