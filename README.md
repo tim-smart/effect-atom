@@ -245,7 +245,7 @@ export const userAtom = Atom.family((id: string) =>
 ## Working with functions
 
 ```ts
-import { Atom, useAtomSet, useAtomSetPromise } from "@effect-atom/atom-react"
+import { Atom, useAtomSet } from "@effect-atom/atom-react"
 import { Effect, Exit } from "effect"
 
 // Create a simple Atom.fn that logs a number
@@ -280,8 +280,8 @@ export const createUserAtom = runtimeAtom.fn(
 )
 
 export function CreateUserComponent() {
-  // If your function returns a Result, you can use the useAtomSetPromise hook
-  const createUser = useAtomSetPromise(createUserAtom)
+  // If your function returns a Result, you can use the useAtomSet hook with `mode: "promiseExit"`
+  const createUser = useAtomSet(createUserAtom, { mode: "promiseExit" })
   return (
     <button
       onClick={async () => {
@@ -356,7 +356,7 @@ export const flagAtom = Atom.kvs({
 `Reactivity` is an Effect service that allows you make queries reactive when
 mutations happen.
 
-You can use an `Rx.runtime` to hook into the `Reactivity` service and trigger
+You can use an `Atom.runtime` to hook into the `Reactivity` service and trigger
 `Atom` refreshes when mutations happen.
 
 ```ts
