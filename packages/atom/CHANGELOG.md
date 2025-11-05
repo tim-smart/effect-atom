@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.0
+
+### Minor Changes
+
+- [`f79d415`](https://github.com/tim-smart/effect-atom/commit/f79d415d9fe5456edee076cd4b09d482457cdf38) Thanks [@tim-smart](https://github.com/tim-smart)! - update effect to 3.19
+
 ## 0.3.4
 
 ### Patch Changes
