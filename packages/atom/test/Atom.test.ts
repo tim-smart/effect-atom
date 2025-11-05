@@ -12,6 +12,8 @@ import * as Layer from "effect/Layer"
 import * as Option from "effect/Option"
 import * as Stream from "effect/Stream"
 
+declare const global: any
+
 addEqualityTesters()
 
 describe("Atom", () => {
