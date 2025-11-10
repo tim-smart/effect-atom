@@ -66,7 +66,7 @@ const countAtom = Atom.make(0)
 // You can use the `get` function to get the value of another Atom.
 //
 // The type of `get` is `Atom.Context`, which also has a bunch of other methods
-// on it to manage Atom's.
+// on it to manage Atoms.
 //
 const doubleCountAtom = Atom.make((get) => get(countAtom) * 2)
 
@@ -78,19 +78,25 @@ const tripleCountAtom = Atom.map(countAtom, (count) => count * 3)
 
 You can also pass effects to the `Atom.make` function.
 
-When working with effectful Atom's, you will get back a `Result` type.
+When working with effectful Atoms, you will get back a `Result` type.
 
 You can see all the ways to work with `Result` here: https://tim-smart.github.io/effect-atom/atom/Result.ts.html
 
 ```ts
 import { Atom, Result } from "@effect-atom/atom-react"
+import { Effect } from "effect"
 
-const countAtom: Atom<Result<number>> = Atom.make(Effect.succeed(0))
+//        ┌─── Atom.Atom<Result.Result<number>>
+//        ▼
+const countAtom = Atom.make(Effect.succeed(0))
 
 // You can also pass a function to get access to the `Atom.Context`
 //
-// `get.result` can be used in Effect's to get the value of an Atom<Result>.
-const resultWithContextAtom: Atom<Result<number>> = Atom.make(
+// `get.result` can be used in `Effect`s to get the value of an `Atom.Atom<Result.Result>`.
+//
+//             ┌─── Atom.Atom<Result.Result<number>>
+//             ▼
+const resultWithContextAtom = Atom.make(
   Effect.fnUntraced(function* (get: Atom.Context) {
     const count = yield* get.result(countAtom)
     return count + 1
@@ -100,14 +106,14 @@ const resultWithContextAtom: Atom<Result<number>> = Atom.make(
 
 ## Working with scoped Effects
 
-All Atom's that use effects are provided with a `Scope`, so you can add finalizers
+All Atoms that use effects are provided with a `Scope`, so you can add finalizers
 that will be run when the Atom is no longer used.
 
 ```ts
 import { Atom } from "@effect-atom/atom-react"
 import { Effect } from "effect"
 
-export const resultAtom = Atom.make(
+const resultAtom = Atom.make(
   Effect.gen(function* () {
     // Add a finalizer to the `Scope` for this Atom
     // It will run when the Atom is rebuilt or no longer needed
@@ -117,7 +123,7 @@ export const resultAtom = Atom.make(
 )
 ```
 
-## Working with Effect Services / Layer's
+## Working with Effect Services / Layers
 
 ```ts
 import { Atom } from "@effect-atom/atom-react"
@@ -134,11 +140,14 @@ class Users extends Effect.Service<Users>()("app/Users", {
   }),
 }) {}
 
-// Create a AtomRuntime from a Layer
-const runtimeAtom: Atom.AtomRuntime<Users, never> = Atom.runtime(Users.Default)
+// Create a `AtomRuntime` from a `Layer`.
+//
+//         ┌─── Atom.AtomRuntime<Users>
+//         ▼
+const runtimeAtom = Atom.runtime(Users.Default)
 
-// You can then use the AtomRuntime to make Atom's that use the services from the Layer
-export const usersAtom = runtimeAtom.atom(
+// You can then use the `AtomRuntime` to make Atoms that use the services from the `Layer`.
+const usersAtom = runtimeAtom.atom(
   Effect.gen(function* () {
     const users = yield* Users
     return yield* users.getAll
@@ -146,9 +155,9 @@ export const usersAtom = runtimeAtom.atom(
 )
 ```
 
-## Adding global Layers to AtomRuntime's
+## Adding global Layers to AtomRuntimes
 
-This is useful for setting up Tracer's, Logger's, ConfigProvider's, etc.
+This is useful for setting up `Tracer`s, `Logger`s, `ConfigProvider`s, etc.
 
 ```ts
 import { Atom } from "@effect-atom/atom-react"
@@ -159,7 +168,7 @@ Atom.runtime.addGlobalLayer(
 )
 ```
 
-## Working with Stream's
+## Working with `Stream`s
 
 ```tsx
 import { Result, Atom, useAtom } from "@effect-atom/atom-react"
@@ -167,30 +176,31 @@ import { Cause, Schedule, Stream } from "effect"
 
 // This will be a simple Atom that emits a incrementing number every second.
 //
-// Atom.make will give back the latest value of a Stream as a Result
-export const countAtom: Atom.Atom<Result.Result<number>> = Atom.make(
-  Stream.fromSchedule(Schedule.spaced(1000)),
-)
+// Atom.make will give back the latest value of a `Stream` as a `Result`.
+//
+//        ┌─── Atom.Atom<Result.Result<number>>
+//        ▼
+const countAtom = Atom.make(Stream.fromSchedule(Schedule.spaced(1000)))
 
-// You can use Atom.pull to create a specialized Atom that will pull from a Stream
+// You can use `Atom.pull` to create a specialized Atom that will pull from a `Stream`
 // one chunk at a time.
 //
 // This is useful for infinite scrolling or paginated data.
 //
 // With a `AtomRuntime`, you can use `runtimeAtom.pull` to create a pull Atom.
-export const countPullAtom: Atom.Writable<
-  Atom.PullResult<number>,
-  void
-> = Atom.pull(Stream.make(1, 2, 3, 4, 5))
+//
+//        ┌─── Atom.Writable<Atom.PullResult<number>, void>
+//        ▼
+const countPullAtom = Atom.pull(Stream.make(1, 2, 3, 4, 5))
 
-// Here is a component that uses countPullAtom to display the numbers in a list.
+// Here is a component that uses `countPullAtom` to display the numbers in a list.
 //
 // You can use `useAtom` to both read the value of an Atom and gain access to the
 // setter function.
 //
 // Each time the setter function is called, it will pull a new chunk of data
-// from the Stream, and append it to the list.
-export function CountPullAtomComponent() {
+// from the `Stream`, and append it to the list.
+function CountPullAtomComponent() {
   const [result, pull] = useAtom(countPullAtom)
 
   return Result.match(result, {
@@ -211,7 +221,7 @@ export function CountPullAtomComponent() {
 }
 ```
 
-## Working with sets of Atom's
+## Working with sets of Atoms
 
 ```ts
 import { Atom } from "@effect-atom/atom-react"
@@ -224,15 +234,17 @@ class Users extends Effect.Service<Users>()("app/Users", {
   }),
 }) {}
 
-// Create a AtomRuntime from a Layer
-const runtimeAtom: Atom.AtomRuntime<Users, never> = Atom.runtime(Users.Default)
+// Create a `AtomRuntime` from a `Layer`
+const runtimeAtom = Atom.runtime(Users.Default)
 
-// Atom's work by reference, so we need to use Atom.family to dynamically create a
-// set of Atom's from a key.
+// Atoms work by reference, so we need to use `Atom.family` to dynamically create a
+// set of Atoms from a key.
 //
-// Atom.family will ensure that we get a stable reference to the Atom for each key.
+// `Atom.family` will ensure that we get a stable reference to the Atom for each key.
 //
-export const userAtom = Atom.family((id: string) =>
+//       ┌─── (arg: string) => Atom.Atom<Result<{ id: string; name: string; }>>
+//       ▼
+const userAtom = Atom.family((id: string) =>
   runtimeAtom.atom(
     Effect.gen(function* () {
       const users = yield* Users
@@ -248,39 +260,41 @@ export const userAtom = Atom.family((id: string) =>
 import { Atom, useAtomSet } from "@effect-atom/atom-react"
 import { Effect, Exit } from "effect"
 
-// Create a simple Atom.fn that logs a number
+// Create a simple `Atom.fn` that logs a number
 const logAtom = Atom.fn(
   Effect.fnUntraced(function* (arg: number) {
     yield* Effect.log("got arg", arg)
   }),
 )
 
-export function LogComponent() {
-  // To call the Atom.fn, we need to use the useAtomSet hook
+function LogComponent() {
+  // To call the `Atom.fn`, we need to use the `useAtomSet` hook
   const logNumber = useAtomSet(logAtom)
   return <button onClick={() => logNumber(42)}>Log 42</button>
 }
 
-// You can also use it with Atom.runtime
+// You can also use it with `Atom.runtime`
 class Users extends Effect.Service<Users>()("app/Users", {
-  succeed: {
-    create: (name: string) => Effect.succeed({ id: 1, name }),
-  } as const,
+  effect: Effect.gen(function* () {
+    const create = (name: string) => Effect.succeed({ id: 1, name })
+
+    return { create } as const
+  }),
 }) {}
 
 const runtimeAtom = Atom.runtime(Users.Default)
 
-// Here we are using runtimeAtom.fn to create a function from the Users.create
+// Here we are using `runtimeAtom.fn` to create a function from the `Users.create`
 // method.
-export const createUserAtom = runtimeAtom.fn(
+const createUserAtom = runtimeAtom.fn(
   Effect.fnUntraced(function* (name: string) {
     const users = yield* Users
     return yield* users.create(name)
   }),
 )
 
-export function CreateUserComponent() {
-  // If your function returns a Result, you can use the useAtomSet hook with `mode: "promiseExit"`
+function CreateUserComponent() {
+  // If your function returns a `Result`, you can use the useAtomSet hook with `mode: "promiseExit"`
   const createUser = useAtomSet(createUserAtom, { mode: "promiseExit" })
   return (
     <button
@@ -291,7 +305,7 @@ export function CreateUserComponent() {
         }
       }}
     >
-      Log 42
+      Create user
     </button>
   )
 }
@@ -304,7 +318,7 @@ import { Atom } from "@effect-atom/atom-react"
 
 // This is a simple Atom that will emit the current scroll position of the
 // window.
-export const scrollYAtom: Atom.Atom<number> = Atom.make((get) => {
+const scrollYAtom: Atom.Atom<number> = Atom.make((get) => {
   // The handler will use `get.setSelf` to update the value of itself
   const onScroll = () => {
     get.setSelf(window.scrollY)
@@ -325,12 +339,19 @@ export const scrollYAtom: Atom.Atom<number> = Atom.make((get) => {
 import { Atom } from "@effect-atom/atom-react"
 import { Option, Schema } from "effect"
 
-// Create an Atom that reads and writes to the URL search parameters
-export const simpleParamAtom: Atom.Writable<string> = Atom.searchParam("simple")
+// Create an Atom that reads and writes to the URL search parameters.
+//
+//          ┌─── Atom.Writable<string>
+//          ▼
+const simpleParamAtom = Atom.searchParam("paramName")
 
 // You can also use a schema to further parse the value
-export const numberParamAtom: Atom.Writable<Option.Option<number>> =
-  Atom.searchParam("number", { schema: Schema.NumberFromString })
+//
+//          ┌─── Atom.Writable<Option<number>>
+//          ▼
+const numberParamAtom = Atom.searchParam("paramName", {
+  schema: Schema.NumberFromString,
+})
 ```
 
 ## Integration with local storage
@@ -340,11 +361,16 @@ import { Atom } from "@effect-atom/atom-react"
 import { BrowserKeyValueStore } from "@effect/platform-browser"
 import { Schema } from "effect"
 
-// Create an Atom that reads and writes to localStorage.
+const runtime = Atom.runtime(BrowserKeyValueStore.layerLocalStorage)
+
+// Create an Atom that reads and writes to `localStorage`.
 //
-// It uses Schema to define the type of the value stored.
-export const flagAtom = Atom.kvs({
-  runtime: Atom.runtime(BrowserKeyValueStore.layerLocalStorage),
+// It uses `Schema` to define the type of the value stored.
+//
+//       ┌─── Atom.Writable<boolean, boolean>
+//       ▼
+const flagAtom = Atom.kvs({
+  runtime: runtime,
   key: "flag",
   schema: Schema.Boolean,
   defaultValue: () => false,
@@ -361,13 +387,15 @@ You can use an `Atom.runtime` to hook into the `Reactivity` service and trigger
 
 ```ts
 import { Atom } from "@effect-atom/atom-react"
-import * as Reactivity from "@effect/experimental/Reactivity"
-import * as Effect from "effect/Effect"
-import * as Layer from "effect/Layer"
+import { Effect, Layer } from "effect"
+import { Reactivity } from "@effect/experimental"
 
 const runtimeAtom = Atom.runtime(Layer.empty)
 
 let i = 0
+
+//      ┌─── Atom.Atom<number>
+//      ▼
 const count = Atom.make(() => i++).pipe(
   // Refresh when the "counter" key changes
   Atom.withReactivity(["counter"]),
@@ -406,14 +434,9 @@ import {
   useAtomSet,
   useAtomValue
 } from "@effect-atom/atom-react"
-import * as BrowserSocket from "@effect/platform-browser/BrowserSocket"
-import { RpcGroup } from "@effect/rpc"
-import * as Rpc from "@effect/rpc/Rpc"
-import * as RpcClient from "@effect/rpc/RpcClient"
-import * as RpcSerialization from "@effect/rpc/RpcSerialization"
-import * as Effect from "effect/Effect"
-import * as Layer from "effect/Layer"
-import * as Schema from "effect/Schema"
+import { Effect, Layer, Schema } from "effect"
+import { BrowserSocket } from "@effect/platform-browser"
+import { Rpc, RpcClient, RpcGroup, RpcSerialization } from "@effect/rpc"
 
 // Define the RPCs
 class Rpcs extends RpcGroup.make(
@@ -423,10 +446,10 @@ class Rpcs extends RpcGroup.make(
   })
 ) {}
 
-// Use AtomRpc.Tag to create a special Context.Tag that builds the RPC client
+// Use `AtomRpc.Tag` to create a special `Context.Tag` that builds the RPC client
 class CountClient extends AtomRpc.Tag<CountClient>()("CountClient", {
   group: Rpcs,
-  // Provide a Layer that provides the RpcClient.Protocol
+  // Provide a `Layer` that provides the RpcClient.Protocol
   protocol: RpcClient.layerProtocolSocket({
     retryTransientErrors: true
   }).pipe(
@@ -472,7 +495,7 @@ const incrementAtom = CountClient.runtime.fn(Effect.fnUntraced(function*() {
 
 // Or use it in your Effect services
 class MyService extends Effect.Service<MyService>()("MyService", {
-  dependencies: [CountClient.layer], // Add the CountClient.layer as a dependency
+  dependencies: [CountClient.layer], // Add the `CountClient` as a dependency
   scoped: Effect.gen(function*() {
     const client = yield* CountClient // Use the Tag to access the client
     const useClient = () => client("increment", void 0)
@@ -493,12 +516,13 @@ import {
   useAtomSet,
   useAtomValue
 } from "@effect-atom/atom-react"
-import * as FetchHttpClient from "@effect/platform/FetchHttpClient"
-import * as HttpApi from "@effect/platform/HttpApi"
-import * as HttpApiEndpoint from "@effect/platform/HttpApiEndpoint"
-import * as HttpApiGroup from "@effect/platform/HttpApiGroup"
-import * as Effect from "effect/Effect"
-import * as Schema from "effect/Schema"
+import {
+  FetchHttpClient,
+  HttpApi,
+  HttpApiEndpoint,
+  HttpApiGroup
+} from "@effect/platform"
+import { Effect, Schema } from "effect"
 
 // Define your api
 class Api extends HttpApi.make("api").add(
@@ -509,7 +533,7 @@ class Api extends HttpApi.make("api").add(
   )
 ) {}
 
-// Use AtomHttpApi.Tag to create a special Context.Tag that builds the client
+// Use `AtomHttpApi.Tag` to create a special `Context.Tag` that builds the client
 class CountClient extends AtomHttpApi.Tag<CountClient>()("CountClient", {
   api: Api,
   // Provide a Layer that provides the HttpClient
@@ -554,7 +578,7 @@ const incrementAtom = CountClient.runtime.fn(Effect.fnUntraced(function*() {
 
 // Or use it in your Effect services
 class MyService extends Effect.Service<MyService>()("MyService", {
-  dependencies: [CountClient.layer], // Add the CountClient.layer as a dependency
+  dependencies: [CountClient.layer], // Add the `CountClient` as a dependency
   scoped: Effect.gen(function*() {
     const client = yield* CountClient // Use the Tag to access the client
     const useClient = () => client.counter.increment()
