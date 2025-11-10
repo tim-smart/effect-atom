@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.1
+
+### Patch Changes
+
+- [#357](https://github.com/tim-smart/effect-atom/pull/357) [`92982ec`](https://github.com/tim-smart/effect-atom/commit/92982ec90ebfd9e902fa76ca2c3316c914316b0b) Thanks [@0xh3x](https://github.com/0xh3x)! - fix Result to consider waiting flag in equality
+
 ## 0.4.0
 
 ### Minor Changes
