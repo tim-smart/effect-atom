@@ -1170,7 +1170,7 @@ describe("Atom", () => {
 
       // optimistic phase: the optimistic value is set, but the true value is not
       expect(r.get(atom)).toEqual(Result.success(0))
-      expect(r.get(optimisticAtom)).toEqual(Result.success(1))
+      expect(r.get(optimisticAtom)).toEqual(Result.success(1, { waiting: true }))
 
       latch.unsafeOpen()
       await Effect.runPromise(Effect.yieldNow())

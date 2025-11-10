@@ -84,7 +84,7 @@ const ResultProto = {
     return pipeArguments(this, arguments)
   },
   [Equal.symbol](this: Result<any, any>, that: Result<any, any>): boolean {
-    if (this._tag !== that._tag && this.waiting !== that.waiting) {
+    if (this._tag !== that._tag || this.waiting !== that.waiting) {
       return false
     }
     switch (this._tag) {
