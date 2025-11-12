@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.2
+
+### Patch Changes
+
+- [#366](https://github.com/tim-smart/effect-atom/pull/366) [`bb913b1`](https://github.com/tim-smart/effect-atom/commit/bb913b173557b90b7c737b17d0ec75d09cc47d45) Thanks [@lucas-barake](https://github.com/lucas-barake)! - ensure refreshed lazy parents invalidate newly mounted children
+
 ## 0.4.1
 
 ### Patch Changes
