@@ -278,6 +278,33 @@ describe("Atom", () => {
     expect(rebuilds).toEqual(2)
   })
 
+  it("refresh derived before mount resolves base effect", async () => {
+    const baseAtom = Atom.make(
+      Effect.succeed("value").pipe(Effect.delay(100))
+    )
+    const derivedAtom = Atom.writable(
+      (get) => get(baseAtom),
+      () => {
+      },
+      (refresh) => refresh(baseAtom)
+    )
+    const registry = Registry.make()
+
+    registry.refresh(derivedAtom)
+    const unmount = registry.mount(derivedAtom)
+
+    let result = registry.get(derivedAtom)
+    assert(result.waiting)
+
+    await vitest.advanceTimersByTimeAsync(100)
+
+    result = registry.get(derivedAtom)
+    assert(Result.isSuccess(result))
+    expect(result.value).toEqual("value")
+
+    unmount()
+  })
+
   it("scopedFn", async () => {
     let finalized = 0
     const count = Atom.fn((n: number) =>
