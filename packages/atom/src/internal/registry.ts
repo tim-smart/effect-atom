@@ -376,6 +376,9 @@ class Node<A> {
 
     if (parent.children.indexOf(this) === -1) {
       parent.children.push(this)
+      if (parent.skipInvalidation) {
+        parent.skipInvalidation = false
+      }
     }
   }
 
