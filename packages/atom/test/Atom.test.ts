@@ -37,7 +37,7 @@ describe("Atom", () => {
     const r = Registry.make()
     r.set(counter, 1)
     expect(r.get(counter)).toEqual(1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(counter)).toEqual(0)
   })
 
@@ -48,7 +48,7 @@ describe("Atom", () => {
     const r = Registry.make()
     r.set(counter, 1)
     expect(r.get(counter)).toEqual(1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(counter)).toEqual(1)
   })
 
@@ -61,11 +61,11 @@ describe("Atom", () => {
     })
     r.set(counter, 1)
     expect(count).toEqual(1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
 
     expect(r.get(counter)).toEqual(1)
     cancel()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(counter)).toEqual(0)
   })
 
@@ -123,8 +123,8 @@ describe("Atom", () => {
     r.set(buildCount, void 0)
     assert.deepStrictEqual(r.get(buildCount), Result.success(1))
 
-    await new Promise((resolve) => resolve(null))
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
+    await Promise.resolve()
 
     result = r.get(count)
     assert(Result.isSuccess(result))
@@ -322,7 +322,7 @@ describe("Atom", () => {
     let result = r.get(count)
     assert(Result.isInitial(result))
 
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(finalized).toEqual(0)
 
     r.set(count, 1)
@@ -331,7 +331,7 @@ describe("Atom", () => {
     expect(result.value).toEqual(2)
 
     r.set(count, 2)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(finalized).toEqual(1)
   })
 
@@ -367,7 +367,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, 2)
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
     assert(Result.isInitial(result))
@@ -394,7 +394,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, 1)
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
     assert(Result.isSuccess(result))
@@ -451,7 +451,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, 6)
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(Result.isInitial(result))
   })
@@ -504,7 +504,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, { done: false, items: [0] })
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
     assert(Option.isNone(Result.value(result)))
@@ -561,7 +561,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, { done: false, items: [1] })
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
     assert(Option.isNone(Result.value(result)))
@@ -587,7 +587,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, { done: false, items: [1] })
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
   })
@@ -711,7 +711,7 @@ describe("Atom", () => {
       ]
     })
     expect(r.get(state)).toEqual(10)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(state)).toEqual(0)
   })
 
@@ -730,18 +730,18 @@ describe("Atom", () => {
     expect(r.get(state)).toEqual(10)
     expect(r.get(state2)).toEqual(10)
     expect(r.get(state3)).toEqual(10)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(state)).toEqual(10)
     expect(r.get(state2)).toEqual(10)
     expect(r.get(state3)).toEqual(10)
 
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     await vitest.advanceTimersByTimeAsync(10000)
     expect(r.get(state)).toEqual(0)
     expect(r.get(state2)).toEqual(10)
     expect(r.get(state3)).toEqual(0)
 
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     await vitest.advanceTimersByTimeAsync(20000)
     expect(r.get(state)).toEqual(0)
     expect(r.get(state2)).toEqual(0)
@@ -862,7 +862,7 @@ describe("Atom", () => {
     assert.deepStrictEqual(r.get(multiplied), Result.success(0, { waiting: true }))
 
     r.set(count, 1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(multiplied), Result.success(2, { waiting: true }))
 
     cancel()
@@ -880,8 +880,8 @@ describe("Atom", () => {
     assert.deepStrictEqual(r.get(plusOne), Result.success(1, { waiting: true }))
 
     r.set(count, 1)
-    await new Promise((resolve) => resolve(null))
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(plusOne), Result.success(3, { waiting: true }))
 
     cancel()
@@ -892,7 +892,7 @@ describe("Atom", () => {
     const r = Registry.make()
     const cancel = r.mount(atom)
 
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     const afterFail = r.get(atom)
     assert(Result.isFailure(afterFail))
     const prev = Result.value(afterFail)
@@ -952,7 +952,7 @@ describe("Atom", () => {
     const unmount = r.mount(atom)
     assert.deepStrictEqual(r.get(atom), 0)
     r.set(atom, 1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(atom), 1)
     unmount()
   })
@@ -963,7 +963,7 @@ describe("Atom", () => {
     const unmount = r.mount(atom)
     assert.deepStrictEqual(r.get(atom), Result.success(0, { waiting: true }))
     r.set(atom, 1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(atom), Result.success(1, { waiting: true }))
     unmount()
   })
@@ -974,7 +974,7 @@ describe("Atom", () => {
     const unmount = r.mount(atom)
     assert.deepStrictEqual(r.get(atom), Result.success(0, { waiting: true }))
     r.set(atom, 1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(atom), Result.success(1, { waiting: true }))
     unmount()
   })
