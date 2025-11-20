@@ -167,6 +167,28 @@ export interface WriteContext<A> {
   set<R, W>(this: WriteContext<A>, atom: Writable<R, W>, value: W): void
 }
 
+/**
+ * @since 1.0.0
+ * @category combinators
+ */
+export const setIdleTTL: {
+  (duration: Duration.DurationInput): <A extends Atom<any>>(self: A) => A
+  <A extends Atom<any>>(self: A, duration: Duration.DurationInput): A
+} = dual<
+  (duration: Duration.DurationInput) => <A extends Atom<any>>(self: A) => A,
+  <A extends Atom<any>>(self: A, duration: Duration.DurationInput) => A
+>(2, (self, durationInput) => {
+  const duration = Duration.decode(durationInput)
+  const isFinite = Duration.isFinite(duration)
+  return Object.assign(Object.create(Object.getPrototypeOf(self)), {
+    ...self,
+    keepAlive: !isFinite,
+    idleTTL: isFinite ? Duration.toMillis(duration) : undefined
+  })
+})
+
+const removeTtl = setIdleTTL(0)
+
 const AtomProto = {
   [TypeId]: TypeId,
   pipe() {
@@ -217,7 +239,7 @@ const RuntimeProto = {
     readonly disableAccumulation?: boolean
     readonly initialValue?: ReadonlyArray<any>
   }) {
-    const pullSignal = state(0)
+    const pullSignal = removeTtl(state(0))
     const pullAtom = readable((get) => {
       const previous = get.self<Result.Result<any, any>>()
       const runtimeResult = get(this)
@@ -236,7 +258,7 @@ const RuntimeProto = {
 
   subscriptionRef(this: AtomRuntime<any, any>, ref: any) {
     return makeSubRef(
-      readable((get) => {
+      removeTtl(readable((get) => {
         const previous = get.self<Result.Result<any, any>>()
         const runtimeResult = get(this)
         if (runtimeResult._tag !== "Success") {
@@ -246,7 +268,7 @@ const RuntimeProto = {
         return SubscriptionRef.SubscriptionRefTypeId in value
           ? value
           : makeEffect(get, value, Result.initial(true), runtimeResult.value)
-      }),
+      })),
       (get, ref) => {
         const runtime = Result.getOrThrow(get(this))
         return readSubscribable(get, ref, runtime)
@@ -677,11 +699,11 @@ export const context: (options: {
   factory.addGlobalLayer = (layer: Layer.Layer<any, any, AtomRegistry | Reactivity.Reactivity>) => {
     globalLayer = Layer.provideMerge(globalLayer, Layer.provide(layer, Reactivity.layer))
   }
-  const reactivityAtom = make(
+  const reactivityAtom = removeTtl(make(
     Effect.scopeWith((scope) => Layer.buildWithMemoMap(Reactivity.layer, options.memoMap, scope)).pipe(
       Effect.map(EffectContext.get(Reactivity.Reactivity))
     )
-  )
+  ))
   factory.withReactivity =
     (keys: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>>) =>
     <A extends Atom<any>>(atom: A): A =>
@@ -1007,7 +1029,7 @@ export const fnSync: {
 const makeFnSync = <Arg, A>(f: (arg: Arg, get: FnContext) => A, options?: {
   readonly initialValue?: A
 }): Writable<Option.Option<A> | A, Arg> => {
-  const argAtom = state<[number, Arg]>([0, undefined as any])
+  const argAtom = removeTtl(state<[number, Arg]>([0, undefined as any]))
   const hasInitialValue = options?.initialValue !== undefined
   return writable(function(get) {
     ;(get as any).isFn = true
@@ -1100,16 +1122,16 @@ function makeResultFn<Arg, E, A>(
     readonly concurrent?: boolean | undefined
   }
 ) {
-  const argAtom = state<[number, Arg | Interrupt]>([0, undefined as any])
+  const argAtom = removeTtl(state<[number, Arg | Interrupt]>([0, undefined as any]))
   const initialValue = options?.initialValue !== undefined
     ? Result.success<A, E>(options.initialValue)
     : Result.initial<A, E>()
   const fibersAtom = options?.concurrent
-    ? make((get) => {
+    ? removeTtl(readable((get) => {
       const fibers = new Set<Fiber.RuntimeFiber<any, any>>()
       get.addFinalizer(() => fibers.forEach((f) => f.unsafeInterruptAsFork(FiberId.none)))
       return fibers
-    })
+    }))
     : undefined
 
   function read(get: Context, runtime?: Runtime.Runtime<any>): Result.Result<A, E | NoSuchElementException> {
@@ -1202,12 +1224,10 @@ export const pull = <A, E>(
     readonly disableAccumulation?: boolean | undefined
   }
 ): Writable<PullResult<A, E>, void> => {
-  const pullSignal = state(0)
-  const pullAtom = readable(
-    makeRead(function(get) {
-      return makeStreamPullEffect(get, pullSignal, create, options)
-    })
-  )
+  const pullSignal = removeTtl(state(0))
+  const pullAtom = readable(makeRead(function(get) {
+    return makeStreamPullEffect(get, pullSignal, create, options)
+  }))
   return makeStreamPull(pullSignal, pullAtom)
 }
 
@@ -1456,26 +1476,6 @@ export const withLabel: {
  * @since 1.0.0
  * @category combinators
  */
-export const setIdleTTL: {
-  (duration: Duration.DurationInput): <A extends Atom<any>>(self: A) => A
-  <A extends Atom<any>>(self: A, duration: Duration.DurationInput): A
-} = dual<
-  (duration: Duration.DurationInput) => <A extends Atom<any>>(self: A) => A,
-  <A extends Atom<any>>(self: A, duration: Duration.DurationInput) => A
->(2, (self, durationInput) => {
-  const duration = Duration.decode(durationInput)
-  const isFinite = Duration.isFinite(duration)
-  return Object.assign(Object.create(Object.getPrototypeOf(self)), {
-    ...self,
-    keepAlive: !isFinite,
-    idleTTL: isFinite ? Duration.toMillis(duration) : undefined
-  })
-})
-
-/**
- * @since 1.0.0
- * @category combinators
- */
 export const initialValue: {
   <A>(initialValue: A): (self: Atom<A>) => readonly [Atom<A>, A]
   <A>(self: Atom<A>, initialValue: A): readonly [Atom<A>, A]
@@ -1593,12 +1593,12 @@ export const debounce: {
  */
 export const optimistic = <A>(self: Atom<A>): Writable<A, Atom<Result.Result<A, unknown>>> => {
   let counter = 0
-  const writeAtom = state(
+  const writeAtom = removeTtl(state(
     [
       counter,
       undefined as any as Atom<Result.Result<A, unknown>>
     ] as const
-  )
+  ))
   return writable(
     (get) => {
       let lastValue = get.once(self)
@@ -1714,7 +1714,7 @@ export const optimisticFn: {
       | ((set: (result: NoInfer<W>) => void) => AtomResultFn<OW, XA, XE>)
   }
 ): AtomResultFn<OW, XA, XE> => {
-  const transition = state<Result.Result<W, unknown>>(Result.initial())
+  const transition = removeTtl(state<Result.Result<W, unknown>>(Result.initial()))
   return fn((arg: OW, get) => {
     let value = options.reducer(get(self), arg)
     if (Result.isResult(value)) {
