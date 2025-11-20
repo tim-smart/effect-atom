@@ -748,6 +748,46 @@ describe("Atom", () => {
     expect(r.get(state3)).toEqual(0)
   })
 
+  it("idleTTL fn", async () => {
+    const fn = Atom.fn((n: number) => Effect.succeed(n + 1)).pipe(
+      Atom.setIdleTTL(0)
+    )
+    const r = Registry.make({ defaultIdleTTL: 2000 })
+
+    let result = r.get(fn)
+    assert(Result.isInitial(result))
+
+    r.set(fn, 1)
+    result = r.get(fn)
+    assert(Result.isSuccess(result))
+    expect(result.value).toEqual(2)
+
+    await new Promise((resolve) => resolve(null))
+
+    result = r.get(fn)
+    assert(Result.isInitial(result))
+  })
+
+  it("idleTTL fnSync", async () => {
+    const fn = Atom.fnSync((n: number) => n + 1).pipe(
+      Atom.setIdleTTL(0)
+    )
+    const r = Registry.make({ defaultIdleTTL: 2000 })
+
+    let result = r.get(fn)
+    assert(Option.isNone(result))
+
+    r.set(fn, 1)
+    result = r.get(fn)
+    assert(Option.isSome(result))
+    expect(result.value).toEqual(2)
+
+    await new Promise((resolve) => resolve(null))
+
+    result = r.get(fn)
+    assert(Option.isNone(result))
+  })
+
   it("fn", async () => {
     const count = Atom.fnSync((n: number) => n).pipe(Atom.keepAlive)
     const r = Registry.make()

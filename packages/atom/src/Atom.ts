@@ -1007,7 +1007,7 @@ export const fnSync: {
 const makeFnSync = <Arg, A>(f: (arg: Arg, get: FnContext) => A, options?: {
   readonly initialValue?: A
 }): Writable<Option.Option<A> | A, Arg> => {
-  const argAtom = state<[number, Arg]>([0, undefined as any])
+  const argAtom = state<[number, Arg]>([0, undefined as any]).pipe(setIdleTTL(0))
   const hasInitialValue = options?.initialValue !== undefined
   return writable(function(get) {
     ;(get as any).isFn = true
@@ -1100,7 +1100,7 @@ function makeResultFn<Arg, E, A>(
     readonly concurrent?: boolean | undefined
   }
 ) {
-  const argAtom = state<[number, Arg | Interrupt]>([0, undefined as any])
+  const argAtom = state<[number, Arg | Interrupt]>([0, undefined as any]).pipe(setIdleTTL(0))
   const initialValue = options?.initialValue !== undefined
     ? Result.success<A, E>(options.initialValue)
     : Result.initial<A, E>()
@@ -1109,7 +1109,7 @@ function makeResultFn<Arg, E, A>(
       const fibers = new Set<Fiber.RuntimeFiber<any, any>>()
       get.addFinalizer(() => fibers.forEach((f) => f.unsafeInterruptAsFork(FiberId.none)))
       return fibers
-    })
+    }).pipe(setIdleTTL(0))
     : undefined
 
   function read(get: Context, runtime?: Runtime.Runtime<any>): Result.Result<A, E | NoSuchElementException> {
