@@ -167,6 +167,28 @@ export interface WriteContext<A> {
   set<R, W>(this: WriteContext<A>, atom: Writable<R, W>, value: W): void
 }
 
+/**
+ * @since 1.0.0
+ * @category combinators
+ */
+export const setIdleTTL: {
+  (duration: Duration.DurationInput): <A extends Atom<any>>(self: A) => A
+  <A extends Atom<any>>(self: A, duration: Duration.DurationInput): A
+} = dual<
+  (duration: Duration.DurationInput) => <A extends Atom<any>>(self: A) => A,
+  <A extends Atom<any>>(self: A, duration: Duration.DurationInput) => A
+>(2, (self, durationInput) => {
+  const duration = Duration.decode(durationInput)
+  const isFinite = Duration.isFinite(duration)
+  return Object.assign(Object.create(Object.getPrototypeOf(self)), {
+    ...self,
+    keepAlive: !isFinite,
+    idleTTL: isFinite ? Duration.toMillis(duration) : undefined
+  })
+})
+
+const removeTtl = setIdleTTL(0)
+
 const AtomProto = {
   [TypeId]: TypeId,
   pipe() {
@@ -1449,28 +1471,6 @@ export const withLabel: {
     ...self,
     label: [name, new Error().stack?.split("\n")[5] ?? ""]
   }))
-
-/**
- * @since 1.0.0
- * @category combinators
- */
-export const setIdleTTL: {
-  (duration: Duration.DurationInput): <A extends Atom<any>>(self: A) => A
-  <A extends Atom<any>>(self: A, duration: Duration.DurationInput): A
-} = dual<
-  (duration: Duration.DurationInput) => <A extends Atom<any>>(self: A) => A,
-  <A extends Atom<any>>(self: A, duration: Duration.DurationInput) => A
->(2, (self, durationInput) => {
-  const duration = Duration.decode(durationInput)
-  const isFinite = Duration.isFinite(duration)
-  return Object.assign(Object.create(Object.getPrototypeOf(self)), {
-    ...self,
-    keepAlive: !isFinite,
-    idleTTL: isFinite ? Duration.toMillis(duration) : undefined
-  })
-})
-
-const removeTtl = setIdleTTL(0)
 
 /**
  * @since 1.0.0
