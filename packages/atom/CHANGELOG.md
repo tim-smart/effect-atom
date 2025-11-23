@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.3
+
+### Patch Changes
+
+- [#371](https://github.com/tim-smart/effect-atom/pull/371) [`e1c5e51`](https://github.com/tim-smart/effect-atom/commit/e1c5e51f3ed3d5c84b38b00cc4586f1c45905c3e) Thanks [@lucas-barake](https://github.com/lucas-barake)! - Ensure atom ttl is 0 for internal intermediate state atoms.
+
 ## 0.4.2
 
 ### Patch Changes
