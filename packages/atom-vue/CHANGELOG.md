@@ -1,5 +1,11 @@
 # @effect-rx/rx-vue
 
+## 0.4.1
+
+### Patch Changes
+
+- [`04dba65`](https://github.com/tim-smart/effect-atom/commit/04dba65d14fc60e7985c6f20bc63cd3866a5239a) Thanks [@tim-smart](https://github.com/tim-smart)! - use shallowRef for vue bindings
+
 ## 0.4.0
 
 ### Minor Changes
