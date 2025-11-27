@@ -10,7 +10,7 @@ import * as Effect from "effect/Effect"
 import * as Exit from "effect/Exit"
 import { globalValue } from "effect/GlobalValue"
 import type { ComputedRef, InjectionKey, Ref } from "vue"
-import { computed, inject, ref, watchEffect } from "vue"
+import { computed, inject, shallowRef, watchEffect } from "vue"
 
 /**
  * @since 1.0.0
@@ -74,7 +74,7 @@ export const injectRegistry = (): Registry.Registry => {
 const useAtomValueRef = <A extends Atom.Atom<any>>(atom: () => A) => {
   const registry = injectRegistry()
   const atomRef = computed(atom)
-  const value = ref(undefined as any as A)
+  const value = shallowRef(undefined as any as A)
   watchEffect((onCleanup) => {
     onCleanup(registry.subscribe(atomRef.value, (nextValue) => {
       value.value = nextValue
@@ -201,7 +201,7 @@ export const useAtomSet = <
  */
 export const useAtomRef = <A>(atomRef: () => AtomRef.ReadonlyRef<A>): Readonly<Ref<A>> => {
   const atomRefRef = computed(atomRef)
-  const value = ref<A>(atomRefRef.value.value)
+  const value = shallowRef<A>(atomRefRef.value.value)
   watchEffect((onCleanup) => {
     const atomRef = atomRefRef.value
     onCleanup(atomRef.subscribe((next) => {
