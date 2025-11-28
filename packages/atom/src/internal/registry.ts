@@ -578,6 +578,14 @@ const LifetimeProto: Omit<Lifetime<any>, "node" | "finalizers" | "disposed" | "i
     })
   },
 
+  setResult<A, E, W>(this: Lifetime<any>, atom: Atom.Writable<Result.Result<A, E>, W>, value: W): Effect.Effect<A, E> {
+    if (this.disposed) {
+      throw disposedError(this.node.atom)
+    }
+    this.node.registry.set(atom, value)
+    return this.resultOnce(atom, { suspendOnWaiting: true })
+  },
+
   some<A>(this: Lifetime<any>, atom: Atom.Atom<Option.Option<A>>): Effect.Effect<A> {
     if (this.disposed) {
       throw disposedError(this.node.atom)
