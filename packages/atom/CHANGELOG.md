@@ -1,5 +1,13 @@
 # @effect-rx/rx
 
+## 0.4.4
+
+### Patch Changes
+
+- [`14b1b1d`](https://github.com/tim-smart/effect-atom/commit/14b1b1dd6f0d1438397991cbf9248f9e593822fa) Thanks [@tim-smart](https://github.com/tim-smart)! - add get.setResult, which can be used to call a Atom.fn inside an atom context
+
+- [`73e0319`](https://github.com/tim-smart/effect-atom/commit/73e03195b371e83cfaa2dd2fcac1bb89afce9d6c) Thanks [@tim-smart](https://github.com/tim-smart)! - add Result.flatMap
+
 ## 0.4.3
 
 ### Patch Changes
