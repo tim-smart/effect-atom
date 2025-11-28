@@ -30,6 +30,7 @@ Added in v1.0.0
   - [value](#value)
 - [combinators](#combinators)
   - [all](#all)
+  - [flatMap](#flatmap)
   - [map](#map)
   - [match](#match)
   - [matchWithError](#matchwitherror)
@@ -327,6 +328,19 @@ export declare const all: <const Arg extends Iterable<any> | Record<string, any>
 
 Added in v1.0.0
 
+## flatMap
+
+**Signature**
+
+```ts
+export declare const flatMap: {
+  <A, E, B, E2>(f: (a: A, prev: Success<A, E>) => Result<A, E2>): (self: Result<A, E>) => Result<B, E | E2>
+  <E, A, B, E2>(self: Result<A, E>, f: (a: A, prev: Success<A, E>) => Result<B, E2>): Result<B, E | E2>
+}
+```
+
+Added in v1.0.0
+
 ## map
 
 **Signature**
@@ -472,7 +486,7 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export declare const failure: <E, A = never>(
+export declare const failure: <A, E = never>(
   cause: Cause.Cause<E>,
   options?: {
     readonly previousSuccess?: Option.Option<Success<A, E>> | undefined

@@ -233,7 +233,7 @@ export const isInterrupted = <A, E>(result: Result<A, E>): result is Failure<A, 
  * @since 1.0.0
  * @category constructors
  */
-export const failure = <E, A = never>(
+export const failure = <A, E = never>(
   cause: Cause.Cause<E>,
   options?: {
     readonly previousSuccess?: Option.Option<Success<A, E>> | undefined
@@ -414,6 +414,30 @@ export const map: {
       })
     case "Success":
       return success(f(self.value), self)
+  }
+})
+
+/**
+ * @since 1.0.0
+ * @category combinators
+ */
+export const flatMap: {
+  <A, E, B, E2>(f: (a: A, prev: Success<A, E>) => Result<A, E2>): (self: Result<A, E>) => Result<B, E | E2>
+  <E, A, B, E2>(self: Result<A, E>, f: (a: A, prev: Success<A, E>) => Result<B, E2>): Result<B, E | E2>
+} = dual(2, <E, A, B, E2>(self: Result<A, E>, f: (a: A, prev: Success<A, E>) => Result<B, E2>): Result<B, E | E2> => {
+  switch (self._tag) {
+    case "Initial":
+      return self as any as Result<B, E>
+    case "Failure":
+      return failure<B, E | E2>(self.cause, {
+        previousSuccess: Option.flatMap(self.previousSuccess, (s) => {
+          const next = f(s.value, s)
+          return isSuccess(next) ? Option.some(next) : Option.none()
+        }),
+        waiting: self.waiting
+      })
+    case "Success":
+      return f(self.value, self)
   }
 })
 
