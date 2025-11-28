@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.5
+
+### Patch Changes
+
+- [`2d71357`](https://github.com/tim-smart/effect-atom/commit/2d71357fc3b2c3c735f067c8a7e29152b8829d32) Thanks [@tim-smart](https://github.com/tim-smart)! - fix this constraint for FnContext.setResult
+
 ## 0.4.4
 
 ### Patch Changes
