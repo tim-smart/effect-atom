@@ -840,6 +840,7 @@ export interface Context {
   self<A>(this: Context): Option.Option<A>
   setSelf<A>(this: Context, a: A): void
   set<R, W>(this: Context, atom: Writable<R, W>, value: W): void
+  setResult<A, E, W>(this: Context, atom: Writable<Result.Result<A, E>, W>, value: W): Effect.Effect<A, E>
   some<A>(this: Context, atom: Atom<Option.Option<A>>): Effect.Effect<A>
   someOnce<A>(this: Context, atom: Atom<Option.Option<A>>): Effect.Effect<A>
   stream<A>(
@@ -1061,6 +1062,7 @@ export interface FnContext {
   self<A>(this: FnContext): Option.Option<A>
   setSelf<A>(this: FnContext, a: A): void
   set<R, W>(this: FnContext, atom: Writable<R, W>, value: W): void
+  setResult<A, E, W>(this: FnContext, atom: Writable<Result.Result<A, E>, W>, value: W): Effect.Effect<A, E>
   some<A>(this: FnContext, atom: Atom<Option.Option<A>>): Effect.Effect<A>
   stream<A>(
     this: FnContext,

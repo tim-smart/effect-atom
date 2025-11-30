@@ -9,6 +9,7 @@ import type * as HttpApiGroup from "@effect/platform/HttpApiGroup"
 import type * as HttpApiMiddleware from "@effect/platform/HttpApiMiddleware"
 import type * as HttpClient from "@effect/platform/HttpClient"
 import type * as HttpClientError from "@effect/platform/HttpClientError"
+import type { HttpClientResponse } from "@effect/platform/HttpClientResponse"
 import * as Context from "effect/Context"
 import * as Data from "effect/Data"
 import * as Duration from "effect/Duration"
@@ -43,10 +44,14 @@ export interface AtomHttpApiClient<Self, Id extends string, Groups extends HttpA
     Endpoint extends HttpApiEndpoint.HttpApiEndpoint.Any = HttpApiEndpoint.HttpApiEndpoint.WithName<
       HttpApiGroup.HttpApiGroup.Endpoints<Group>,
       Name
-    >
+    >,
+    const WithResponse extends boolean = false
   >(
     group: GroupName,
-    endpoint: Name
+    endpoint: Name,
+    options?: {
+      readonly withResponse?: WithResponse | undefined
+    }
   ) => [Endpoint] extends [
     HttpApiEndpoint.HttpApiEndpoint<
       infer _Name,
@@ -66,7 +71,7 @@ export interface AtomHttpApiClient<Self, Id extends string, Groups extends HttpA
           readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
         }
       >,
-      _Success,
+      WithResponse extends true ? [_Success, HttpClientResponse] : _Success,
       _Error | HttpApiGroup.HttpApiGroup.Error<Group> | E | HttpClientError.HttpClientError | ParseResult.ParseError
     >
     : never
@@ -78,7 +83,8 @@ export interface AtomHttpApiClient<Self, Id extends string, Groups extends HttpA
     Endpoint extends HttpApiEndpoint.HttpApiEndpoint.Any = HttpApiEndpoint.HttpApiEndpoint.WithName<
       HttpApiGroup.HttpApiGroup.Endpoints<Group>,
       Name
-    >
+    >,
+    const WithResponse extends boolean = false
   >(
     group: GroupName,
     endpoint: Name,
@@ -96,7 +102,7 @@ export interface AtomHttpApiClient<Self, Id extends string, Groups extends HttpA
         infer _RE
       >
     ] ? Simplify<
-        HttpApiEndpoint.HttpApiEndpoint.ClientRequest<_Path, _UrlParams, _Payload, _Headers, false> & {
+        HttpApiEndpoint.HttpApiEndpoint.ClientRequest<_Path, _UrlParams, _Payload, _Headers, WithResponse> & {
           readonly reactivityKeys?:
             | ReadonlyArray<unknown>
             | ReadonlyRecord<string, ReadonlyArray<unknown>>
@@ -120,7 +126,7 @@ export interface AtomHttpApiClient<Self, Id extends string, Groups extends HttpA
     >
   ] ? Atom.Atom<
       Result.Result<
-        _Success,
+        WithResponse extends true ? [_Success, HttpClientResponse] : _Success,
         _Error | HttpApiGroup.HttpApiGroup.Error<Group> | E | HttpClientError.HttpClientError | ParseResult.ParseError
       >
     >
@@ -168,7 +174,7 @@ export const Tag =
     ).pipe(Layer.provide(options.httpClient)) as Layer.Layer<Self, E>
     self.runtime = Atom.runtime(self.layer)
 
-    const mutationFamily = Atom.family(({ endpoint, group }: MutationKey) =>
+    const mutationFamily = Atom.family(({ endpoint, group, withResponse }: MutationKey) =>
       self.runtime.fn<{
         path: any
         urlParams: any
@@ -178,7 +184,10 @@ export const Tag =
       }>()(
         Effect.fnUntraced(function*(opts) {
           const client = (yield* self) as any
-          const effect = client[group][endpoint](opts) as Effect.Effect<any>
+          const effect = client[group][endpoint]({
+            ...opts,
+            withResponse
+          }) as Effect.Effect<any>
           return yield* opts.reactivityKeys
             ? Reactivity.mutation(effect, opts.reactivityKeys)
             : effect
@@ -186,11 +195,14 @@ export const Tag =
       )
     ) as any
 
-    self.mutation = ((group: string, endpoint: string) =>
+    self.mutation = ((group: string, endpoint: string, options?: {
+      readonly withResponse?: boolean | undefined
+    }) =>
       mutationFamily(
         new MutationKey({
           group,
-          endpoint
+          endpoint,
+          withResponse: options?.withResponse ?? false
         })
       )) as any
 
@@ -219,6 +231,7 @@ export const Tag =
         readonly urlParams?: any
         readonly payload?: any
         readonly headers?: any
+        readonly withResponse?: boolean
         readonly reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
         readonly timeToLive?: Duration.DurationInput | undefined
       }
@@ -231,6 +244,7 @@ export const Tag =
           urlParams: request.urlParams && Data.struct(request.urlParams),
           payload: request.payload && Data.struct(request.payload),
           headers: request.headers && Data.struct(request.headers),
+          withResponse: request.withResponse ?? false,
           reactivityKeys: request.reactivityKeys
             ? wrapReactivityKeys(request.reactivityKeys)
             : undefined,
@@ -246,13 +260,14 @@ export const Tag =
 class MutationKey extends Data.Class<{
   group: string
   endpoint: string
+  withResponse: boolean
 }> {
   [Equal.symbol](that: QueryKey) {
-    return this.group === that.group && this.endpoint === that.endpoint
+    return this.group === that.group && this.endpoint === that.endpoint && this.withResponse === that.withResponse
   }
   [Hash.symbol]() {
     return pipe(
-      Hash.string(`${this.group}/${this.endpoint}`),
+      Hash.string(`${this.group}/${this.endpoint}/${this.withResponse}`),
       Hash.cached(this)
     )
   }
@@ -265,6 +280,7 @@ class QueryKey extends Data.Class<{
   urlParams: any
   headers: any
   payload: any
+  withResponse: boolean
   reactivityKeys?: ReadonlyArray<unknown> | ReadonlyRecord<string, ReadonlyArray<unknown>> | undefined
   timeToLive?: Duration.Duration | undefined
 }> {
@@ -276,6 +292,7 @@ class QueryKey extends Data.Class<{
       Equal.equals(this.urlParams, that.urlParams) &&
       Equal.equals(this.payload, that.payload) &&
       Equal.equals(this.headers, that.headers) &&
+      Equal.equals(this.withResponse, that.withResponse) &&
       Equal.equals(this.reactivityKeys, that.reactivityKeys) &&
       Equal.equals(this.timeToLive, that.timeToLive)
     )
@@ -287,6 +304,7 @@ class QueryKey extends Data.Class<{
       Hash.combine(Hash.hash(this.urlParams)),
       Hash.combine(Hash.hash(this.payload)),
       Hash.combine(Hash.hash(this.headers)),
+      Hash.combine(Hash.hash(this.withResponse)),
       Hash.combine(Hash.hash(this.reactivityKeys)),
       Hash.combine(Hash.hash(this.timeToLive)),
       Hash.cached(this)
