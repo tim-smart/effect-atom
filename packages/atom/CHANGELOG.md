@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.6
+
+### Patch Changes
+
+- [`5338c6f`](https://github.com/tim-smart/effect-atom/commit/5338c6f465b5601aac1004a438e7dde5ff8923c5) Thanks [@tim-smart](https://github.com/tim-smart)! - expose HttpApi `withResponse` option
+
 ## 0.4.5
 
 ### Patch Changes
