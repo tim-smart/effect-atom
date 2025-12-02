@@ -1388,6 +1388,40 @@ describe("Atom", () => {
     const result = r.get(atom)
     expect(Result.isInterrupted(result)).toBeTruthy()
   })
+
+  it("writable derived clears waiting after refresh", async () => {
+    let count = 0
+    const base = Atom.make(Effect.sync(() => ++count).pipe(Effect.delay(100))).pipe(
+      Atom.withLabel("base")
+    )
+    const derived = Atom.writable(
+      (get) => get(base),
+      () => {},
+      (refresh) => refresh(base)
+    ).pipe(
+      Atom.withLabel("derived")
+    )
+    const r = Registry.make()
+
+    const unmount1 = r.mount(derived)
+    await vitest.advanceTimersByTimeAsync(100)
+    let result = r.get(derived)
+    assert(Result.isSuccess(result))
+    expect(result.value).toEqual(1)
+    expect(result.waiting).toEqual(false)
+    unmount1()
+
+    r.refresh(derived)
+    const unmount2 = r.mount(derived)
+    await vitest.advanceTimersByTimeAsync(100)
+
+    result = r.get(derived)
+    expect(result.waiting).toEqual(false)
+    assert(Result.isSuccess(result))
+    expect(result.value).toEqual(2)
+
+    unmount2()
+  })
 })
 
 interface BuildCounter {
