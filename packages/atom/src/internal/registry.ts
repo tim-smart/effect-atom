@@ -347,9 +347,10 @@ class Node<A> {
     }
 
     this._value = value
+    const isWaitingResult = Result.isResult(value) && value.waiting
     if (this.skipInvalidation) {
       this.skipInvalidation = false
-    } else {
+    } else if (!isWaitingResult) {
       this.invalidateChildren()
     }
 
