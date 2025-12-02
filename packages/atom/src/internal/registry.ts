@@ -1,7 +1,7 @@
 import * as Effect from "effect/Effect"
 import * as Equal from "effect/Equal"
 import * as Exit from "effect/Exit"
-import { pipe } from "effect/Function"
+import { constVoid, pipe } from "effect/Function"
 import { globalValue } from "effect/GlobalValue"
 import * as Option from "effect/Option"
 import * as Queue from "effect/Queue"
@@ -11,7 +11,6 @@ import type * as Registry from "../Registry.js"
 import * as Result from "../Result.js"
 
 const constImmediate = { immediate: true }
-function constListener(_: any) {}
 
 /** @internal */
 export const TypeId: Registry.TypeId = "~effect-atom/atom/Registry"
@@ -116,7 +115,7 @@ class RegistryImpl implements Registry.Registry {
   }
 
   mount<A>(atom: Atom.Atom<A>) {
-    return this.subscribe(atom, constListener, constImmediate)
+    return this.subscribe(atom, constVoid, constImmediate)
   }
 
   atomHasTtl(atom: Atom.Atom<any>): boolean {
@@ -347,10 +346,9 @@ class Node<A> {
     }
 
     this._value = value
-    const isWaitingResult = Result.isResult(value) && value.waiting
     if (this.skipInvalidation) {
       this.skipInvalidation = false
-    } else if (!isWaitingResult) {
+    } else {
       this.invalidateChildren()
     }
 
@@ -736,8 +734,9 @@ const makeLifetime = <A>(node: Node<A>): Lifetime<A> => {
       return node.registry.get(atom)
     }
     const parent = node.registry.ensureNode(atom)
+    const value = parent.value()
     node.addParent(parent)
-    return parent.value()
+    return value
   }
   Object.setPrototypeOf(get, LifetimeProto)
   get.isFn = false

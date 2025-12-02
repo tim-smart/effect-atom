@@ -1391,11 +1391,15 @@ describe("Atom", () => {
 
   it("writable derived clears waiting after refresh", async () => {
     let count = 0
-    const base = Atom.make(Effect.sync(() => ++count).pipe(Effect.delay(100)))
+    const base = Atom.make(Effect.sync(() => ++count).pipe(Effect.delay(100))).pipe(
+      Atom.withLabel("base")
+    )
     const derived = Atom.writable(
       (get) => get(base),
       () => {},
       (refresh) => refresh(base)
+    ).pipe(
+      Atom.withLabel("derived")
     )
     const r = Registry.make()
 
