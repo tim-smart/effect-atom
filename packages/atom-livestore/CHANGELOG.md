@@ -1,5 +1,14 @@
 # @effect-rx/rx-livestore
 
+## 0.4.2
+
+### Patch Changes
+
+- [#378](https://github.com/tim-smart/effect-atom/pull/378) [`07af354`](https://github.com/tim-smart/effect-atom/commit/07af3549641d85009e3ab66065fff391f5966917) Thanks [@lucas-barake](https://github.com/lucas-barake)! - establish atom relationship after rebuilds
+
+- Updated dependencies [[`07af354`](https://github.com/tim-smart/effect-atom/commit/07af3549641d85009e3ab66065fff391f5966917)]:
+  - @effect-atom/atom@0.4.7
+
 ## 0.4.1
 
 ### Patch Changes

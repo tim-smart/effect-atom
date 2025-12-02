@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.7
+
+### Patch Changes
+
+- [#378](https://github.com/tim-smart/effect-atom/pull/378) [`07af354`](https://github.com/tim-smart/effect-atom/commit/07af3549641d85009e3ab66065fff391f5966917) Thanks [@lucas-barake](https://github.com/lucas-barake)! - establish atom relationship after rebuilds
+
 ## 0.4.6
 
 ### Patch Changes
