@@ -1,5 +1,14 @@
 # @effect-rx/rx-vue
 
+## 0.4.4
+
+### Patch Changes
+
+- [`c2f083c`](https://github.com/tim-smart/effect-atom/commit/c2f083c9e48235ac2821b6e5245d1ab5dd7078da) Thanks [@tim-smart](https://github.com/tim-smart)! - make Atom.searchParam work when window is undefined
+
+- Updated dependencies [[`c2f083c`](https://github.com/tim-smart/effect-atom/commit/c2f083c9e48235ac2821b6e5245d1ab5dd7078da)]:
+  - @effect-atom/atom@0.4.8
+
 ## 0.4.3
 
 ### Patch Changes
