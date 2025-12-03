@@ -1850,6 +1850,9 @@ export const searchParam = <A = never, I extends string = never>(name: string, o
   const encode = options?.schema && Schema.encodeEither(options.schema)
   return writable(
     (get) => {
+      if (typeof window === "undefined") {
+        return decode ? Option.none() : ""
+      }
       const handleUpdate = () => {
         if (searchParamState.updating) return
         const searchParams = new URLSearchParams(window.location.search)
@@ -1870,6 +1873,11 @@ export const searchParam = <A = never, I extends string = never>(name: string, o
       return decode ? Either.getRight(decode(value as I)) : value as any
     },
     (ctx, value: any) => {
+      if (typeof window === "undefined") {
+        ctx.setSelf(value)
+        return
+      }
+
       if (encode) {
         const encoded = Option.flatMap(value, (v) => Either.getRight(encode(v as A)))
         searchParamState.updates.set(name, Option.getOrElse(encoded, () => ""))
