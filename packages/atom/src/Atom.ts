@@ -622,18 +622,22 @@ export interface AtomRuntime<R, ER = never> extends Atom<Result.Result<Runtime.R
 
   readonly subscriptionRef: <A, E>(
     create:
-      | Effect.Effect<SubscriptionRef.SubscriptionRef<A>, E, R | AtomRegistry | Reactivity.Reactivity>
+      | Effect.Effect<SubscriptionRef.SubscriptionRef<A>, E, Scope.Scope | R | AtomRegistry | Reactivity.Reactivity>
       | ((
         get: Context
-      ) => Effect.Effect<SubscriptionRef.SubscriptionRef<A>, E, R | AtomRegistry | Reactivity.Reactivity>)
+      ) => Effect.Effect<SubscriptionRef.SubscriptionRef<A>, E, Scope.Scope | R | AtomRegistry | Reactivity.Reactivity>)
   ) => Writable<Result.Result<A, E>, A>
 
   readonly subscribable: <A, E, E1 = never>(
     create:
-      | Effect.Effect<Subscribable.Subscribable<A, E, R>, E1, R | AtomRegistry | Reactivity.Reactivity>
+      | Effect.Effect<Subscribable.Subscribable<A, E, R>, E1, Scope.Scope | R | AtomRegistry | Reactivity.Reactivity>
       | ((
         get: Context
-      ) => Effect.Effect<Subscribable.Subscribable<A, E, R>, E1, R | AtomRegistry | Reactivity.Reactivity>)
+      ) => Effect.Effect<
+        Subscribable.Subscribable<A, E, R>,
+        E1,
+        Scope.Scope | R | AtomRegistry | Reactivity.Reactivity
+      >)
   ) => Atom<Result.Result<A, E | E1>>
 }
 
