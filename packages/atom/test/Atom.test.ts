@@ -979,6 +979,30 @@ describe("Atom", () => {
     unmount()
   })
 
+  it("SubscriptionRef/runtime/scoped", async () => {
+    let finalized = false
+    const atom = counterRuntime.subscriptionRef(
+      Effect.gen(function*() {
+        yield* Effect.addFinalizer(() =>
+          Effect.sync(() => {
+            finalized = true
+          })
+        )
+        return yield* SubscriptionRef.make(0)
+      })
+    )
+    const r = Registry.make()
+    const unmount = r.mount(atom)
+    assert.deepStrictEqual(r.get(atom), Result.success(0, { waiting: true }))
+    r.set(atom, 1)
+    await new Promise((resolve) => resolve(null))
+    assert.deepStrictEqual(r.get(atom), Result.success(1, { waiting: true }))
+    assert.strictEqual(finalized, false)
+    unmount()
+    await new Promise((resolve) => resolve(null))
+    assert.strictEqual(finalized, true)
+  })
+
   it("setLazy(true)", async () => {
     const count = Atom.make(0).pipe(Atom.keepAlive)
     let rebuilds = 0
