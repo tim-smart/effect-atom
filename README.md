@@ -171,7 +171,7 @@ Atom.runtime.addGlobalLayer(
 ## Working with `Stream`s
 
 ```tsx
-import { Result, Atom, useAtom } from "@effect-atom/atom-react"
+import { Atom, Result, useAtom } from "@effect-atom/atom-react"
 import { Cause, Schedule, Stream } from "effect"
 
 // This will be a simple Atom that emits a incrementing number every second.
@@ -203,21 +203,21 @@ const countPullAtom = Atom.pull(Stream.make(1, 2, 3, 4, 5))
 function CountPullAtomComponent() {
   const [result, pull] = useAtom(countPullAtom)
 
-  return Result.match(result, {
-    onInitial: () => <div>Loading...</div>,
-    onFailure: (error) => <div>Error: {Cause.pretty(error.cause)}</div>,
-    onSuccess: (success) => (
+  return Result.builder(result)
+    .onInitial(() => <div>Loading...</div>)
+    .onFailure((cause) => <div>Error: {Cause.pretty(cause)}</div>)
+    .onSuccess(({ items }, { waiting }) => (
       <div>
         <ul>
-          {success.value.items.map((item) => (
+          {items.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
         <button onClick={() => pull()}>Load more</button>
-        {success.waiting ? <p>Loading more...</p> : <p>Loaded chunk</p>}
+        {waiting ? <p>Loading more...</p> : <p>Loaded chunk</p>}
       </div>
-    ),
-  })
+    ))
+    .render()
 }
 ```
 

@@ -38,8 +38,10 @@
     "paths": {
       "@effect-atom/atom/test/*": ["./packages/atom/test/*.js"],
       "@effect-atom/atom/*": ["./packages/atom/src/*.js"],
+      "@effect-atom/atom": ["./packages/atom/src/index.js"],
       "@effect-atom/atom-react/test/*": ["./packages/atom-react/test/*.js"],
       "@effect-atom/atom-react/*": ["./packages/atom-react/src/*.js"],
+      "@effect-atom/atom-react": ["./packages/atom-react/src/index.js"],
       "@effect-atom/atom-vue/test/*": ["./packages/atom-vue/test/*.js"],
       "@effect-atom/atom-vue/*": ["./packages/atom-vue/src/*.js"]
     },
