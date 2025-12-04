@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.8
+
+### Patch Changes
+
+- [`c2f083c`](https://github.com/tim-smart/effect-atom/commit/c2f083c9e48235ac2821b6e5245d1ab5dd7078da) Thanks [@tim-smart](https://github.com/tim-smart)! - make Atom.searchParam work when window is undefined
+
 ## 0.4.7
 
 ### Patch Changes

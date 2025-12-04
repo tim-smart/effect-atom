@@ -1,6 +1,6 @@
 {
   "name": "@effect-atom/atom-react",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Reactive toolkit for Effect",
   "type": "module",
   "publishConfig": {
