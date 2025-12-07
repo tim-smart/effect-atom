@@ -979,6 +979,30 @@ describe("Atom", () => {
     unmount()
   })
 
+  it("SubscriptionRef/runtime/scoped", async () => {
+    let finalized = false
+    const atom = counterRuntime.subscriptionRef(
+      Effect.gen(function*() {
+        yield* Effect.addFinalizer(() =>
+          Effect.sync(() => {
+            finalized = true
+          })
+        )
+        return yield* SubscriptionRef.make(0)
+      })
+    )
+    const r = Registry.make()
+    const unmount = r.mount(atom)
+    assert.deepStrictEqual(r.get(atom), Result.success(0, { waiting: true }))
+    r.set(atom, 1)
+    await new Promise((resolve) => resolve(null))
+    assert.deepStrictEqual(r.get(atom), Result.success(1, { waiting: true }))
+    assert.strictEqual(finalized, false)
+    unmount()
+    await new Promise((resolve) => resolve(null))
+    assert.strictEqual(finalized, true)
+  })
+
   it("setLazy(true)", async () => {
     const count = Atom.make(0).pipe(Atom.keepAlive)
     let rebuilds = 0
@@ -1421,6 +1445,80 @@ describe("Atom", () => {
     expect(result.value).toEqual(2)
 
     unmount2()
+  })
+
+  it("subscriptionRef with runtime recomputes when dependencies change", async () => {
+    vitest.useRealTimers()
+
+    // Test that subscriptionRef atoms properly recompute when their dependencies change
+    // This test was added based on a user report that subscriptionRef atoms don't recompute
+    // when dependencies accessed via get.some() change.
+    const chatIdAtom = Atom.make<Option.Option<string>>(Option.none()).pipe(Atom.keepAlive)
+
+    // A regular derived atom using Effect.fnUntraced
+    let derivedRecomputes = 0
+    const derivedStateAtom = counterRuntime.atom(
+      Effect.fnUntraced(function*(get: Atom.Context) {
+        const chatId = yield* get.some(chatIdAtom)
+        derivedRecomputes++
+        return chatId
+      })
+    )
+
+    // A subscriptionRef atom that also depends on chatIdAtom
+    let subRefRecomputes = 0
+    const stateAtom = counterRuntime.subscriptionRef((get) =>
+      Effect.gen(function*() {
+        const chatId = yield* get.some(chatIdAtom)
+        subRefRecomputes++
+        return yield* SubscriptionRef.make(chatId)
+      })
+    )
+
+    const r = Registry.make()
+    const unmountDerived = r.mount(derivedStateAtom)
+    const unmountSubRef = r.mount(stateAtom)
+
+    // Initially, chatIdAtom is None, so both should fail with NoSuchElementException
+    let derivedResult = r.get(derivedStateAtom)
+    let subRefResult = r.get(stateAtom)
+    expect(derivedRecomputes).toEqual(0)
+    expect(subRefRecomputes).toEqual(0)
+
+    // Set chatIdAtom to Some("chat-1")
+    r.set(chatIdAtom, Option.some("chat-1"))
+    await new Promise((resolve) => resolve(null))
+
+    derivedResult = r.get(derivedStateAtom)
+    subRefResult = r.get(stateAtom)
+
+    assert(Result.isSuccess(derivedResult))
+    expect(derivedResult.value).toEqual("chat-1")
+    expect(derivedRecomputes).toEqual(1)
+
+    assert(Result.isSuccess(subRefResult))
+    expect(subRefResult.value).toEqual("chat-1")
+    expect(subRefRecomputes).toEqual(1)
+
+    // Change chatIdAtom to Some("chat-2") - both atoms should recompute
+    r.set(chatIdAtom, Option.some("chat-2"))
+    await new Promise((resolve) => resolve(null))
+
+    derivedResult = r.get(derivedStateAtom)
+    subRefResult = r.get(stateAtom)
+
+    // The derived atom should have recomputed
+    assert(Result.isSuccess(derivedResult))
+    expect(derivedResult.value).toEqual("chat-2")
+    expect(derivedRecomputes).toEqual(2)
+
+    // The subscriptionRef atom should ALSO have recomputed
+    assert(Result.isSuccess(subRefResult))
+    expect(subRefResult.value).toEqual("chat-2")
+    expect(subRefRecomputes).toEqual(2)
+
+    unmountDerived()
+    unmountSubRef()
   })
 })
 
