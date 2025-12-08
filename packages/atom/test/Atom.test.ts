@@ -37,7 +37,7 @@ describe("Atom", () => {
     const r = Registry.make()
     r.set(counter, 1)
     expect(r.get(counter)).toEqual(1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(counter)).toEqual(0)
   })
 
@@ -48,7 +48,7 @@ describe("Atom", () => {
     const r = Registry.make()
     r.set(counter, 1)
     expect(r.get(counter)).toEqual(1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(counter)).toEqual(1)
   })
 
@@ -61,11 +61,11 @@ describe("Atom", () => {
     })
     r.set(counter, 1)
     expect(count).toEqual(1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
 
     expect(r.get(counter)).toEqual(1)
     cancel()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(counter)).toEqual(0)
   })
 
@@ -123,8 +123,8 @@ describe("Atom", () => {
     r.set(buildCount, void 0)
     assert.deepStrictEqual(r.get(buildCount), Result.success(1))
 
-    await new Promise((resolve) => resolve(null))
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
+    await Promise.resolve()
 
     result = r.get(count)
     assert(Result.isSuccess(result))
@@ -322,7 +322,7 @@ describe("Atom", () => {
     let result = r.get(count)
     assert(Result.isInitial(result))
 
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(finalized).toEqual(0)
 
     r.set(count, 1)
@@ -331,7 +331,7 @@ describe("Atom", () => {
     expect(result.value).toEqual(2)
 
     r.set(count, 2)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(finalized).toEqual(1)
   })
 
@@ -367,7 +367,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, 2)
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
     assert(Result.isInitial(result))
@@ -394,7 +394,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, 1)
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
     assert(Result.isSuccess(result))
@@ -451,7 +451,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, 6)
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(Result.isInitial(result))
   })
@@ -504,7 +504,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, { done: false, items: [0] })
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
     assert(Option.isNone(Result.value(result)))
@@ -561,7 +561,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, { done: false, items: [1] })
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
     assert(Option.isNone(Result.value(result)))
@@ -587,7 +587,7 @@ describe("Atom", () => {
     assert.deepEqual(result.value, { done: false, items: [1] })
 
     unmount()
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     result = r.get(count)
     assert(result.waiting)
   })
@@ -711,7 +711,7 @@ describe("Atom", () => {
       ]
     })
     expect(r.get(state)).toEqual(10)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(state)).toEqual(0)
   })
 
@@ -730,18 +730,18 @@ describe("Atom", () => {
     expect(r.get(state)).toEqual(10)
     expect(r.get(state2)).toEqual(10)
     expect(r.get(state3)).toEqual(10)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     expect(r.get(state)).toEqual(10)
     expect(r.get(state2)).toEqual(10)
     expect(r.get(state3)).toEqual(10)
 
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     await vitest.advanceTimersByTimeAsync(10000)
     expect(r.get(state)).toEqual(0)
     expect(r.get(state2)).toEqual(10)
     expect(r.get(state3)).toEqual(0)
 
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     await vitest.advanceTimersByTimeAsync(20000)
     expect(r.get(state)).toEqual(0)
     expect(r.get(state2)).toEqual(0)
@@ -862,7 +862,7 @@ describe("Atom", () => {
     assert.deepStrictEqual(r.get(multiplied), Result.success(0, { waiting: true }))
 
     r.set(count, 1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(multiplied), Result.success(2, { waiting: true }))
 
     cancel()
@@ -880,8 +880,8 @@ describe("Atom", () => {
     assert.deepStrictEqual(r.get(plusOne), Result.success(1, { waiting: true }))
 
     r.set(count, 1)
-    await new Promise((resolve) => resolve(null))
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(plusOne), Result.success(3, { waiting: true }))
 
     cancel()
@@ -892,7 +892,7 @@ describe("Atom", () => {
     const r = Registry.make()
     const cancel = r.mount(atom)
 
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     const afterFail = r.get(atom)
     assert(Result.isFailure(afterFail))
     const prev = Result.value(afterFail)
@@ -952,7 +952,7 @@ describe("Atom", () => {
     const unmount = r.mount(atom)
     assert.deepStrictEqual(r.get(atom), 0)
     r.set(atom, 1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(atom), 1)
     unmount()
   })
@@ -963,7 +963,7 @@ describe("Atom", () => {
     const unmount = r.mount(atom)
     assert.deepStrictEqual(r.get(atom), Result.success(0, { waiting: true }))
     r.set(atom, 1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(atom), Result.success(1, { waiting: true }))
     unmount()
   })
@@ -974,7 +974,7 @@ describe("Atom", () => {
     const unmount = r.mount(atom)
     assert.deepStrictEqual(r.get(atom), Result.success(0, { waiting: true }))
     r.set(atom, 1)
-    await new Promise((resolve) => resolve(null))
+    await Promise.resolve()
     assert.deepStrictEqual(r.get(atom), Result.success(1, { waiting: true }))
     unmount()
   })
@@ -1421,6 +1421,241 @@ describe("Atom", () => {
     expect(result.value).toEqual(2)
 
     unmount2()
+  })
+
+  it("map", () => {
+    const r = Registry.make()
+    const state = Atom.make(1)
+    const doubled = Atom.map(state, (n) => n * 2)
+
+    expect(r.get(doubled)).toBe(2)
+    r.set(state, 5)
+    expect(r.get(doubled)).toBe(10)
+  })
+
+  it("mapResult", () => {
+    const r = Registry.make()
+    const effect = Atom.make(Effect.succeed(42))
+    const mapped = Atom.mapResult(effect, (n) => n * 2)
+
+    const result = r.get(mapped)
+    assert(Result.isSuccess(result))
+    expect(result.value).toBe(84)
+  })
+
+  it("transform", () => {
+    const r = Registry.make()
+    const state = Atom.make(1)
+    const derived = Atom.transform(state, (get) => get(state) * 2 + 1)
+
+    expect(r.get(derived)).toBe(3)
+    r.set(state, 5)
+    expect(r.get(derived)).toBe(11)
+  })
+
+  it("debounce", async () => {
+    const r = Registry.make()
+    const state = Atom.make(0)
+    const debounced = Atom.debounce(state, "100 millis")
+
+    // Mount the debounced atom first
+    const unmount = r.mount(debounced)
+
+    let updates = 0
+    const cancel = r.subscribe(debounced, () => updates++)
+
+    r.set(state, 1)
+    r.set(state, 2)
+    r.set(state, 3)
+
+    expect(updates).toBe(0) // Should not update immediately
+
+    await vitest.advanceTimersByTimeAsync(150)
+    expect(r.get(debounced)).toBe(3)
+    expect(updates).toBe(1)
+
+    cancel()
+    unmount()
+  })
+
+  it("effect failure", () => {
+    const r = Registry.make()
+    const failing = Atom.make(Effect.fail("error"))
+
+    const result = r.get(failing)
+    assert(Result.isFailure(result))
+    assert(Cause.isFailType(result.cause))
+    expect(result.cause.error).toBe("error")
+  })
+
+  it("effect failure with previousSuccess", () => {
+    const r = Registry.make()
+    const atom = Atom.fn((shouldFail: boolean) => shouldFail ? Effect.fail("error") : Effect.succeed(42))
+    // First success
+    r.set(atom, false)
+    let result = r.get(atom)
+    assert(Result.isSuccess(result))
+    expect(result.value).toBe(42)
+
+    // Then failure - should keep previous success
+    r.set(atom, true)
+    result = r.get(atom)
+    assert(Result.isFailure(result))
+    const value = Result.value(result)
+    assert(Option.isSome(value))
+    expect(value.value).toBe(42)
+  })
+
+  it("context.once", () => {
+    const r = Registry.make()
+    const state = Atom.make(1)
+    let getCount = 0
+
+    const derived = Atom.make((get) => {
+      getCount++
+      return get.once(state) * 2
+    })
+
+    expect(r.get(derived)).toBe(2)
+    expect(getCount).toBe(1)
+
+    // Should not trigger rebuild on state change since we used once
+    r.set(state, 5)
+    expect(r.get(derived)).toBe(2) // Still old value
+    expect(getCount).toBe(1) // No rebuild
+  })
+
+  it("context.refresh", () => {
+    const r = Registry.make()
+    let counter = 0
+    const state = Atom.make(() => ++counter)
+    const other = Atom.make(() => counter * 10)
+
+    const derived = Atom.make((get) => {
+      const stateValue = get(state)
+      get.refresh(other) // Refresh a different atom
+      return stateValue
+    })
+
+    expect(r.get(derived)).toBe(1)
+    expect(counter).toBe(1)
+  })
+
+  it("custom refresh function", () => {
+    const r = Registry.make()
+    let refreshCalled = false
+    let otherRefreshed = false
+    const otherAtom = Atom.readable(
+      () => "other",
+      () => {
+        otherRefreshed = true
+      }
+    )
+
+    const atom = Atom.readable(
+      () => "value",
+      (refresh) => {
+        refreshCalled = true
+        refresh(otherAtom)
+      }
+    )
+
+    r.get(atom)
+    expect(refreshCalled).toBe(false)
+    expect(otherRefreshed).toBe(false)
+
+    r.refresh(atom)
+    expect(refreshCalled).toBe(true)
+    expect(otherRefreshed).toBe(true)
+  })
+
+  it("isAtom type guard", () => {
+    const atom = Atom.make(1)
+    const notAtom = { value: 1 }
+
+    expect(Atom.isAtom(atom)).toBe(true)
+    expect(Atom.isAtom(notAtom)).toBe(false)
+    expect(Atom.isAtom(null)).toBe(false)
+    expect(Atom.isAtom(undefined)).toBe(false)
+  })
+
+  it("isWritable type guard", () => {
+    const readable = Atom.readable(() => 1)
+    const writable = Atom.make(1)
+
+    expect(Atom.isWritable(readable)).toBe(false)
+    expect(Atom.isWritable(writable)).toBe(true)
+  })
+
+  it("atom properties", () => {
+    const atom = Atom.make(1)
+
+    expect(atom.keepAlive).toBe(false)
+    expect(atom.lazy).toBe(true)
+    expect(typeof atom.read).toBe("function")
+  })
+
+  it("keepAlive modifier", () => {
+    const atom = Atom.make(1)
+    const keepAliveAtom = Atom.keepAlive(atom)
+
+    expect(atom.keepAlive).toBe(false)
+    expect(keepAliveAtom.keepAlive).toBe(true)
+    expect(atom !== keepAliveAtom).toBe(true) // Should be new instance
+  })
+
+  it("autoDispose modifier", () => {
+    const atom = Atom.keepAlive(Atom.make(1))
+    const autoDisposeAtom = Atom.autoDispose(atom)
+
+    expect(atom.keepAlive).toBe(true)
+    expect(autoDisposeAtom.keepAlive).toBe(false)
+  })
+
+  it("makeRefreshOnSignal", () => {
+    const r = Registry.make()
+    const signal = Atom.make(0)
+    let computations = 0
+
+    const atom = Atom.make(() => {
+      computations++
+      return "value"
+    })
+
+    const refreshing = Atom.makeRefreshOnSignal(signal)(atom)
+
+    expect(r.get(refreshing)).toBe("value")
+    expect(computations).toBe(1)
+
+    // Trigger signal - should cause refresh
+    r.set(signal, 1)
+    expect(r.get(refreshing)).toBe("value")
+    expect(computations).toBe(2) // Should have recomputed
+  })
+
+  it("Reset symbol", () => {
+    const r = Registry.make()
+    const atom = Atom.fn((arg: number) => Effect.succeed(arg * 2))
+
+    r.set(atom, 5)
+    const result1 = r.get(atom)
+    expect(Result.isSuccess(result1)).toBe(true)
+
+    r.set(atom, Atom.Reset)
+    const result2 = r.get(atom)
+    expect(Result.isInitial(result2)).toBe(true)
+  })
+
+  it("Interrupt symbol", () => {
+    const r = Registry.make()
+    const atom = Atom.fn((arg: number) => Effect.delay(Effect.succeed(arg * 2), "100 millis"))
+    r.set(atom, 5)
+    const result1 = r.get(atom)
+    expect(Result.isWaiting(result1)).toBe(true)
+
+    r.set(atom, Atom.Interrupt)
+    const result2 = r.get(atom)
+    expect(Result.isInterrupted(result2)).toBe(true)
   })
 })
 
