@@ -1,5 +1,13 @@
 # @effect-rx/rx
 
+## 0.4.9
+
+### Patch Changes
+
+- [#380](https://github.com/tim-smart/effect-atom/pull/380) [`9db8b26`](https://github.com/tim-smart/effect-atom/commit/9db8b2631c078d29d0f8401a356f955fe1dcf356) Thanks [@mikearnaldi](https://github.com/mikearnaldi)! - add Scope support to Atom.subscriptionRef types
+
+- [#384](https://github.com/tim-smart/effect-atom/pull/384) [`84fd4f7`](https://github.com/tim-smart/effect-atom/commit/84fd4f74dd52c7a516848ffeb4bd3ef8b3eb6d34) Thanks [@lucas-barake](https://github.com/lucas-barake)! - pass suspendOnWaiting options to resultOnce in Atom.fn context
+
 ## 0.4.8
 
 ### Patch Changes
