@@ -538,7 +538,7 @@ const LifetimeProto: Omit<Lifetime<any>, "node" | "finalizers" | "disposed" | "i
     if (this.disposed) {
       throw disposedError(this.node.atom)
     } else if (this.isFn) {
-      return this.resultOnce(atom)
+      return this.resultOnce(atom, options)
     }
     const result = this.get(atom)
     if (options?.suspendOnWaiting && result.waiting) {

@@ -1422,6 +1422,57 @@ describe("Atom", () => {
 
     unmount2()
   })
+
+  it("get.result suspendOnWaiting", async () => {
+    const r = Registry.make()
+
+    const inner = Atom.make(Effect.succeed(1).pipe(Effect.delay(50)))
+    const outer = Atom.make((get) => get.result(inner, { suspendOnWaiting: true }))
+
+    r.mount(outer)
+
+    let result = r.get(outer)
+    assert(result.waiting)
+
+    await vitest.advanceTimersByTimeAsync(50)
+
+    result = r.get(outer)
+    assert(Result.isSuccess(result))
+    assert.strictEqual(result.value, 1)
+  })
+
+  it("fn get.result suspendOnWaiting", async () => {
+    const r = Registry.make()
+    let runs = 0
+
+    const inner = Atom.fn((n: number) => {
+      runs++
+      return Effect.succeed(n * 2).pipe(Effect.delay(50))
+    })
+
+    const outer = Atom.fn(
+      Effect.fn(function*(_: void, get: Atom.FnContext) {
+        get.set(inner, 1)
+        const a = yield* get.result(inner, { suspendOnWaiting: true })
+
+        get.set(inner, 2)
+        const b = yield* get.result(inner, { suspendOnWaiting: true })
+
+        return { a, b }
+      })
+    )
+
+    r.mount(outer)
+    r.set(outer, void 0)
+
+    await vitest.advanceTimersByTimeAsync(100)
+
+    const result = r.get(outer)
+    assert(Result.isSuccess(result))
+    assert.strictEqual(result.value.a, 2)
+    assert.strictEqual(result.value.b, 4)
+    assert.strictEqual(runs, 2)
+  })
 })
 
 interface BuildCounter {
