@@ -116,7 +116,7 @@ export const Tag = <Self>() =>
       get.addFinalizer(
         store.subscribe(q, {
           onUpdate(value) {
-            get.setSelf(Result.success(value))
+            get.setSelf(value)
           }
         })
       )
