@@ -40,12 +40,16 @@ export interface AtomLiveStore<Self, Id extends string, S extends LiveStoreSchem
    * Creates a Atom that allows you to resolve a LiveQueryDef. It embeds the loading
    * of the Store and will emit a `Result` that contains the result of the query
    */
-  readonly makeQuery: <A>(query: LiveQueryDef<A>) => Atom.Atom<Result.Result<A>>
+  readonly makeQuery: <A>(
+    query: LiveQueryDef<A> | ((get: Atom.Context) => LiveQueryDef<A>)
+  ) => Atom.Atom<Result.Result<A>>
   /**
    * Creates a Atom that allows you to resolve a LiveQueryDef. If the Store has
    * not been created yet, it will return `undefined`.
    */
-  readonly makeQueryUnsafe: <A>(query: LiveQueryDef<A>) => Atom.Atom<A | undefined>
+  readonly makeQueryUnsafe: <A>(
+    query: LiveQueryDef<A> | ((get: Atom.Context) => LiveQueryDef<A>)
+  ) => Atom.Atom<A | undefined>
   /**
    * A Atom.Writable that allows you to commit an event to the Store.
    */
@@ -87,35 +91,36 @@ export const Tag = <Self>() =>
     const result = get(self.store)
     return Result.getOrElse(result, constUndefined)
   })
-  self.makeQuery = <A>(query: LiveQueryDef<A>) =>
+  self.makeQuery = <A>(query: LiveQueryDef<A> | ((get: Atom.Context) => LiveQueryDef<A>)) =>
     Atom.readable((get) => {
       const store = get(self.store)
       return Result.map(store, (store) => {
-        const result = store.query(query)
+        const q = typeof query === "function" ? query(get) : query
         get.addFinalizer(
-          store.subscribe(query, {
+          store.subscribe(q, {
             onUpdate(value) {
               get.setSelf(Result.success(value))
             }
           })
         )
-        return result
+        return store.query(q)
       })
     })
-  self.makeQueryUnsafe = <A>(query: LiveQueryDef<A>) =>
+  self.makeQueryUnsafe = <A>(query: LiveQueryDef<A> | ((get: Atom.Context) => LiveQueryDef<A>)) =>
     Atom.readable((get) => {
       const store = get(self.storeUnsafe)
       if (store === undefined) {
         return undefined
       }
+      const q = typeof query === "function" ? query(get) : query
       get.addFinalizer(
-        store.subscribe(query, {
+        store.subscribe(q, {
           onUpdate(value) {
             get.setSelf(Result.success(value))
           }
         })
       )
-      return store.query(query)
+      return store.query(q)
     })
   self.commit = Atom.writable((get) => {
     get(self.storeUnsafe)
