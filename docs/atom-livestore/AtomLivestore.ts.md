@@ -62,12 +62,16 @@ export interface AtomLiveStore<Self, Id extends string, S extends LiveStoreSchem
    * Creates a Atom that allows you to resolve a LiveQueryDef. It embeds the loading
    * of the Store and will emit a `Result` that contains the result of the query
    */
-  readonly makeQuery: <A>(query: LiveQueryDef<A>) => Atom.Atom<Result.Result<A>>
+  readonly makeQuery: <A>(
+    query: LiveQueryDef<A> | ((get: Atom.Context) => LiveQueryDef<A>)
+  ) => Atom.Atom<Result.Result<A>>
   /**
    * Creates a Atom that allows you to resolve a LiveQueryDef. If the Store has
    * not been created yet, it will return `undefined`.
    */
-  readonly makeQueryUnsafe: <A>(query: LiveQueryDef<A>) => Atom.Atom<A | undefined>
+  readonly makeQueryUnsafe: <A>(
+    query: LiveQueryDef<A> | ((get: Atom.Context) => LiveQueryDef<A>)
+  ) => Atom.Atom<A | undefined>
   /**
    * A Atom.Writable that allows you to commit an event to the Store.
    */
