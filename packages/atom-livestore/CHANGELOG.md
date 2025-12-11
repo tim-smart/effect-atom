@@ -1,5 +1,11 @@
 # @effect-rx/rx-livestore
 
+## 0.4.5
+
+### Patch Changes
+
+- [`4c52971`](https://github.com/tim-smart/effect-atom/commit/4c52971b43cd45b19dab2dcfd45a2b196c56a6c2) Thanks [@tim-smart](https://github.com/tim-smart)! - don't wrap unsafe queries with Result
+
 ## 0.4.4
 
 ### Patch Changes
