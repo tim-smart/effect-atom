@@ -1,5 +1,11 @@
 # @effect-rx/rx-livestore
 
+## 0.4.4
+
+### Patch Changes
+
+- [`fdedcbc`](https://github.com/tim-smart/effect-atom/commit/fdedcbcef69ab5fc10344387b7041702d75f9a96) Thanks [@tim-smart](https://github.com/tim-smart)! - add support for derived queries
+
 ## 0.4.3
 
 ### Patch Changes
