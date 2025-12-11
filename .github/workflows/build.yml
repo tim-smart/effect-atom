@@ -15,7 +15,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    steps: 
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -24,6 +28,8 @@ jobs:
       - run: pnpm build
       - run: pnpm circular
       - run: pnpm docgen
+      - name: Upgrade npm for OIDC support
+        run: npm install -g npm@latest
       - name: Create Release Pull Request or Publish
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: changesets
@@ -32,4 +38,3 @@ jobs:
           publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
