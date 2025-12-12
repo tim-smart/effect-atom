@@ -180,13 +180,15 @@ describe("atom-react", () => {
     const atomResult2 = makeAtomResult("errored")
     const atomResult3 = makeAtomResult("pending")
 
-    const dehydratedState: Array<Hydration.DehydratedAtom> = [
+    const dehydratedState: Array<Hydration.DehydratedAtomValue> = [
       {
+        "~@effect-atom/atom/DehydratedAtom": true,
         key: "basic",
         value: 1,
         dehydratedAt: Date.now()
       },
       {
+        "~@effect-atom/atom/DehydratedAtom": true,
         key: "success",
         value: {
           _tag: "Success",
@@ -197,6 +199,7 @@ describe("atom-react", () => {
         dehydratedAt: Date.now()
       },
       {
+        "~@effect-atom/atom/DehydratedAtom": true,
         key: "errored",
         value: {
           _tag: "Failure",
@@ -212,6 +215,7 @@ describe("atom-react", () => {
         dehydratedAt: Date.now()
       },
       {
+        "~@effect-atom/atom/DehydratedAtom": true,
         key: "pending",
         value: {
           _tag: "Initial",
