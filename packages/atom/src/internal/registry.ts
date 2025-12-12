@@ -31,7 +31,7 @@ export const make = (options?: {
 
 const SerializableTypeId: Atom.SerializableTypeId = "~effect-atom/atom/Atom/Serializable"
 const atomKey = <A>(atom: Atom.Atom<A>): Atom.Atom<A> | string =>
-  SerializableTypeId in atom ? (atom as Atom.Serializable)[SerializableTypeId].key : atom
+  SerializableTypeId in atom ? (atom as Atom.Serializable<any>)[SerializableTypeId].key : atom
 
 class RegistryImpl implements Registry.Registry {
   readonly [TypeId]: Registry.TypeId
@@ -134,7 +134,7 @@ class RegistryImpl implements Registry.Registry {
     if (typeof key === "string" && this.preloadedSerializable.has(key)) {
       const encoded = this.preloadedSerializable.get(key)
       this.preloadedSerializable.delete(key)
-      const decoded = (atom as any as Atom.Serializable)[SerializableTypeId].decode(encoded)
+      const decoded = (atom as any as Atom.Serializable<any>)[SerializableTypeId].decode(encoded)
       node.setValue(decoded)
     }
     return node
