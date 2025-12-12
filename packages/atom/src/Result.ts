@@ -801,6 +801,21 @@ export const schemaFromSelf: Schema_.Schema<Result<any, any>> = Schema_.declare(
  * @since 1.0.0
  * @category Schemas
  */
+export interface Schema<
+  Success extends Schema_.Schema.All,
+  Error extends Schema_.Schema.All
+> extends
+  Schema_.Schema<
+    Result<Success["Type"], Error["Type"]>,
+    Encoded<Success["Encoded"], Error["Encoded"]>,
+    Success["Context"] | Error["Context"]
+  >
+{}
+
+/**
+ * @since 1.0.0
+ * @category Schemas
+ */
 export const Schema = <
   Success extends Schema_.Schema.All = typeof Schema_.Never,
   Error extends Schema_.Schema.All = typeof Schema_.Never
@@ -809,14 +824,7 @@ export const Schema = <
     readonly success?: Success | undefined
     readonly error?: Error | undefined
   }
-): Schema_.transform<
-  Schema_.Schema<
-    PartialEncoded<Success["Type"], Error["Type"]>,
-    Encoded<Success["Encoded"], Error["Encoded"]>,
-    Success["Context"] | Error["Context"]
-  >,
-  Schema_.Schema<Result<Success["Type"], Error["Type"]>>
-> => {
+): Schema<Success, Error> => {
   const success_: Success = options.success ?? Schema_.Never as any
   const error: Error = options.error ?? Schema_.Never as any
   const Success = Schema_.TaggedStruct("Success", {

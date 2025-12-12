@@ -21,6 +21,7 @@ Added in v1.0.0
   - [Encoded (type alias)](#encoded-type-alias)
   - [PartialEncoded (type alias)](#partialencoded-type-alias)
   - [Schema](#schema)
+  - [Schema (interface)](#schema-interface)
   - [schemaFromSelf](#schemafromself)
 - [accessors](#accessors)
   - [cause](#cause)
@@ -217,14 +218,22 @@ export declare const Schema: <
 >(options: {
   readonly success?: Success | undefined
   readonly error?: Error | undefined
-}) => Schema_.transform<
-  Schema_.Schema<
-    PartialEncoded<Success["Type"], Error["Type"]>,
+}) => Schema<Success, Error>
+```
+
+Added in v1.0.0
+
+## Schema (interface)
+
+**Signature**
+
+```ts
+export interface Schema<Success extends Schema_.Schema.All, Error extends Schema_.Schema.All>
+  extends Schema_.Schema<
+    Result<Success["Type"], Error["Type"]>,
     Encoded<Success["Encoded"], Error["Encoded"]>,
     Success["Context"] | Error["Context"]
-  >,
-  Schema_.Schema<Result<Success["Type"], Error["Type"]>>
->
+  > {}
 ```
 
 Added in v1.0.0
