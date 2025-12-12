@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.10
+
+### Patch Changes
+
+- [`8764061`](https://github.com/tim-smart/effect-atom/commit/87640619ec6015ff3696cbc692c66fbc809fc177) Thanks [@tim-smart](https://github.com/tim-smart)! - improve Serializable compatibility
+
 ## 0.4.9
 
 ### Patch Changes

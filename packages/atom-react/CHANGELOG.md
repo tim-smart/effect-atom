@@ -1,5 +1,14 @@
 # @effect-rx/rx-react
 
+## 0.4.4
+
+### Patch Changes
+
+- [`8764061`](https://github.com/tim-smart/effect-atom/commit/87640619ec6015ff3696cbc692c66fbc809fc177) Thanks [@tim-smart](https://github.com/tim-smart)! - improve Serializable compatibility
+
+- Updated dependencies [[`8764061`](https://github.com/tim-smart/effect-atom/commit/87640619ec6015ff3696cbc692c66fbc809fc177)]:
+  - @effect-atom/atom@0.4.10
+
 ## 0.4.3
 
 ### Patch Changes
