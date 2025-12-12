@@ -11,6 +11,14 @@ import * as Result from "./Result.js"
  * @category models
  */
 export interface DehydratedAtom {
+  readonly "~@effect-atom/atom/DehydratedAtom": true
+}
+
+/**
+ * @since 1.0.0
+ * @category models
+ */
+export interface DehydratedAtomValue extends DehydratedAtom {
   readonly key: string
   readonly value: unknown
   readonly dehydratedAt: number
@@ -31,7 +39,7 @@ export const dehydrate = (
   }
 ): Array<DehydratedAtom> => {
   const encodeInitialResultMode = options?.encodeInitialAs ?? "ignore"
-  const arr = Arr.empty<DehydratedAtom>()
+  const arr = Arr.empty<DehydratedAtomValue>()
   const now = Date.now()
   registry.getNodes().forEach((node, key) => {
     if (!Atom.isSerializable(node.atom)) return
@@ -55,14 +63,21 @@ export const dehydrate = (
     }
 
     arr.push({
+      "~@effect-atom/atom/DehydratedAtom": true,
       key: key as string,
       value: encodedValue,
       dehydratedAt: now,
       resultPromise
     })
   })
-  return arr
+  return arr as any
 }
+
+/**
+ * @since 1.0.0
+ * @category dehydration
+ */
+export const toValues = (state: ReadonlyArray<DehydratedAtom>): Array<DehydratedAtomValue> => state as any
 
 /**
  * @since 1.0.0
@@ -72,7 +87,7 @@ export const hydrate = (
   registry: Registry.Registry,
   dehydratedState: Iterable<DehydratedAtom>
 ): void => {
-  for (const datom of dehydratedState) {
+  for (const datom of (dehydratedState as Iterable<DehydratedAtomValue>)) {
     registry.setSerializable(datom.key, datom.value)
 
     // If there's a resultPromise, it means this was in Initial state when dehydrated

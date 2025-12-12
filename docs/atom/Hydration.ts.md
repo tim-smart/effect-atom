@@ -14,10 +14,12 @@ Added in v1.0.0
 
 - [dehydration](#dehydration)
   - [dehydrate](#dehydrate)
+  - [toValues](#tovalues)
 - [hydration](#hydration)
   - [hydrate](#hydrate)
 - [models](#models)
   - [DehydratedAtom (interface)](#dehydratedatom-interface)
+  - [DehydratedAtomValue (interface)](#dehydratedatomvalue-interface)
 
 ---
 
@@ -32,6 +34,16 @@ export declare const dehydrate: (
   registry: Registry.Registry,
   options?: { readonly encodeInitialAs?: "ignore" | "promise" | "value-only" | undefined }
 ) => Array<DehydratedAtom>
+```
+
+Added in v1.0.0
+
+## toValues
+
+**Signature**
+
+```ts
+export declare const toValues: (state: ReadonlyArray<DehydratedAtom>) => Array<DehydratedAtomValue>
 ```
 
 Added in v1.0.0
@@ -56,6 +68,18 @@ Added in v1.0.0
 
 ```ts
 export interface DehydratedAtom {
+  readonly "~@effect-atom/atom/DehydratedAtom": true
+}
+```
+
+Added in v1.0.0
+
+## DehydratedAtomValue (interface)
+
+**Signature**
+
+```ts
+export interface DehydratedAtomValue extends DehydratedAtom {
   readonly key: string
   readonly value: unknown
   readonly dehydratedAt: number

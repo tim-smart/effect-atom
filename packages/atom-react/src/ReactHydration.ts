@@ -40,13 +40,13 @@ export const HydrationBoundary: React.FC<HydrationBoundaryProps> = ({
   // If the transition is aborted, we will have hydrated any _new_ Atom values, but
   // we throw away the fresh data for any existing ones to avoid unexpectedly
   // updating the UI.
-  const hydrationQueue: Array<Hydration.DehydratedAtom> | undefined = React.useMemo(() => {
+  const hydrationQueue: Array<Hydration.DehydratedAtomValue> | undefined = React.useMemo(() => {
     if (state) {
-      const dehydratedAtoms = Array.from(state)
+      const dehydratedAtoms = Array.from(state) as Array<Hydration.DehydratedAtomValue>
       const nodes = registry.getNodes()
 
-      const newDehydratedAtoms: Array<Hydration.DehydratedAtom> = []
-      const existingDehydratedAtoms: Array<Hydration.DehydratedAtom> = []
+      const newDehydratedAtoms: Array<Hydration.DehydratedAtomValue> = []
+      const existingDehydratedAtoms: Array<Hydration.DehydratedAtomValue> = []
 
       for (const dehydratedAtom of dehydratedAtoms) {
         const existingNode = nodes.get(dehydratedAtom.key)

@@ -2023,11 +2023,11 @@ export type SerializableTypeId = "~effect-atom/atom/Atom/Serializable"
  * @since 1.0.0
  * @category Serializable
  */
-export interface Serializable {
+export interface Serializable<S extends Schema.Schema.Any> {
   readonly [SerializableTypeId]: {
     readonly key: string
-    readonly encode: (value: unknown) => unknown
-    readonly decode: (value: unknown) => unknown
+    readonly encode: (value: S["Type"]) => S["Encoded"]
+    readonly decode: (value: S["Encoded"]) => S["Type"]
   }
 }
 
@@ -2035,25 +2035,25 @@ export interface Serializable {
  * @since 1.0.0
  * @category Serializable
  */
-export const isSerializable = (self: Atom<any>): self is Atom<any> & Serializable => SerializableTypeId in self
+export const isSerializable = (self: Atom<any>): self is Atom<any> & Serializable<any> => SerializableTypeId in self
 
 /**
  * @since 1.0.0
  * @category combinators
  */
 export const serializable: {
-  <R extends Atom<any>, I>(options: {
+  <R extends Atom<any>, S extends Schema.Schema<Type<R>, any>>(options: {
     readonly key: string
-    readonly schema: Schema.Schema<Type<R>, I>
-  }): (self: R) => R & Serializable
-  <R extends Atom<any>, I>(self: R, options: {
+    readonly schema: S
+  }): (self: R) => R & Serializable<S>
+  <R extends Atom<any>, S extends Schema.Schema<Type<R>, any>>(self: R, options: {
     readonly key: string
-    readonly schema: Schema.Schema<Type<R>, I>
-  }): R & Serializable
+    readonly schema: S
+  }): R & Serializable<S>
 } = dual(2, <R extends Atom<any>, A, I>(self: R, options: {
   readonly key: string
   readonly schema: Schema.Schema<A, I>
-}): R & Serializable =>
+}): R & Serializable<any> =>
   Object.assign(Object.create(Object.getPrototypeOf(self)), {
     ...self,
     label: self.label ?? [options.key, new Error().stack?.split("\n")[5] ?? ""],

@@ -323,11 +323,11 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export interface Serializable {
+export interface Serializable<S extends Schema.Schema.Any> {
   readonly [SerializableTypeId]: {
     readonly key: string
-    readonly encode: (value: unknown) => unknown
-    readonly decode: (value: unknown) => unknown
+    readonly encode: (value: S["Type"]) => S["Encoded"]
+    readonly decode: (value: S["Encoded"]) => S["Type"]
   }
 }
 ```
@@ -359,7 +359,7 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export declare const isSerializable: (self: Atom<any>) => self is Atom<any> & Serializable
+export declare const isSerializable: (self: Atom<any>) => self is Atom<any> & Serializable<any>
 ```
 
 Added in v1.0.0
@@ -548,14 +548,14 @@ Added in v1.0.0
 
 ```ts
 export declare const serializable: {
-  <R extends Atom<any>, I>(options: {
+  <R extends Atom<any>, S extends Schema.Schema<Type<R>, any>>(options: {
     readonly key: string
-    readonly schema: Schema.Schema<Type<R>, I>
-  }): (self: R) => R & Serializable
-  <R extends Atom<any>, I>(
+    readonly schema: S
+  }): (self: R) => R & Serializable<S>
+  <R extends Atom<any>, S extends Schema.Schema<Type<R>, any>>(
     self: R,
-    options: { readonly key: string; readonly schema: Schema.Schema<Type<R>, I> }
-  ): R & Serializable
+    options: { readonly key: string; readonly schema: S }
+  ): R & Serializable<S>
 }
 ```
 

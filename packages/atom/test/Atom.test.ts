@@ -1135,14 +1135,15 @@ describe("Atom", () => {
     }))
     r.mount(pending)
 
-    const state = Hydration.dehydrate(r, {
+    const state = Hydration.toValues(Hydration.dehydrate(r, {
       encodeInitialAs: "promise"
-    })
+    }))
     expect(state.map((r) => Struct.omit(r, "dehydratedAt", "resultPromise"))).toMatchInlineSnapshot(`
       [
         {
           "key": "basicSerializable",
           "value": 0,
+          "~@effect-atom/atom/DehydratedAtom": true,
         },
         {
           "key": "errored",
@@ -1157,6 +1158,7 @@ describe("Atom", () => {
             },
             "waiting": false,
           },
+          "~@effect-atom/atom/DehydratedAtom": true,
         },
         {
           "key": "success",
@@ -1166,6 +1168,7 @@ describe("Atom", () => {
             "value": 123,
             "waiting": false,
           },
+          "~@effect-atom/atom/DehydratedAtom": true,
         },
         {
           "key": "pending",
@@ -1173,6 +1176,7 @@ describe("Atom", () => {
             "_tag": "Initial",
             "waiting": true,
           },
+          "~@effect-atom/atom/DehydratedAtom": true,
         },
       ]
     `)
