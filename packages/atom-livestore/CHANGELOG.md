@@ -1,5 +1,11 @@
 # @effect-rx/rx-livestore
 
+## 0.4.6
+
+### Patch Changes
+
+- [`ba17d84`](https://github.com/tim-smart/effect-atom/commit/ba17d841deb8638070d88eaecedb7da35c7b6f3c) Thanks [@tim-smart](https://github.com/tim-smart)! - support dev builds of livestore
+
 ## 0.4.5
 
 ### Patch Changes
