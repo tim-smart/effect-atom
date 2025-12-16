@@ -96,12 +96,12 @@ export const Tag = <Self>() =>
       const store = get(self.store)
       return Result.map(store, (store) => {
         const q = typeof query === "function" ? query(get) : query
+        function onUpdate(value: A) {
+          get.setSelf(Result.success(value))
+        }
+        onUpdate.onUpdate = onUpdate
         get.addFinalizer(
-          store.subscribe(q, {
-            onUpdate(value) {
-              get.setSelf(Result.success(value))
-            }
-          })
+          store.subscribe(q, onUpdate)
         )
         return store.query(q)
       })
@@ -113,12 +113,12 @@ export const Tag = <Self>() =>
         return undefined
       }
       const q = typeof query === "function" ? query(get) : query
+      function onUpdate(value: A) {
+        get.setSelf(value)
+      }
+      onUpdate.onUpdate = onUpdate
       get.addFinalizer(
-        store.subscribe(q, {
-          onUpdate(value) {
-            get.setSelf(value)
-          }
-        })
+        store.subscribe(q, onUpdate)
       )
       return store.query(q)
     })
