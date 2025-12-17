@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.4.11
+
+### Patch Changes
+
+- [`827bd5a`](https://github.com/tim-smart/effect-atom/commit/827bd5a8863834836b982173802b5fced1ade6ba) Thanks [@tim-smart](https://github.com/tim-smart)! - update kvs when default value is generated
+
 ## 0.4.10
 
 ### Patch Changes
