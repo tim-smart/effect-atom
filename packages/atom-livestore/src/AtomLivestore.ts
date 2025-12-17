@@ -66,7 +66,7 @@ declare global {
  * @since 1.0.0
  * @category Models
  */
-export type Options<const Id extends string, S extends LiveStoreSchema, Context = {}> =
+export type Options<S extends LiveStoreSchema, Context = {}> =
   & CreateStoreOptions<S, Context>
   & {
     readonly otelOptions?: Partial<OtelOptions> | undefined
@@ -79,11 +79,11 @@ export type Options<const Id extends string, S extends LiveStoreSchema, Context 
 export const Tag = <Self>() =>
 <const Id extends string, S extends LiveStoreSchema, Context = {}>(
   id: Id,
-  options: Options<Id, S, Context> | Atom.Atom<Options<Id, S, Context>>
+  options: Options<S, Context> | ((get: Atom.Context) => Options<S, Context>)
 ): AtomLiveStore<Self, Id, S, Context> => {
   const self: Mutable<AtomLiveStore<Self, Id, S, Context>> = Context.Tag(id)<Self, Store<S, Context>>() as any
 
-  const layerFromOptions = (opts: Options<Id, S, Context>) =>
+  const layerFromOptions = (opts: Options<S, Context>) =>
     Layer.scoped(
       self,
       createStore(opts).pipe(
@@ -96,7 +96,7 @@ export const Tag = <Self>() =>
     )
 
   self.runtime = Atom.runtime(
-    Atom.isAtom(options) ? (get) => layerFromOptions(get(options)) : layerFromOptions(options)
+    typeof options === "function" ? (get) => layerFromOptions(options(get)) : layerFromOptions(options)
   )
   self.layer = self.runtime.layer
   self.store = self.runtime.atom(Effect.contextWith(Context.get(self)) as any)
