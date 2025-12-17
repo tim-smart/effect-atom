@@ -1,5 +1,11 @@
 # @effect-rx/rx-livestore
 
+## 0.4.7
+
+### Patch Changes
+
+- [`282ed4f`](https://github.com/tim-smart/effect-atom/commit/282ed4fe0aa8d3b02227eafccbf133c62d2f8166) Thanks [@tim-smart](https://github.com/tim-smart)! - allow using an atom for store options
+
 ## 0.4.6
 
 ### Patch Changes
