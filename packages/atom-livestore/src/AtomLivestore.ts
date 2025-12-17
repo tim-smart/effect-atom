@@ -23,7 +23,7 @@ export interface AtomLiveStore<Self, Id extends string, S extends LiveStoreSchem
     _: never
   ): Context.TagClassShape<Id, Store<S, Context>>
 
-  readonly layer: Layer.Layer<Self>
+  readonly layer: Atom.Atom<Layer.Layer<Self>>
   readonly runtime: Atom.AtomRuntime<Self>
 
   /**
@@ -64,28 +64,41 @@ declare global {
 
 /**
  * @since 1.0.0
+ * @category Models
+ */
+export type Options<const Id extends string, S extends LiveStoreSchema, Context = {}> =
+  & CreateStoreOptions<S, Context>
+  & {
+    readonly otelOptions?: Partial<OtelOptions> | undefined
+  }
+
+/**
+ * @since 1.0.0
  * @category Constructors
  */
 export const Tag = <Self>() =>
 <const Id extends string, S extends LiveStoreSchema, Context = {}>(
   id: Id,
-  options: CreateStoreOptions<S, Context> & {
-    readonly otelOptions?: Partial<OtelOptions> | undefined
-  }
+  options: Options<Id, S, Context> | Atom.Atom<Options<Id, S, Context>>
 ): AtomLiveStore<Self, Id, S, Context> => {
   const self: Mutable<AtomLiveStore<Self, Id, S, Context>> = Context.Tag(id)<Self, Store<S, Context>>() as any
 
-  self.layer = Layer.scoped(
-    self,
-    createStore(options).pipe(
-      provideOtel({
-        parentSpanContext: options?.otelOptions?.rootSpanContext,
-        otelTracer: options?.otelOptions?.tracer
-      }),
-      Effect.orDie
+  const layerFromOptions = (opts: Options<Id, S, Context>) =>
+    Layer.scoped(
+      self,
+      createStore(opts).pipe(
+        provideOtel({
+          parentSpanContext: opts?.otelOptions?.rootSpanContext,
+          otelTracer: opts?.otelOptions?.tracer
+        }),
+        Effect.orDie
+      )
     )
+
+  self.runtime = Atom.runtime(
+    Atom.isAtom(options) ? (get) => layerFromOptions(get(options)) : layerFromOptions(options)
   )
-  self.runtime = Atom.runtime(self.layer)
+  self.layer = self.runtime.layer
   self.store = self.runtime.atom(Effect.contextWith(Context.get(self)) as any)
   self.storeUnsafe = Atom.readable((get) => {
     const result = get(self.store)

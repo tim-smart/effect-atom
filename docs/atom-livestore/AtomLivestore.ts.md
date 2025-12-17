@@ -16,6 +16,7 @@ Added in v1.0.0
   - [Tag](#tag)
 - [Models](#models)
   - [AtomLiveStore (interface)](#atomlivestore-interface)
+  - [Options (type alias)](#options-type-alias)
 
 ---
 
@@ -28,7 +29,7 @@ Added in v1.0.0
 ```ts
 export declare const Tag: <Self>() => <const Id extends string, S extends LiveStoreSchema, Context = {}>(
   id: Id,
-  options: CreateStoreOptions<S, Context> & { readonly otelOptions?: Partial<OtelOptions> | undefined }
+  options: Options<Id, S, Context> | Atom.Atom<Options<Id, S, Context>>
 ) => AtomLiveStore<Self, Id, S, Context>
 ```
 
@@ -45,7 +46,7 @@ export interface AtomLiveStore<Self, Id extends string, S extends LiveStoreSchem
   extends Context.Tag<Self, Store<S, Context>> {
   new (_: never): Context.TagClassShape<Id, Store<S, Context>>
 
-  readonly layer: Layer.Layer<Self>
+  readonly layer: Atom.Atom<Layer.Layer<Self>>
   readonly runtime: Atom.AtomRuntime<Self>
 
   /**
@@ -76,6 +77,21 @@ export interface AtomLiveStore<Self, Id extends string, S extends LiveStoreSchem
    * A Atom.Writable that allows you to commit an event to the Store.
    */
   readonly commit: Atom.Writable<void, {}>
+}
+```
+
+Added in v1.0.0
+
+## Options (type alias)
+
+**Signature**
+
+```ts
+export type Options<const Id extends string, S extends LiveStoreSchema, Context = {}> = CreateStoreOptions<
+  S,
+  Context
+> & {
+  readonly otelOptions?: Partial<OtelOptions> | undefined
 }
 ```
 
