@@ -26,7 +26,9 @@ import * as MutableHashMap from "effect/MutableHashMap"
 import * as Option from "effect/Option"
 import { type Pipeable, pipeArguments } from "effect/Pipeable"
 import { hasProperty, isObject } from "effect/Predicate"
+import * as Predicate from "effect/Predicate"
 import type { ReadonlyRecord } from "effect/Record"
+import * as Record from "effect/Record"
 import * as Runtime from "effect/Runtime"
 import * as Schema from "effect/Schema"
 import * as Scope from "effect/Scope"
@@ -1539,6 +1541,66 @@ export const map: {
   2,
   <A, B>(self: Atom<A>, f: (_: A) => B): Atom<B> => transform(self, (get) => f(get(self)))
 )
+
+/**
+ * `Atom.slice` can be used to split up a structure atom into separate atoms
+ * for each property. This has the benefit of gating reactivity: if the source
+ * structure updates, but the target property does not, then any atom that
+ * depends on that property's slice atom will not update.
+ *
+ * @since 1.0.0
+ * @category combinators
+ */
+export function slice<A extends Atom<object>>(
+  atom: A
+): { readonly [K in keyof Type<A>]: Atom<Type<A>[K]> }
+/**
+ * `Atom.slice` can be used to split up a structure atom into separate atoms
+ * for each property. This has the benefit of gating reactivity: if the source
+ * structure updates, but the target property does not, then any atom that
+ * depends on that property's slice atom will not update.
+ *
+ * @since 1.0.0
+ * @category combinators
+ */
+export function slice<Arg, A extends Atom<object>>(
+  family: (arg: Arg) => A
+): {
+  readonly [K in keyof Type<A>]: (arg: Arg) => Atom<Type<A>[K]>
+}
+export function slice<Arg, A extends Atom<Record<string, unknown>>>(
+  input: A | ((arg: Arg) => A)
+):
+  | Record<string, Atom<unknown>>
+  | Record<string, (arg: Arg) => Atom<unknown>>
+{
+  const isFamily = Predicate.isFunction(input)
+
+  return new Proxy<
+    | Record<string, Atom<unknown>>
+    | Record<string, (arg: Arg) => Atom<unknown>>
+  >(
+    {},
+    {
+      get(target, property, receiver) {
+        if (
+          Record.has<string | symbol, unknown>(target, property) ||
+          Predicate.isSymbol(property)
+        ) {
+          return Reflect.get(target, property, receiver)
+        }
+
+        const value = isFamily ?
+          family((arg: Arg) => readable((get) => get(input(arg))[property]))
+          : readable((get) => get(input)[property])
+
+        target[property] = value
+
+        return value
+      }
+    }
+  )
+}
 
 /**
  * @since 1.0.0
