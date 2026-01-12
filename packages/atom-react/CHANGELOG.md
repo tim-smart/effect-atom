@@ -1,5 +1,14 @@
 # @effect-rx/rx-react
 
+## 0.4.5
+
+### Patch Changes
+
+- [`c874a58`](https://github.com/tim-smart/effect-atom/commit/c874a58df3d7bf921d987bbdce5cd219587c8755) Thanks [@tim-smart](https://github.com/tim-smart)! - try hiding type ids to fix declaration emit errors
+
+- Updated dependencies [[`c874a58`](https://github.com/tim-smart/effect-atom/commit/c874a58df3d7bf921d987bbdce5cd219587c8755)]:
+  - @effect-atom/atom@0.4.12
+
 ## 0.4.4
 
 ### Patch Changes
