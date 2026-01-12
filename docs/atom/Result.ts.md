@@ -66,9 +66,6 @@ Added in v1.0.0
   - [isNotInitial](#isnotinitial)
   - [isSuccess](#issuccess)
   - [isWaiting](#iswaiting)
-- [type ids](#type-ids)
-  - [TypeId](#typeid)
-  - [TypeId (type alias)](#typeid-type-alias)
 - [utils](#utils)
   - [With (type alias)](#with-type-alias)
 
@@ -751,28 +748,6 @@ Added in v1.0.0
 
 ```ts
 export declare const isWaiting: <A, E>(result: Result<A, E>) => boolean
-```
-
-Added in v1.0.0
-
-# type ids
-
-## TypeId
-
-**Signature**
-
-```ts
-export declare const TypeId: typeof TypeId
-```
-
-Added in v1.0.0
-
-## TypeId (type alias)
-
-**Signature**
-
-```ts
-export type TypeId = typeof TypeId
 ```
 
 Added in v1.0.0

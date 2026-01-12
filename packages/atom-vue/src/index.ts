@@ -52,7 +52,7 @@ export * as AtomRpc from "@effect-atom/atom/AtomRpc"
  * @since 1.0.0
  * @category registry
  */
-export const registryKey = Symbol.for(Registry.TypeId) as InjectionKey<Registry.Registry>
+export const registryKey = Symbol.for("@effect-atom/atom-vue/registryKey") as InjectionKey<Registry.Registry>
 
 /**
  * @since 1.0.0

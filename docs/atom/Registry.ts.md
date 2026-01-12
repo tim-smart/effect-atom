@@ -27,9 +27,6 @@ Added in v1.0.0
   - [isRegistry](#isregistry)
 - [models](#models)
   - [Registry (interface)](#registry-interface)
-- [type ids](#type-ids)
-  - [TypeId](#typeid)
-  - [TypeId (type alias)](#typeid-type-alias)
 
 ---
 
@@ -180,28 +177,6 @@ export interface Registry {
   readonly reset: () => void
   readonly dispose: () => void
 }
-```
-
-Added in v1.0.0
-
-# type ids
-
-## TypeId
-
-**Signature**
-
-```ts
-export declare const TypeId: "~effect-atom/atom/Registry"
-```
-
-Added in v1.0.0
-
-## TypeId (type alias)
-
-**Signature**
-
-```ts
-export type TypeId = "~effect-atom/atom/Registry"
 ```
 
 Added in v1.0.0

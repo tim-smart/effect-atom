@@ -15,17 +15,8 @@ import type { Registry } from "./index.js"
 import * as internal from "./internal/registry.js"
 import * as Result from "./Result.js"
 
-/**
- * @since 1.0.0
- * @category type ids
- */
-export const TypeId: TypeId = "~effect-atom/atom/Registry"
-
-/**
- * @since 1.0.0
- * @category type ids
- */
-export type TypeId = "~effect-atom/atom/Registry"
+const TypeId: TypeId = "~effect-atom/atom/Registry"
+type TypeId = "~effect-atom/atom/Registry"
 
 /**
  * @since 1.0.0

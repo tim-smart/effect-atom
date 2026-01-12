@@ -15,17 +15,8 @@ import { hasProperty, isIterable } from "effect/Predicate"
 import * as Schema_ from "effect/Schema"
 import type * as Types from "effect/Types"
 
-/**
- * @since 1.0.0
- * @category type ids
- */
-export const TypeId = Symbol.for("@effect-atom/atom/Result")
-
-/**
- * @since 1.0.0
- * @category type ids
- */
-export type TypeId = typeof TypeId
+type TypeId = "~effect-atom/atom/Result"
+const TypeId: TypeId = "~effect-atom/atom/Result"
 
 /**
  * @since 1.0.0

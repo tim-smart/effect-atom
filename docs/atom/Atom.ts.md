@@ -92,11 +92,6 @@ Added in v1.0.0
   - [Interrupt (type alias)](#interrupt-type-alias)
   - [Reset](#reset)
   - [Reset (type alias)](#reset-type-alias)
-- [type ids](#type-ids)
-  - [TypeId](#typeid)
-  - [TypeId (type alias)](#typeid-type-alias)
-  - [WritableTypeId](#writabletypeid)
-  - [WritableTypeId (type alias)](#writabletypeid-type-alias)
 - [utils](#utils)
   - [Failure (type alias)](#failure-type-alias)
   - [PullSuccess (type alias)](#pullsuccess-type-alias)
@@ -1207,48 +1202,6 @@ Added in v1.0.0
 
 ```ts
 export type Reset = typeof Reset
-```
-
-Added in v1.0.0
-
-# type ids
-
-## TypeId
-
-**Signature**
-
-```ts
-export declare const TypeId: "~effect-atom/atom/Atom"
-```
-
-Added in v1.0.0
-
-## TypeId (type alias)
-
-**Signature**
-
-```ts
-export type TypeId = "~effect-atom/atom/Atom"
-```
-
-Added in v1.0.0
-
-## WritableTypeId
-
-**Signature**
-
-```ts
-export declare const WritableTypeId: "~effect-atom/atom/Atom/Writable"
-```
-
-Added in v1.0.0
-
-## WritableTypeId (type alias)
-
-**Signature**
-
-```ts
-export type WritableTypeId = "~effect-atom/atom/Atom/Writable"
 ```
 
 Added in v1.0.0

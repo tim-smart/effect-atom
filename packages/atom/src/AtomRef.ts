@@ -5,17 +5,8 @@ import * as Equal from "effect/Equal"
 import { globalValue } from "effect/GlobalValue"
 import * as Hash from "effect/Hash"
 
-/**
- * @since 1.0.0
- * @category type ids
- */
-export const TypeId: TypeId = "~effect-atom/atom/AtomRef"
-
-/**
- * @since 1.0.0
- * @category type ids
- */
-export type TypeId = "~effect-atom/atom/AtomRef"
+const TypeId: TypeId = "~effect-atom/atom/AtomRef"
+type TypeId = "~effect-atom/atom/AtomRef"
 
 /**
  * @since 1.0.0

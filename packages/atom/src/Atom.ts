@@ -40,17 +40,8 @@ import * as Registry from "./Registry.js"
 import { AtomRegistry as AtomRegistry } from "./Registry.js"
 import * as Result from "./Result.js"
 
-/**
- * @since 1.0.0
- * @category type ids
- */
-export const TypeId: TypeId = "~effect-atom/atom/Atom"
-
-/**
- * @since 1.0.0
- * @category type ids
- */
-export type TypeId = "~effect-atom/atom/Atom"
+const TypeId: TypeId = "~effect-atom/atom/Atom"
+type TypeId = "~effect-atom/atom/Atom"
 
 /**
  * @since 1.0.0
@@ -98,17 +89,8 @@ export type Failure<T extends Atom<any>> = T extends Atom<Result.Result<infer _,
 export type WithoutSerializable<T extends Atom<any>> = T extends Writable<infer R, infer W> ? Writable<R, W>
   : Atom<Type<T>>
 
-/**
- * @since 1.0.0
- * @category type ids
- */
-export const WritableTypeId: WritableTypeId = "~effect-atom/atom/Atom/Writable"
-
-/**
- * @since 1.0.0
- * @category type ids
- */
-export type WritableTypeId = "~effect-atom/atom/Atom/Writable"
+type WritableTypeId = "~effect-atom/atom/Atom/Writable"
+const WritableTypeId: WritableTypeId = "~effect-atom/atom/Atom/Writable"
 
 /**
  * @since 1.0.0

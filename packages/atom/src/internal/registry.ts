@@ -12,8 +12,8 @@ import * as Result from "../Result.js"
 
 const constImmediate = { immediate: true }
 
-/** @internal */
-export const TypeId: Registry.TypeId = "~effect-atom/atom/Registry"
+type TypeId = "~effect-atom/atom/Registry"
+const TypeId: TypeId = "~effect-atom/atom/Registry" as const
 
 /** @internal */
 export const make = (options?: {
@@ -34,7 +34,7 @@ const atomKey = <A>(atom: Atom.Atom<A>): Atom.Atom<A> | string =>
   SerializableTypeId in atom ? (atom as Atom.Serializable<any>)[SerializableTypeId].key : atom
 
 class RegistryImpl implements Registry.Registry {
-  readonly [TypeId]: Registry.TypeId
+  readonly [TypeId]: TypeId
   readonly timeoutResolution: number
 
   constructor(

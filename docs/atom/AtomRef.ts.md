@@ -19,9 +19,6 @@ Added in v1.0.0
   - [AtomRef (interface)](#atomref-interface)
   - [Collection (interface)](#collection-interface)
   - [ReadonlyRef (interface)](#readonlyref-interface)
-- [type ids](#type-ids)
-  - [TypeId](#typeid)
-  - [TypeId (type alias)](#typeid-type-alias)
 
 ---
 
@@ -90,28 +87,6 @@ export interface ReadonlyRef<A> extends Equal.Equal {
   readonly subscribe: (f: (a: A) => void) => () => void
   readonly map: <B>(f: (a: A) => B) => ReadonlyRef<B>
 }
-```
-
-Added in v1.0.0
-
-# type ids
-
-## TypeId
-
-**Signature**
-
-```ts
-export declare const TypeId: "~effect-atom/atom/AtomRef"
-```
-
-Added in v1.0.0
-
-## TypeId (type alias)
-
-**Signature**
-
-```ts
-export type TypeId = "~effect-atom/atom/AtomRef"
 ```
 
 Added in v1.0.0

@@ -29,7 +29,7 @@ Added in v1.0.0
 ```ts
 export declare const Tag: <Self>() => <const Id extends string, S extends LiveStoreSchema, Context = {}>(
   id: Id,
-  options: Options<Id, S, Context> | Atom.Atom<Options<Id, S, Context>>
+  options: Options<S, Context> | ((get: Atom.Context) => Options<S, Context>)
 ) => AtomLiveStore<Self, Id, S, Context>
 ```
 
@@ -87,10 +87,7 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export type Options<const Id extends string, S extends LiveStoreSchema, Context = {}> = CreateStoreOptions<
-  S,
-  Context
-> & {
+export type Options<S extends LiveStoreSchema, Context = {}> = CreateStoreOptions<S, Context> & {
   readonly otelOptions?: Partial<OtelOptions> | undefined
 }
 ```
