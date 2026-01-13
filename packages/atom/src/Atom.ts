@@ -1812,9 +1812,7 @@ export const kvs = <A>(options: {
       if (Option.isSome(value)) {
         return value.value
       }
-      const defaultValue = options.defaultValue()
-      get.set(setAtom, defaultValue)
-      return defaultValue
+      return options.defaultValue()
     },
     (ctx, value: A) => {
       ctx.set(setAtom, value as any)

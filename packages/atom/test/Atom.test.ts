@@ -3,6 +3,7 @@ import * as Hydration from "@effect-atom/atom/Hydration"
 import * as Registry from "@effect-atom/atom/Registry"
 import * as Result from "@effect-atom/atom/Result"
 import { addEqualityTesters, afterEach, assert, beforeEach, describe, expect, it, test, vitest } from "@effect/vitest"
+import * as KeyValueStore from "@effect/platform/KeyValueStore"
 import { Cause, Either, Equal, FiberRef, Schema, Struct, Subscribable, SubscriptionRef } from "effect"
 import * as Arr from "effect/Array"
 import * as Context from "effect/Context"
@@ -1500,6 +1501,62 @@ describe("Atom", () => {
     assert.strictEqual(result.value.a, 2)
     assert.strictEqual(result.value.b, 4)
     assert.strictEqual(runs, 2)
+  })
+
+  describe("kvs", () => {
+    it("preserves existing value after async load completes", async () => {
+      vitest.useRealTimers()
+      // Create an in-memory store with a pre-existing value
+      const storage = new Map<string, string>()
+      storage.set("test-key", JSON.stringify(42))
+
+      // Create a delayed KeyValueStore to simulate async loading
+      // Use KeyValueStore.make to get proper forSchema support
+      const DelayedKVS = Layer.succeed(
+        KeyValueStore.KeyValueStore,
+        KeyValueStore.make({
+          get: (key) =>
+            Effect.gen(function* () {
+              yield* Effect.sleep(20) // Short delay to create Initial state window
+              return Option.fromNullable(storage.get(key))
+            }),
+          getAll: Effect.succeed({}),
+          set: (key, value) =>
+            Effect.sync(() => {
+              storage.set(key, value)
+            }),
+          remove: (key) =>
+            Effect.sync(() => {
+              storage.delete(key)
+            }),
+          clear: Effect.sync(() => storage.clear()),
+          size: Effect.sync(() => storage.size)
+        })
+      )
+
+      const kvsRuntime = Atom.runtime(DelayedKVS)
+      const atom = Atom.kvs({
+        runtime: kvsRuntime,
+        key: "test-key",
+        schema: Schema.Number,
+        defaultValue: () => 0
+      })
+
+      const r = Registry.make()
+      r.mount(atom)
+
+      // First read during Initial state returns default
+      let value = r.get(atom)
+      expect(value).toEqual(0)
+
+      // Wait for async load AND any set effects to complete
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      // THE KEY ASSERTION: After load completes, storage should still have original value.
+      // The bug was that the default (0) would be written during Initial state,
+      // corrupting the storage before the async load could read it.
+      expect(storage.get("test-key")).toEqual(JSON.stringify(42))
+    })
   })
 })
 
