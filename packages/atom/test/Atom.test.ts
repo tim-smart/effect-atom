@@ -1504,6 +1504,54 @@ describe("Atom", () => {
   })
 
   describe("kvs", () => {
+    it("memoizes defaultValue while loading empty storage", async () => {
+      let calls = 0
+      const storage = new Map<string, string>()
+
+      const DelayedKVS = Layer.succeed(
+        KeyValueStore.KeyValueStore,
+        KeyValueStore.makeStringOnly({
+          get: (key) =>
+            Effect.gen(function*() {
+              yield* Effect.sleep(20)
+              return Option.fromNullable(storage.get(key))
+            }),
+          set: (key, value) =>
+            Effect.sync(() => {
+              storage.set(key, value)
+            }),
+          remove: (key) =>
+            Effect.sync(() => {
+              storage.delete(key)
+            }),
+          clear: Effect.sync(() => storage.clear()),
+          size: Effect.sync(() => storage.size)
+        })
+      )
+
+      const kvsRuntime = Atom.runtime(DelayedKVS)
+      const atom = Atom.kvs({
+        runtime: kvsRuntime,
+        key: "default-value-key",
+        schema: Schema.Number,
+        defaultValue: () => {
+          calls++
+          return 0
+        }
+      })
+
+      const r = Registry.make()
+      r.mount(atom)
+
+      expect(r.get(atom)).toEqual(0)
+      expect(calls).toEqual(1)
+
+      await vitest.advanceTimersByTimeAsync(50)
+
+      expect(r.get(atom)).toEqual(0)
+      expect(calls).toEqual(1)
+    })
+
     it("preserves existing value after async load completes", async () => {
       vitest.useRealTimers()
       // Create an in-memory store with a pre-existing value
@@ -1514,13 +1562,12 @@ describe("Atom", () => {
       // Use KeyValueStore.make to get proper forSchema support
       const DelayedKVS = Layer.succeed(
         KeyValueStore.KeyValueStore,
-        KeyValueStore.make({
+        KeyValueStore.makeStringOnly({
           get: (key) =>
             Effect.gen(function* () {
               yield* Effect.sleep(20) // Short delay to create Initial state window
               return Option.fromNullable(storage.get(key))
             }),
-          getAll: Effect.succeed({}),
           set: (key, value) =>
             Effect.sync(() => {
               storage.set(key, value)

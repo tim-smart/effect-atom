@@ -1808,11 +1808,17 @@ export const kvs = <A>(options: {
   return writable(
     (get) => {
       get.mount(setAtom)
+      const cached = get.self<A>()
       const value = Result.value(get(resultAtom))
       if (Option.isSome(value)) {
         return value.value
       }
-      return options.defaultValue()
+      if (Option.isSome(cached)) {
+        return cached.value
+      }
+      const defaultValue = options.defaultValue()
+      get.setSelf(defaultValue)
+      return defaultValue
     },
     (ctx, value: A) => {
       ctx.set(setAtom, value as any)
