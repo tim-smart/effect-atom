@@ -2,8 +2,8 @@ import * as Atom from "@effect-atom/atom/Atom"
 import * as Hydration from "@effect-atom/atom/Hydration"
 import * as Registry from "@effect-atom/atom/Registry"
 import * as Result from "@effect-atom/atom/Result"
-import { addEqualityTesters, afterEach, assert, beforeEach, describe, expect, it, test, vitest } from "@effect/vitest"
 import * as KeyValueStore from "@effect/platform/KeyValueStore"
+import { addEqualityTesters, afterEach, assert, beforeEach, describe, expect, it, test, vitest } from "@effect/vitest"
 import { Cause, Either, Equal, FiberRef, Schema, Struct, Subscribable, SubscriptionRef } from "effect"
 import * as Arr from "effect/Array"
 import * as Context from "effect/Context"
@@ -1564,7 +1564,7 @@ describe("Atom", () => {
         KeyValueStore.KeyValueStore,
         KeyValueStore.makeStringOnly({
           get: (key) =>
-            Effect.gen(function* () {
+            Effect.gen(function*() {
               yield* Effect.sleep(20) // Short delay to create Initial state window
               return Option.fromNullable(storage.get(key))
             }),
@@ -1593,7 +1593,7 @@ describe("Atom", () => {
       r.mount(atom)
 
       // First read during Initial state returns default
-      let value = r.get(atom)
+      const value = r.get(atom)
       expect(value).toEqual(0)
 
       // Wait for async load AND any set effects to complete

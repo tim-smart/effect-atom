@@ -1802,23 +1802,23 @@ export const kvs = <A>(options: {
   const resultAtom = options.runtime.atom(
     Effect.flatMap(
       KeyValueStore.KeyValueStore,
-      (store) => Effect.flatten(store.forSchema(options.schema).get(options.key))
+      (store) => store.forSchema(options.schema).get(options.key)
     )
   )
   return writable(
     (get) => {
       get.mount(setAtom)
-      const cached = get.self<A>()
-      const value = Result.value(get(resultAtom))
-      if (Option.isSome(value)) {
-        return value.value
-      }
-      if (Option.isSome(cached)) {
-        return cached.value
-      }
-      const defaultValue = options.defaultValue()
-      get.setSelf(defaultValue)
-      return defaultValue
+      get.subscribe(resultAtom, (result) => {
+        if (!Result.isSuccess(result)) return
+        if (Option.isSome(result.value)) {
+          get.setSelf(result.value.value)
+        } else {
+          const value = Option.getOrElse(get.self<A>(), options.defaultValue)
+          get.setSelf(value)
+          get.set(setAtom, value)
+        }
+      }, { immediate: true })
+      return Option.getOrElse(get.self<A>(), options.defaultValue)
     },
     (ctx, value: A) => {
       ctx.set(setAtom, value as any)
