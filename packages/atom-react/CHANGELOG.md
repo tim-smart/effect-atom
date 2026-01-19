@@ -1,5 +1,11 @@
 # @effect-rx/rx-react
 
+## 0.4.6
+
+### Patch Changes
+
+- [`fb922c9`](https://github.com/tim-smart/effect-atom/commit/fb922c964a6c2f6095da2ca01367584ed0f37938) Thanks [@tim-smart](https://github.com/tim-smart)! - add ScopedAtom module to atom-react
+
 ## 0.4.5
 
 ### Patch Changes
