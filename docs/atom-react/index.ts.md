@@ -19,6 +19,7 @@ Added in v1.0.0
 - [hooks](#hooks)
   - [From "./Hooks.js"](#from-hooksjs)
 - [re-exports](#re-exports)
+  - [From "./ScopedAtom.js"](#from-scopedatomjs)
   - [From "@effect-atom/atom/AtomHttpApi"](#from-effect-atomatomatomhttpapi)
   - [From "@effect-atom/atom/AtomRef"](#from-effect-atomatomatomref)
   - [From "@effect-atom/atom/AtomRpc"](#from-effect-atomatomatomrpc)
@@ -71,6 +72,18 @@ export * from "./Hooks.js"
 Added in v1.0.0
 
 # re-exports
+
+## From "./ScopedAtom.js"
+
+Re-exports all named exports from the "./ScopedAtom.js" module as `ScopedAtom`.
+
+**Signature**
+
+```ts
+export * as ScopedAtom from "./ScopedAtom.js"
+```
+
+Added in v1.0.0
 
 ## From "@effect-atom/atom/AtomHttpApi"
 

@@ -46,6 +46,12 @@ export * as Hydration from "@effect-atom/atom/Hydration"
 
 /**
  * @since 1.0.0
+ * @category re-exports
+ */
+export * as ScopedAtom from "./ScopedAtom.js"
+
+/**
+ * @since 1.0.0
  * @category hooks
  */
 export * from "./Hooks.js"
