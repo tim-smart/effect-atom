@@ -42,8 +42,10 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export interface AtomLiveStore<Self, Id extends string, S extends LiveStoreSchema, Context = {}>
-  extends Context.Tag<Self, Store<S, Context>> {
+export interface AtomLiveStore<Self, Id extends string, S extends LiveStoreSchema, Context = {}> extends Context.Tag<
+  Self,
+  Store<S, Context>
+> {
   new (_: never): Context.TagClassShape<Id, Store<S, Context>>
 
   readonly layer: Atom.Atom<Layer.Layer<Self>>

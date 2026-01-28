@@ -54,8 +54,10 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export interface AtomRpcClient<Self, Id extends string, Rpcs extends Rpc.Any, E>
-  extends Context.Tag<Self, RpcClient.RpcClient.Flat<Rpcs, RpcClientError>> {
+export interface AtomRpcClient<Self, Id extends string, Rpcs extends Rpc.Any, E> extends Context.Tag<
+  Self,
+  RpcClient.RpcClient.Flat<Rpcs, RpcClientError>
+> {
   new (_: never): Context.TagClassShape<Id, RpcClient.RpcClient.Flat<Rpcs, RpcClientError>>
 
   readonly layer: Layer.Layer<Self, E>

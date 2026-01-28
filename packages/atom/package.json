@@ -24,15 +24,15 @@
   "license": "MIT",
   "sideEffects": [],
   "devDependencies": {
-    "@effect/experimental": "^0.57.0",
-    "@effect/platform": "^0.93.0",
-    "@effect/rpc": "^0.72.1",
-    "effect": "^3.19.0"
+    "@effect/experimental": "^0.58.0",
+    "@effect/platform": "^0.94.2",
+    "@effect/rpc": "^0.73.0",
+    "effect": "^3.19.15"
   },
   "peerDependencies": {
-    "@effect/experimental": "^0.57.0",
-    "@effect/platform": "^0.93.0",
-    "@effect/rpc": "^0.72.1",
-    "effect": "^3.19.0"
+    "@effect/experimental": "^0.58.0",
+    "@effect/platform": "^0.94.2",
+    "@effect/rpc": "^0.73.0",
+    "effect": "^3.19.15"
   }
 }

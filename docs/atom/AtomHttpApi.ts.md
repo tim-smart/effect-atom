@@ -62,8 +62,13 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export interface AtomHttpApiClient<Self, Id extends string, Groups extends HttpApiGroup.HttpApiGroup.Any, ApiE, E>
-  extends Context.Tag<Self, Simplify<HttpApiClient.Client<Groups, ApiE, never>>> {
+export interface AtomHttpApiClient<
+  Self,
+  Id extends string,
+  Groups extends HttpApiGroup.HttpApiGroup.Any,
+  ApiE,
+  E
+> extends Context.Tag<Self, Simplify<HttpApiClient.Client<Groups, ApiE, never>>> {
   new (_: never): Context.TagClassShape<Id, Simplify<HttpApiClient.Client<Groups, ApiE, never>>>
 
   readonly layer: Layer.Layer<Self, E>

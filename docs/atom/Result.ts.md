@@ -225,12 +225,11 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export interface Schema<Success extends Schema_.Schema.All, Error extends Schema_.Schema.All>
-  extends Schema_.Schema<
-    Result<Success["Type"], Error["Type"]>,
-    Encoded<Success["Encoded"], Error["Encoded"]>,
-    Success["Context"] | Error["Context"]
-  > {}
+export interface Schema<Success extends Schema_.Schema.All, Error extends Schema_.Schema.All> extends Schema_.Schema<
+  Result<Success["Type"], Error["Type"]>,
+  Encoded<Success["Encoded"], Error["Encoded"]>,
+  Success["Context"] | Error["Context"]
+> {}
 ```
 
 Added in v1.0.0
