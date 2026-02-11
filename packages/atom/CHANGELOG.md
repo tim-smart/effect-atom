@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.5.1
+
+### Patch Changes
+
+- [#404](https://github.com/tim-smart/effect-atom/pull/404) [`abce499`](https://github.com/tim-smart/effect-atom/commit/abce4996e81d44dbe5ac172d2f629d4d42dda6da) Thanks [@petar-omni](https://github.com/petar-omni)! - use Set for node listeners to prevent skipping during notify
+
 ## 0.5.0
 
 ### Minor Changes
