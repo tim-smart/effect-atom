@@ -70,6 +70,29 @@ describe("Atom", () => {
     expect(r.get(counter)).toEqual(0)
   })
 
+  it("subscribe does not skip listeners when unsubscribing during notify", () => {
+    const counter = Atom.make(0)
+    const r = Registry.make()
+    let first = 0
+    let second = 0
+    let cancelFirst = () => {
+    }
+
+    cancelFirst = r.subscribe(counter, () => {
+      first++
+      cancelFirst()
+    })
+
+    r.subscribe(counter, () => {
+      second++
+    })
+
+    r.set(counter, 1)
+
+    expect(first).toEqual(1)
+    expect(second).toEqual(1)
+  })
+
   it("runtime", async () => {
     const count = counterRuntime.atom(Effect.flatMap(Counter, (_) => _.get))
     const r = Registry.make()
