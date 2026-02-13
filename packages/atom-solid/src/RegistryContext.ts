@@ -6,11 +6,15 @@ import * as Registry from "@effect-atom/atom/Registry"
 import type { JSX } from "solid-js"
 import { createComponent, createContext, onCleanup } from "solid-js"
 
+const defaultScheduleTask = (f: () => void) => queueMicrotask(f)
+
 /**
  * @since 1.0.0
  * @category context
  */
-export const RegistryContext = createContext<Registry.Registry>(Registry.make())
+export const RegistryContext = createContext<Registry.Registry>(Registry.make({
+  scheduleTask: defaultScheduleTask
+}))
 
 /**
  * @since 1.0.0
@@ -24,7 +28,7 @@ export const RegistryProvider = (options: {
   readonly defaultIdleTTL?: number | undefined
 }) => {
   const registry = Registry.make({
-    scheduleTask: options.scheduleTask,
+    scheduleTask: options.scheduleTask ?? defaultScheduleTask,
     initialValues: options.initialValues,
     timeoutResolution: options.timeoutResolution,
     defaultIdleTTL: options.defaultIdleTTL
