@@ -9,6 +9,9 @@
     },
     {
       "path": "packages/atom-vue"
+    },
+    {
+      "path": "packages/atom-solid"
     }
   ]
 }

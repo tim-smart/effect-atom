@@ -43,7 +43,10 @@
       "@effect-atom/atom-react/*": ["./packages/atom-react/src/*.js"],
       "@effect-atom/atom-react": ["./packages/atom-react/src/index.js"],
       "@effect-atom/atom-vue/test/*": ["./packages/atom-vue/test/*.js"],
-      "@effect-atom/atom-vue/*": ["./packages/atom-vue/src/*.js"]
+      "@effect-atom/atom-vue/*": ["./packages/atom-vue/src/*.js"],
+      "@effect-atom/atom-solid/test/*": ["./packages/atom-solid/test/*.js"],
+      "@effect-atom/atom-solid/*": ["./packages/atom-solid/src/*.js"],
+      "@effect-atom/atom-solid": ["./packages/atom-solid/src/index.js"]
     },
     "plugins": [{ "name": "@effect/language-service" }]
   }
