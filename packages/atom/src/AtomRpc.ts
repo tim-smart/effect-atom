@@ -118,6 +118,7 @@ export const Tag = <Self>() =>
     readonly generateRequestId?: (() => RequestId) | undefined
     readonly disableTracing?: boolean | undefined
     readonly makeEffect?: Effect.Effect<RpcClient.RpcClient.Flat<Rpcs, RpcClientError>, never, RM> | undefined
+    readonly runtime?: Atom.RuntimeFactory | undefined
   }
 ): AtomRpcClient<Self, Id, Rpcs, ER> => {
   const self: Mutable<AtomRpcClient<Self, Id, Rpcs, ER>> = Context.Tag(id)<
@@ -133,7 +134,8 @@ export const Tag = <Self>() =>
         flatten: true
       }) as Effect.Effect<RpcClient.RpcClient.Flat<Rpcs, RpcClientError>, never, RM>
   ).pipe(Layer.provide(options.protocol))
-  self.runtime = Atom.runtime(self.layer)
+  const runtimeFactory = options.runtime ?? Atom.runtime
+  self.runtime = runtimeFactory(self.layer)
 
   self.mutation = Atom.family(<Tag extends Rpc.Tag<Rpcs>>(tag: Tag) =>
     self.runtime.fn<{

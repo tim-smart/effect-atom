@@ -49,6 +49,7 @@ export declare const Tag: <Self>() => <
       | ((effect: Effect.Effect<unknown, unknown>) => Effect.Effect<unknown, unknown>)
       | undefined
     readonly baseUrl?: URL | string | undefined
+    readonly runtime?: Atom.RuntimeFactory | undefined
   }
 ) => AtomHttpApiClient<Self, Id, Groups, ApiE, E>
 ```
