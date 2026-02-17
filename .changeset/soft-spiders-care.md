@@ -1,5 +1,5 @@
 ---
-"@effect-atom/atom": minor
+"@effect-atom/atom": patch
 ---
 
 allow overriding AtomHttpApi & AtomRpc runtime factory
