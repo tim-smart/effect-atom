@@ -41,6 +41,7 @@ export declare const Tag: <Self>() => <
     readonly generateRequestId?: (() => RequestId) | undefined
     readonly disableTracing?: boolean | undefined
     readonly makeEffect?: Effect.Effect<RpcClient.RpcClient.Flat<Rpcs, RpcClientError>, never, RM> | undefined
+    readonly runtime?: Atom.RuntimeFactory | undefined
   }
 ) => AtomRpcClient<Self, Id, Rpcs, ER>
 ```
