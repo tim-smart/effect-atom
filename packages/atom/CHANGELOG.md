@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.5.2
+
+### Patch Changes
+
+- [#409](https://github.com/tim-smart/effect-atom/pull/409) [`6fe7bd0`](https://github.com/tim-smart/effect-atom/commit/6fe7bd02564d8f53f1cc570f808f2beea035675c) Thanks [@harrysolovay](https://github.com/harrysolovay)! - allow overriding AtomHttpApi & AtomRpc runtime factory
+
 ## 0.5.1
 
 ### Patch Changes
