@@ -217,9 +217,7 @@ class RegistryImpl implements Registry.Registry {
 
   removeNodeTimeout(node: Node<any>): void {
     const bucket = this.nodeTimeoutBucket.get(node)
-    if (bucket === undefined) {
-      return
-    }
+    if (bucket === undefined) return
     this.nodeTimeoutBucket.delete(node)
     this.scheduleNodeRemoval(node)
 
@@ -237,10 +235,8 @@ class RegistryImpl implements Registry.Registry {
     this.timeoutBuckets.delete(bucket)
 
     nodes.forEach((node) => {
-      if (!node.canBeRemoved) {
-        return
-      }
       this.nodeTimeoutBucket.delete(node)
+      if (!node.canBeRemoved) return
       this.nodes.delete(atomKey(node.atom))
       this.#currentSweepTTL = node.atom.idleTTL ?? this.defaultIdleTTL!
       node.remove()
