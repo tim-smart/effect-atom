@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.5.3
+
+### Patch Changes
+
+- [`f71598a`](https://github.com/tim-smart/effect-atom/commit/f71598a426017654b4b5f923162e77a3e56207e5) Thanks [@tim-smart](https://github.com/tim-smart)! - ensure node timeout buckets are cleaned up correctly
+
 ## 0.5.2
 
 ### Patch Changes
