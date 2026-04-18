@@ -1628,6 +1628,99 @@ describe("Atom", () => {
       expect(storage.get("test-key")).toEqual(JSON.stringify(42))
     })
   })
+
+  describe("dedupeWith", () => {
+    it("plain-object atom without dedupeWith re-notifies on structurally-equal new reference", () => {
+      const atom = Atom.make({ n: 1 })
+      const r = Registry.make()
+      r.get(atom)
+      let count = 0
+      const cancel = r.subscribe(atom, () => {
+        count++
+      })
+      r.set(atom, { n: 1 })
+      r.set(atom, { n: 1 })
+      expect(count).toEqual(2)
+      cancel()
+    })
+
+    it("dedupeWith with deep equality suppresses notify on structurally-equal writes", () => {
+      const eq = (a: { n: number }, b: { n: number }) => a.n === b.n
+      const atom = Atom.make({ n: 1 }).pipe(Atom.dedupeWith(eq))
+      const r = Registry.make()
+      r.get(atom)
+      let count = 0
+      const cancel = r.subscribe(atom, () => {
+        count++
+      })
+      r.set(atom, { n: 1 })
+      r.set(atom, { n: 1 })
+      expect(count).toEqual(0)
+      r.set(atom, { n: 2 })
+      expect(count).toEqual(1)
+      cancel()
+    })
+
+    it("dedupeWith does not suppress the initial value", () => {
+      const atom = Atom.make({ n: 1 }).pipe(
+        Atom.dedupeWith((a: { n: number }, b: { n: number }) => a.n === b.n)
+      )
+      const r = Registry.make()
+      expect(r.get(atom)).toEqual({ n: 1 })
+    })
+
+    it("dedupeWith prevents downstream invalidation of derived atoms", () => {
+      const source = Atom.make({ n: 1 }).pipe(
+        Atom.keepAlive,
+        Atom.dedupeWith((a: { n: number }, b: { n: number }) => a.n === b.n)
+      )
+      let derivations = 0
+      const derived = Atom.readable((get) => {
+        derivations++
+        return get(source).n * 2
+      }).pipe(Atom.keepAlive)
+      const r = Registry.make()
+      expect(r.get(derived)).toEqual(2)
+      expect(derivations).toEqual(1)
+      r.set(source, { n: 1 })
+      expect(r.get(derived)).toEqual(2)
+      expect(derivations).toEqual(1)
+      r.set(source, { n: 3 })
+      expect(r.get(derived)).toEqual(6)
+      expect(derivations).toEqual(2)
+    })
+
+    it("composes with setIdleTTL in either order", () => {
+      const eq = (a: { n: number }, b: { n: number }) => a.n === b.n
+      const a = Atom.make({ n: 1 }).pipe(
+        Atom.dedupeWith(eq),
+        Atom.setIdleTTL("1 second")
+      )
+      const b = Atom.make({ n: 1 }).pipe(
+        Atom.setIdleTTL("1 second"),
+        Atom.dedupeWith(eq)
+      )
+      expect(a.eq).toBe(eq)
+      expect(b.eq).toBe(eq)
+      expect(a.idleTTL).toEqual(1000)
+      expect(b.idleTTL).toEqual(1000)
+    })
+
+    it("default eq is Equal.equals — primitive writes still deduplicate unchanged", () => {
+      const atom = Atom.make(1)
+      const r = Registry.make()
+      r.get(atom)
+      let count = 0
+      const cancel = r.subscribe(atom, () => {
+        count++
+      })
+      r.set(atom, 1)
+      expect(count).toEqual(0)
+      r.set(atom, 2)
+      expect(count).toEqual(1)
+      cancel()
+    })
+  })
 })
 
 interface BuildCounter {
