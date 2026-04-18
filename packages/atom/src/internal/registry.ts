@@ -1,5 +1,4 @@
 import * as Effect from "effect/Effect"
-import * as Equal from "effect/Equal"
 import * as Exit from "effect/Exit"
 import { constVoid, pipe } from "effect/Function"
 import { globalValue } from "effect/GlobalValue"
@@ -341,7 +340,7 @@ class Node<A> {
     }
 
     this.state = NodeState.valid
-    if (Equal.equals(this._value, value)) {
+    if (this.atom.eq(this._value, value)) {
       return
     }
 
