@@ -168,9 +168,9 @@ want the atom to have. `RegistryProvider`'s `initialValues` accepts any
 any component reads it.
 
 Because effect-backed atoms hold a [Result](/guides/atom-react/result-types),
-you seed them with one of [Result.success](/atom/Result.ts.html#success),
-[Result.fail](/atom/Result.ts.html#fail), or
-[Result.initial](/atom/Result.ts.html#initial).
+you seed them with one of [Result.success](/atom/Result.ts#success),
+[Result.fail](/atom/Result.ts#fail), or
+[Result.initial](/atom/Result.ts#initial).
 
 ```typescript
 import { Result } from "@effect-atom/atom";
@@ -289,8 +289,9 @@ while keeping atom identities the same. For most isolated component tests
 this is the right tool — it requires no changes to your atoms and the
 existing helper APIs all keep working.
 
-[Scoped Atoms](/atom-react/ScopedAtom.ts) take a different approach: they
-swap the atom *identity itself* per `Provider` boundary. Reach for them when:
+[Scoped Atoms](/guides/atom-react/scoped-atoms) take a different approach:
+they swap the atom *identity itself* per `Provider` boundary. Reach for them
+when:
 
 - You need different *atoms* (not just different values) in different parts
   of the same tree, for example for two independent panels each with their
@@ -302,4 +303,5 @@ swap the atom *identity itself* per `Provider` boundary. Reach for them when:
 
 For service mocking and most component tests, prefer `RegistryProvider` with
 `initialValues`. Reach for `ScopedAtom` when atom identity itself needs to
-vary across the tree.
+vary across the tree — see the
+[Scoped Atoms guide](/guides/atom-react/scoped-atoms) for the full story.

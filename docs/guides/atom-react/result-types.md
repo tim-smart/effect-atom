@@ -8,7 +8,7 @@ nav_order: 2
 
 ## Result Types & Consuming Atom State
 
-To use data from an atom in React, the hooks return a [Result](/atom/Result.ts.html).
+To use data from an atom in React, the hooks return a [Result](/atom/Result.ts).
 A `Result` is a tagged union that can be in one of three states: `Initial`,
 `Success`, or `Failure`. The `Initial` state is important for asynchronous
 atoms: it represents the "loading" phase before the async work has resolved.
@@ -36,7 +36,7 @@ states.
 ### Using Result.builder to Render
 
 The above pattern is common when working with async atoms. To make the code
-more concise, use [Result.builder](/atom/Result.ts.html#builder), a fluent
+more concise, use [Result.builder](/atom/Result.ts#builder), a fluent
 API that maps each state to a React node:
 
 ```typescript
@@ -73,5 +73,5 @@ Useful branches include:
 - `onError((error) => ...)`: only typed errors (the `E` channel).
 - `onDefect((defect) => ...)`: only unexpected errors (`Effect.die`, exceptions, etc.).
 
-See [Result.builder](/atom/Result.ts.html#builder) for the full set of
+See [Result.builder](/atom/Result.ts#builder) for the full set of
 branches.

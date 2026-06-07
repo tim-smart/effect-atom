@@ -3,7 +3,7 @@ title: "Advanced Topics: The Dependency Graph"
 parent: "Using Atom with React"
 grand_parent: "Guides"
 permalink: /guides/atom-react/advanced-topics
-nav_order: 5
+nav_order: 6
 ---
 
 # Advanced Topics: The Dependency Graph
@@ -176,6 +176,10 @@ substituted value.
 
 ## Where `ScopedAtom` Fits
 
+This section covers the mechanics of how `ScopedAtom` interacts with the
+graph. For the practical guide on when to reach for one, common patterns,
+and gotchas, see [Scoped Atoms](/guides/atom-react/scoped-atoms).
+
 `ScopedAtom` lives one level *above* the dependency graph. It is a React
 Context wrapper, not a registry primitive.
 
@@ -288,7 +292,7 @@ A mental checklist for choosing where in this stack to operate:
 2. **Need to swap an atom's value for a subtree?** Use `RegistryProvider`
    with `initialValues` for the leaf atom. Its effect is bypassed entirely.
 3. **Need to swap an atom's *identity* for a subtree?** Use `ScopedAtom`.
-   Reach for it when the same atom descriptor isn't right everywhere —
+   Reach for it when the same atom descriptor isn't right everywhere,
    either because each subtree needs its own copy, or because the atom's
    construction depends on tree-local input.
 4. **Need genuine isolation between subtrees** (e.g. test isolation, two
@@ -301,7 +305,8 @@ independent state graphs.
 
 ## See Also
 
-- [Services, Registries, and Testability](/guides/atom-react/services-registry)
-- [Atom](/atom/Atom.ts) — the descriptor type and combinators
-- [Registry](/atom/Registry.ts) — the state container
-- [ScopedAtom](/atom-react/ScopedAtom.ts) — per-subtree atom identity
+- [Services, Registries, and Testability](/guides/atom-react/services-registry): the practical guide for swapping services.
+- [Scoped Atoms](/guides/atom-react/scoped-atoms): the practical guide for per-subtree atom identity.
+- [Atom](/atom/Atom.ts): the descriptor type and combinators.
+- [Registry](/atom/Registry.ts): the state container.
+- [ScopedAtom](/atom-react/ScopedAtom.ts): API reference for `ScopedAtom`.
