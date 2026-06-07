@@ -2,6 +2,7 @@
 title: AtomHttpApi.ts
 nav_order: 2
 parent: "@effect-atom/atom"
+grand_parent: "Reference"
 ---
 
 ## AtomHttpApi overview

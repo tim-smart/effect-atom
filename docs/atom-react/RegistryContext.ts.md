@@ -2,6 +2,7 @@
 title: RegistryContext.ts
 nav_order: 4
 parent: "@effect-atom/atom-react"
+grand_parent: "Reference"
 ---
 
 ## RegistryContext overview

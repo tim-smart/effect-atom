@@ -2,6 +2,7 @@
 title: index.ts
 nav_order: 6
 parent: "@effect-atom/atom"
+grand_parent: "Reference"
 ---
 
 ## index overview

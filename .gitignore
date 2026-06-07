@@ -11,3 +11,10 @@ dist/
 .direnv/
 .idea/
 packages/*/docs
+
+## Jekyll Docs
+docs/vendor
+docs/_site
+docs/.bundle
+docs/Gemfile.lock
+

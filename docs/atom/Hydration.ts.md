@@ -2,6 +2,7 @@
 title: Hydration.ts
 nav_order: 5
 parent: "@effect-atom/atom"
+grand_parent: "Reference"
 ---
 
 ## Hydration overview
