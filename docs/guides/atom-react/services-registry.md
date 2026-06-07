@@ -6,10 +6,10 @@ permalink: /guides/atom-react/services-registry
 nav_order: 4
 ---
 
-# Understanding Services and Layers in Effect-Atom 
+# Services, Registries, and Testability
 
-In [Basic Types](/atom/BasicTypes.ts), we introduced you to the core building block
-of Effect-Atom, but intentionally left out how to provide Services. 
+In [Basic Types](/guides/atom-react/basic-types), we introduced the core building
+block of effect-atom but intentionally left out how to provide Services.
 
 ```typescript
 import { Atom } from "@effect-atom/atom-react";
@@ -23,59 +23,64 @@ export const fetchMessages = Effect.gen(function* () {
 }).pipe(
     // ...providers,
     // ...retry logic,
-    // ...error handing,
+    // ...error handling,
     // ...etc.
 )
 
 export const MessagesAtom = Atom.make(fetchMessages);
 ```
 
-Your first instinct may be to create a service, and provide it directly to each atom's generator.
+Your first instinct may be to create a service and provide it directly to
+each atom's effect.
 
 ```typescript
 import { Atom } from "@effect-atom/atom-react";
-import { Effect, Context } from "effect"
-import type { Messages } from "..."
+import { Effect, Context, Layer } from "effect";
 
-export class APIService extends Context.Tag("deno-web-application.services.APIService")<
-    APIService, {
-        readonly getMessages: () => Effect.Effect<Messages, never, ...>
+export class APIService extends Context.Tag("MyApp/APIService")<
+    APIService,
+    {
+        readonly getMessages: () => Effect.Effect<ReadonlyArray<Message>>;
     }
 >() {}
 
-export const APIServiceLive = APIService.of({
-    readonly getMessages: () => Effect.Effect<Messages, never, ...> = () => Effect.gen(function* () {
-        const response = yield* Effect.tryPromise(() => fetch("...."));
-        const data = yield* Effect.tryPromise(() => response.json());
-        return data.messages;
-    })
+export const APIServiceLive = Layer.succeed(APIService, {
+    getMessages: () =>
+        Effect.tryPromise(() =>
+            fetch("/api/messages").then((res) => res.json() as Promise<ReadonlyArray<Message>>)
+        ).pipe(Effect.orDie),
 });
 
 export const fetchMessages = Effect.gen(function* () {
     const api = yield* APIService;
-    const res = yield* api.getMessages();
-    return data.messages;
+    return yield* api.getMessages();
 }).pipe(
-    Effect.provideService(APIService, APIServiceLive);
-)
+    Effect.provide(APIServiceLive),
+);
 
 export const MessagesAtom = Atom.make(fetchMessages);
 ```
 
-This is a valid way to provide services to atoms, and does create a service that any other atoms can use,
-but it tightly couples the live implementation of services to the atoms. If for example, you wanted
-to mock this component in a development environment, it is hard linked to the live service.
+This is a valid way to provide services to atoms, and it makes a service that
+other atoms can also use. The downside is that it tightly couples the live
+implementation of each service to the atom. If you wanted to mock this
+component in a development or test environment, the atom is hard-linked to
+the live service.
 
-This generally will not scale well, since you have to register each service at the atom
-layer. Luckily, effect-atom provides a way to register entire layers into a Provider context,
-so you can register them once at the root of your application, as well as swap them out.
+This generally will not scale well, since you have to register each service
+at the atom layer. Luckily, effect-atom provides a way to register an entire
+layer once at the root of your application, and lets you swap it out per
+React subtree.
 
 ### Registry Providers and Layers
 
-One way to think of the [RegistryProvider] is as a per-subtree container for atom state. Atoms built
-from it's constructor with a registered layer, reference runtime's layer in that registry
-just like derived atoms reference other atoms in the context.
+A [Registry](/atom/Registry.ts) is a per-subtree container for atom state. It
+holds the cached value, subscriptions, and lifetime of every atom that has
+been read inside it. The [RegistryProvider](/atom-react/RegistryContext.ts)
+component provides a fresh `Registry` instance via React Context, so every
+subtree can have its own independent state graph.
 
+Mount one at the root of your application:
 
 ```typescript
 "use client";
@@ -85,13 +90,13 @@ import { RegistryProvider } from "@effect-atom/atom-react";
 export default function Layout({
     children
 }: {
-    children: React.ReactNode
+    children: React.ReactNode;
 }) {
   return (
     <html>
       <body>
         <RegistryProvider>
-            {children}
+          {children}
         </RegistryProvider>
       </body>
     </html>
@@ -99,51 +104,60 @@ export default function Layout({
 }
 ```
 
-Next, you can register a single Layer with all your services and register them into the provider
-your atoms need, using [Atom.runtime](/atom/Atom.ts#runtime).
+Next, define a single `Layer` that composes all your services, and turn it
+into a runtime atom using [Atom.runtime](/atom/Atom.ts#runtime):
 
 ```typescript
-import { APILayerLive } from "./APILayer.ts";
-.... more layers
 import { Layer } from "effect";
 import { Atom } from "@effect-atom/atom-react";
+import { APILayerLive } from "./APILayer";
+// ...other layer imports
 
-export const ApplicationLayerLive = Layer.merge(
-    ... merge and compose all the layers here
+export const ApplicationLayerLive = Layer.mergeAll(
+    APILayerLive,
+    // ...other layers
 );
 
 export const AppRuntime = Atom.runtime(ApplicationLayerLive);
 ```
 
-This runtime when used, will look for the closest parent Registry Provider, and store the layers
-there.
+`Atom.runtime(layer)` produces an *atom-runtime* that is itself an atom whose value
+is the built `Runtime<R>` for that layer, plus factory methods (`.atom`,
+`.fn`, `.pull`, `.subscriptionRef`, ...) for creating atoms that consume the
+layer's services. The first time the runtime atom is read inside a registry,
+the layer is built into a scope tied to that registry's lifetime. When the
+`RegistryProvider` unmounts, the scope is closed and the layer's resources
+are released.
 
 ### Using the Runtime with Registered Services
 
-Because we used a specific Registry, atoms need to be linked to the same runtime atom. This is done
-using Atom constructors directly on this runtime. The instantiated value, exposes all the general
-constructors for atoms. If we take the code above, refactor out the services into their on layer
-files, you end up with a registered atom like this:
+Atoms that depend on the layer's services are created with the runtime's
+constructor methods rather than `Atom.make`. The signatures are nearly
+identical, but the runtime methods automatically thread the runtime through
+so the effect can access any service in the layer:
 
 ```typescript
-import { AppRuntime } from "./...(the application layer file)"
-import { Effect } from "effect"
+import { Effect } from "effect";
+import { AppRuntime } from "./runtime";
+import { APIService } from "./services/APIService";
 
 export const fetchMessages = Effect.gen(function* () {
     const api = yield* APIService;
-    const res = yield* api.getMessages();
-    return data.messages;
-})
+    return yield* api.getMessages();
+});
 
 export const MessagesAtom = AppRuntime.atom(fetchMessages);
 ```
 
-Now Atom.make is replaced with the runtime alias, [someRuntime.atom](/atom/Atom.ts#atomruntime-interfaceatom).
-The signatures are generally identical to every Atom constructor, and there
-are others to make other flavors of Atoms.
+`Atom.make` is replaced with the runtime's
+[atom method](/atom/Atom.ts#atomruntime-interfaceatom); the runtime also
+exposes `.fn`, `.pull`, `.subscriptionRef`, and `.subscribable` for other
+flavors of atom.
 
-Components that consume the MessagesAtom will now just need to use the Atom,
-and you don't have to worry about providing layers to new Atoms.
+Components that consume `MessagesAtom` use the same hooks as any other atom. 
+You don't have to thread layers or runtimes through your component tree at
+all. The runtime is part of the dependency graph (see
+[Advanced Topics](/guides/atom-react/advanced-topics)).
 
 ### Mocking Atoms in Tests with `initialValues`
 
@@ -179,7 +193,7 @@ const withMockMessages = () => (
 ```
 
 Because the atom's value is already in the registry, its underlying effect is
-never run — no API call is made and no service is required. The component
+never run so no API call is made and no service is required. The component
 renders with `Result.Success(mockMessages)` immediately on first render.
 
 The same pattern covers the other states an async atom can be in:
@@ -224,13 +238,13 @@ directly:
 </RegistryProvider>
 ```
 
-You don't need to mock `UserAtom`, `APIService`, or the layer — because
+You don't need to mock `UserAtom`, `APIService`, or the layer because
 `UserMessagesAtom` already has its value cached, none of its dependencies are
 read.
 
 ### When You Need the Effect to Actually Run
 
-Sometimes you want to exercise the atom's effect itself — to verify it calls
+Sometimes you want to exercise the atom's effect itself to verify it calls
 the service correctly, to test retry or error behavior end to end, or to
 integration-test multiple atoms together. In that case, mock the layer.
 
@@ -279,7 +293,7 @@ existing helper APIs all keep working.
 swap the atom *identity itself* per `Provider` boundary. Reach for them when:
 
 - You need different *atoms* (not just different values) in different parts
-  of the same tree — for example, two independent panels each with their
+  of the same tree, for example for two independent panels each with their
   own state.
 - You want to parameterize an atom by tree position (URL params, a user id
   passed from a route).
@@ -289,4 +303,3 @@ swap the atom *identity itself* per `Provider` boundary. Reach for them when:
 For service mocking and most component tests, prefer `RegistryProvider` with
 `initialValues`. Reach for `ScopedAtom` when atom identity itself needs to
 vary across the tree.
-
