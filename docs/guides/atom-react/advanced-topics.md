@@ -174,6 +174,169 @@ seeding a value for `AppRuntime` or `AppRuntime.layer` replaces what the
 graph sees at that node, and every downstream atom transparently uses the
 substituted value.
 
+## SSR and the Module-Scoped Default Registry
+
+[RegistryContext](/atom-react/RegistryContext.ts) is created with a real
+`Registry` as its *default value*:
+
+```typescript
+export const RegistryContext = React.createContext<Registry>(Registry.make({
+  scheduleTask,
+  defaultIdleTTL: 400
+}));
+```
+
+Because that `Registry.make(...)` call runs at module load, the resulting
+instance is **module-scoped**. There's one per Node process / browser tab,
+and it persists for the lifetime of that process. Every component that
+doesn't have a closer `RegistryProvider` above it shares it.
+
+For a client-only SPA this is fine: there's exactly one user, one tab, and
+one registry that lives for the lifetime of the page. For SSR it's
+actively dangerous.
+
+### Why the default registry breaks under SSR
+
+A Node server typically reuses the same module across concurrent requests.
+If every request reads atoms through the module-scoped default registry,
+you get a single graph shared by all of them:
+
+```
+                  ┌─────────────────────────┐
+                  │  default singleton      │
+                  │  Registry (module-      │
+                  │  scoped)                │
+Request A ──read──┤   userAtom → {id:1}     ├──read── Request B
+Request B ──write─┤   userAtom → {id:2}     │
+                  │   ...                   │
+                  └─────────────────────────┘
+```
+
+Three concrete failure modes follow:
+
+- **State leakage between users.** Request A's render writes
+  `userAtom = Result.Success({id:1})` to the registry. Request B reads
+  the same atom moments later and sees user 1's data, because the cache
+  is shared. This is a real correctness and privacy bug, not a
+  theoretical one.
+- **Races during concurrent rendering.** Two requests that touch the same
+  atom both call `setValue` — they race; one wins; both renders end up
+  with the wrong data.
+- **Cache growth across requests.** The registry's idle TTL gives nodes a
+  grace period before removal. Under load, the cache accumulates faster
+  than it evicts.
+
+Per-request registries (via `RegistryProvider` or a manual
+`RegistryContext.Provider` wrapping the SSR render) eliminate all three,
+because each request has its own graph.
+
+### What's actually shared vs per-request
+
+There are two distinct things to keep straight:
+
+1. **Atom descriptors**: `const messagesAtom = Atom.make(...)`. These are
+   module-level constants. They're imported once per Node process and stay
+   around for its entire lifetime. They're shared across every request on
+   that server instance, which is fine. That's just how JS modules work.
+2. **Atom values**: the cached results stored in a `Registry`. *This* is
+   what needs to be isolated per request.
+
+The module-scoped singleton in `RegistryContext` shares (2) across
+requests, which is the source of the trouble. Sharing (1) is unavoidable
+and harmless.
+
+### "Wouldn't I want some things shared across requests?"
+
+Yes, but at a different level. You don't want to rebuild a database
+connection pool, an HTTP client, or any other expensive layer service for
+every single request. Effect-atom already handles this for you, through
+the [`Layer.MemoMap`](/atom/Atom.ts#defaultmemomap):
+
+```typescript
+export const defaultMemoMap: Layer.MemoMap = globalValue(
+  "@effect-atom/atom/Atom/defaultMemoMap",
+  () => Effect.runSync(Layer.makeMemoMap)
+);
+
+export const runtime: RuntimeFactory = globalValue(
+  "@effect-atom/atom/Atom/defaultContext",
+  () => context({ memoMap: defaultMemoMap })
+);
+```
+
+`defaultMemoMap` is a process-global `globalValue`. There is exactly one for the
+lifetime of the process, and every runtime atom passes it to
+`Layer.buildWithMemoMap` when building its layer. When Request A's
+registry builds the runtime, the layer is built into the MemoMap. When
+Request B's registry builds the same runtime, the MemoMap returns the
+already-built services rather than rebuilding them.
+
+So the SSR picture looks like this:
+
+```
+   Process-wide                                Per-request
+   ─────────────                               ────────────
+   module-level Atom descriptors               Request A's Registry
+   default Layer.MemoMap          ◄──build──── Request B's Registry
+   (DB pool, HTTP client, ...)                 Request C's Registry
+```
+
+You get the best of both worlds: cheap setup (no rebuilding services per
+request) and correct isolation (no atom state leakage).
+
+### When you really do want cross-request value caching
+
+The rare case where you genuinely want an atom's *cached value* to survive
+across requests is almost always better expressed differently:
+
+1. **Just a constant.** If it's truly static, declare it as data, not as
+   an atom.
+2. **A layer service with internal caching.** Write a `CacheService` that
+   lives in your layer; it'll be shared via the MemoMap. The atom that
+   reads from it gets fresh values per request, but the cache itself is
+   process-wide.
+3. **Framework-level caching.** Next.js's `fetch` cache, ISR, the edge
+   cache, or a CDN. These tools are purpose-built for cross-request
+   caching and handle invalidation properly.
+4. **A dedicated cache layer.** Redis, an in-memory LRU service, etc.,
+   wrapped as a Layer like any other service.
+
+What you almost never want is to lean on registry state for cross-request
+caching. It'll bite you the moment one of those "atoms" turns out to be
+user-scoped or has any per-request derivation in its dependency graph.
+
+### The recommended SSR pattern
+
+For Next.js App Router (and any other framework that calls your root
+component fresh per request), mount the provider in the root layout:
+
+```typescript
+"use client";
+import { RegistryProvider } from "@effect-atom/atom-react";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html>
+      <body>
+        <RegistryProvider>{children}</RegistryProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+Each render call gets its own `RegistryProvider`, which `useRef`s a
+freshly-made `Registry`. The first read of the runtime atom builds the
+layer through `defaultMemoMap`, so the underlying services are reused
+across requests, but the atom values (caches, subscriptions, lifetimes)
+are per-request.
+
+When the request finishes and the React tree is discarded,
+`RegistryProvider`'s 500ms-delayed cleanup eventually disposes the
+registry's scope. That releases the request's claim on its MemoMap
+entries; the underlying layer stays alive as long as some other request
+references it.
+
 ## Where `ScopedAtom` Fits
 
 This section covers the mechanics of how `ScopedAtom` interacts with the

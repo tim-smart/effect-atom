@@ -80,7 +80,39 @@ been read inside it. The [RegistryProvider](/atom-react/RegistryContext.ts)
 component provides a fresh `Registry` instance via React Context, so every
 subtree can have its own independent state graph.
 
-Mount one at the root of your application:
+#### Do I need to mount a `RegistryProvider`?
+
+Not always. `RegistryContext` is created with a default value, a real
+`Registry` instance, so atoms work out of the box even if no
+`RegistryProvider` is mounted above them:
+
+```typescript
+// This is what RegistryContext does at module load:
+const defaultRegistry = Registry.make({ defaultIdleTTL: 400 });
+export const RegistryContext = React.createContext(defaultRegistry);
+```
+
+That default registry is **module-scoped**: there's one per Node process /
+browser tab, and every component that doesn't have a closer
+`RegistryProvider` above it shares it. Whether that's safe depends on
+your environment:
+
+| Environment | Need a `RegistryProvider`? | Why |
+|---|---|---|
+| Client-only SPA (Vite, CRA, single-page apps) | Optional | One user, one tab, one registry — the default singleton is fine. |
+| SSR (Next.js App Router, Remix, etc.) | **Yes** | The module-scoped registry would leak state across concurrent requests on the same Node process. Each request needs its own registry. |
+| Tests | **Yes** (or a manual `RegistryContext.Provider`) | Each test needs an isolated registry so cached values, subscriptions, and lifetimes don't bleed between tests. |
+| Disposable subtree (a modal, sandbox, embedded app) | Optional | Mounting one gives the subtree its own state graph that's torn down when it unmounts. |
+
+For an SSR app, the typical place to mount one is in the root layout. See
+[Advanced Topics: SSR and the Module-Scoped Default Registry](/guides/atom-react/advanced-topics#ssr-and-the-module-scoped-default-registry)
+for why this is required and how shared layer services are still reused
+across requests via the [Layer.MemoMap](/atom/Atom.ts#defaultmemomap).
+
+#### Mounting `RegistryProvider`
+
+For SSR (or anytime you want explicit registry control), mount one at the
+root of your application:
 
 ```typescript
 "use client";
@@ -162,10 +194,10 @@ all. The runtime is part of the dependency graph (see
 ### Mocking Atoms in Tests with `initialValues`
 
 For testing a component that consumes `MessagesAtom`, the simplest approach is
-to skip the service plumbing entirely and seed the registry with the value you
-want the atom to have. `RegistryProvider`'s `initialValues` accepts any
-`[atom, value]` pair and sets the registry's cached value for that atom before
-any component reads it.
+to skip the service plumbing entirely and seed a test-only registry with the
+value you want the atom to have. `Registry.make` accepts `initialValues` —
+an iterable of `[atom, value]` pairs — and pre-populates the cache before any
+component reads from it.
 
 Because effect-backed atoms hold a [Result](/guides/atom-react/result-types),
 you seed them with one of [Result.success](/atom/Result.ts#success),
@@ -173,8 +205,9 @@ you seed them with one of [Result.success](/atom/Result.ts#success),
 [Result.initial](/atom/Result.ts#initial).
 
 ```typescript
-import { Result } from "@effect-atom/atom";
-import { RegistryProvider } from "@effect-atom/atom-react";
+import { Registry, Result } from "@effect-atom/atom";
+import { RegistryContext } from "@effect-atom/atom-react";
+import { render } from "@testing-library/react";
 import ComponentThatUsesMessages from "...";
 import { MessagesAtom } from "...";
 
@@ -183,17 +216,25 @@ const mockMessages = [
   { id: "2", text: "World" },
 ];
 
-const withMockMessages = () => (
-  <RegistryProvider initialValues={[
-    [MessagesAtom, Result.success(mockMessages)]
-  ]}>
-    <ComponentThatUsesMessages />
-  </RegistryProvider>
-);
+it("renders mocked messages", () => {
+  const registry = Registry.make({
+    initialValues: [
+      [MessagesAtom, Result.success(mockMessages)],
+    ],
+  });
+
+  render(
+    <RegistryContext.Provider value={registry}>
+      <ComponentThatUsesMessages />
+    </RegistryContext.Provider>
+  );
+
+  // ...assertions
+});
 ```
 
-Because the atom's value is already in the registry, its underlying effect is
-never run so no API call is made and no service is required. The component
+Because the atom's value is already in the registry, its underlying effect
+is never run — no API call is made, no service is required. The component
 renders with `Result.Success(mockMessages)` immediately on first render.
 
 The same pattern covers the other states an async atom can be in:
@@ -204,6 +245,55 @@ The same pattern covers the other states an async atom can be in:
 
 // Error state
 [MessagesAtom, Result.fail(new Error("network failed"))]
+```
+
+> **Why `RegistryContext.Provider` instead of `RegistryProvider` here?**
+> `RegistryProvider` is the React-aware wrapper used in production — it
+> keeps the registry stable via `useRef`, schedules registry tasks
+> through React's scheduler, and delays disposal by 500ms on unmount.
+> None of those matter in tests, and they actually get in the way. Tests
+> render once and tear down; constructing the `Registry` directly is
+> clearer and gives you full control.
+>
+> The equivalent `RegistryProvider` form also works, if you prefer
+> consistency with production code:
+>
+> ```typescript
+> <RegistryProvider initialValues={[
+>   [MessagesAtom, Result.success(mockMessages)],
+> ]}>
+>   <ComponentThatUsesMessages />
+> </RegistryProvider>
+> ```
+
+#### A `renderWithRegistry` helper
+
+If your test suite does this a lot, wrap it once:
+
+```typescript
+import type { ReactNode } from "react";
+import { Registry } from "@effect-atom/atom";
+import type { Atom } from "@effect-atom/atom";
+import { RegistryContext } from "@effect-atom/atom-react";
+import { render } from "@testing-library/react";
+
+export const renderWithRegistry = (
+  ui: ReactNode,
+  initialValues: Iterable<readonly [Atom.Atom<any>, any]> = []
+) => {
+  const registry = Registry.make({ initialValues });
+  return render(
+    <RegistryContext.Provider value={registry}>{ui}</RegistryContext.Provider>
+  );
+};
+```
+
+Then each test becomes:
+
+```typescript
+renderWithRegistry(<MessagesList />, [
+  [MessagesAtom, Result.success(mockMessages)],
+]);
 ```
 
 #### Derived Atoms
@@ -222,31 +312,29 @@ export const UserMessagesAtom = AppRuntime.atom((get) =>
 )
 ```
 
-This atom is slightly different than the one above, because we need the user's
-ID from `UserAtom` to make a request to the API. Note the `atom` method
-provides both the `get` context (to read from other atoms) and a generator (to
-abstract service calls).
+This atom is slightly different from the one above, because we need the
+user's ID from `UserAtom` to make a request to the API. Note the `atom`
+method provides both the `get` context (to read from other atoms) and a
+generator (to abstract service calls).
 
-To test a component that uses `UserMessagesAtom`, you can still just preload it
-directly:
+To test a component that uses `UserMessagesAtom`, you can still just preload
+it directly:
 
 ```typescript
-<RegistryProvider initialValues={[
-  [UserMessagesAtom, Result.success([ /* ...messages */ ])]
-]}>
-  <ComponentUnderTest />
-</RegistryProvider>
+renderWithRegistry(<ComponentUnderTest />, [
+  [UserMessagesAtom, Result.success([ /* ...messages */ ])],
+]);
 ```
 
-You don't need to mock `UserAtom`, `APIService`, or the layer because
-`UserMessagesAtom` already has its value cached, none of its dependencies are
-read.
+You don't need to mock `UserAtom`, `APIService`, or the layer — because
+`UserMessagesAtom` already has its value cached, none of its dependencies
+are read.
 
 ### When You Need the Effect to Actually Run
 
-Sometimes you want to exercise the atom's effect itself to verify it calls
-the service correctly, to test retry or error behavior end to end, or to
-integration-test multiple atoms together. In that case, mock the layer.
+Sometimes you want to exercise the atom's effect itself — to verify it
+calls the service correctly, to test retry or error behavior end to end, or
+to integration-test multiple atoms together. In that case, mock the layer.
 
 You seed `AppRuntime.layer` with a test layer, but remember to merge
 [`Reactivity.layer`](https://github.com/Effect-TS/effect/blob/main/packages/experimental/src/Reactivity.ts)
@@ -256,7 +344,6 @@ back in — the runtime relies on it internally for `withReactivity` and
 ```typescript
 import { Layer, Effect } from "effect";
 import * as Reactivity from "@effect/experimental/Reactivity";
-import { RegistryProvider } from "@effect-atom/atom-react";
 import { AppRuntime } from "...";
 import { APIService } from "...";
 
@@ -270,17 +357,18 @@ const MockApplicationLayer = Layer.mergeAll(
 
 const TestLayer = Layer.provideMerge(MockApplicationLayer, Reactivity.layer);
 
-const withMockLayer = () => (
-  <RegistryProvider initialValues={[[AppRuntime.layer, TestLayer]]}>
-    <ComponentUnderTest />
-  </RegistryProvider>
-);
+it("integration-tests the full effect", () => {
+  renderWithRegistry(<ComponentUnderTest />, [
+    [AppRuntime.layer, TestLayer],
+  ]);
+  // ...assertions
+});
 ```
 
-When any `AppRuntime.atom(...)` is read inside this provider, it builds the
+When any `AppRuntime.atom(...)` is read inside this registry, it builds the
 runtime from your test layer instead of the production one. The layer is
 built lazily into a scope tied to the registry's lifetime, so resources are
-released automatically when the `RegistryProvider` unmounts.
+released automatically when the test unmounts.
 
 ### Choosing Between `RegistryProvider` and `ScopedAtom`
 
