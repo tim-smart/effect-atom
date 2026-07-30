@@ -4,6 +4,7 @@
     "strict": true,
     "moduleDetection": "force",
     "composite": true,
+    "ignoreDeprecations": "6.0",
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "esModuleInterop": false,

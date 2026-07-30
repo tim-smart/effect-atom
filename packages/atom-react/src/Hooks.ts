@@ -209,8 +209,8 @@ export const useAtom = <R, W, const Mode extends "value" | "promise" | "promiseE
 const atomPromiseMap = globalValue(
   "@effect-atom/atom-react/atomPromiseMap",
   () => ({
-    suspendOnWaiting: new Map<Atom.Atom<any>, Promise<void>>(),
-    default: new Map<Atom.Atom<any>, Promise<void>>()
+    suspendOnWaiting: new WeakMap<Registry.Registry, WeakMap<Atom.Atom<any>, Promise<void>>>(),
+    default: new WeakMap<Registry.Registry, WeakMap<Atom.Atom<any>, Promise<void>>>()
   })
 )
 
@@ -219,7 +219,12 @@ function atomToPromise<A, E>(
   atom: Atom.Atom<Result.Result<A, E>>,
   suspendOnWaiting: boolean
 ) {
-  const map = suspendOnWaiting ? atomPromiseMap.suspendOnWaiting : atomPromiseMap.default
+  const registries = suspendOnWaiting ? atomPromiseMap.suspendOnWaiting : atomPromiseMap.default
+  let map = registries.get(registry)
+  if (map === undefined) {
+    map = new WeakMap()
+    registries.set(registry, map)
+  }
   let promise = map.get(atom)
   if (promise !== undefined) {
     return promise
