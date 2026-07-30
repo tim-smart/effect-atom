@@ -1,6 +1,7 @@
 {
   "include": [],
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "strict": true,
     "moduleDetection": "force",
     "composite": true,
