@@ -284,14 +284,14 @@ class Node<A> {
   lifetime: Lifetime<A> | undefined
   writeContext: WriteContextImpl<A>
 
-  parents: Array<Node<any>> = []
-  previousParents: Array<Node<any>> | undefined
-  children: Array<Node<any>> = []
-  listeners: Set<() => void> = new Set()
+  parents = new Set<Node<any>>()
+  previousParents: Set<Node<any>> | undefined
+  children = new Set<Node<any>>()
+  listeners = new Set<() => void>()
   skipInvalidation = false
 
   get canBeRemoved(): boolean {
-    return !this.atom.keepAlive && this.listeners.size === 0 && this.children.length === 0 &&
+    return !this.atom.keepAlive && this.listeners.size === 0 && this.children.size === 0 &&
       this.state !== 0
   }
 
@@ -307,10 +307,10 @@ class Node<A> {
       if (this.previousParents) {
         const parents = this.previousParents
         this.previousParents = undefined
-        for (let i = 0; i < parents.length; i++) {
-          parents[i].removeChild(this)
-          if (parents[i].canBeRemoved) {
-            this.registry.scheduleNodeRemoval(parents[i])
+        for (const parent of parents) {
+          parent.removeChild(this)
+          if (parent.canBeRemoved) {
+            this.registry.scheduleNodeRemoval(parent)
           }
         }
       }
@@ -362,19 +362,16 @@ class Node<A> {
   }
 
   addParent(parent: Node<any>): void {
-    this.parents.push(parent)
+    this.parents.add(parent)
     if (this.previousParents !== undefined) {
-      const index = this.previousParents.indexOf(parent)
-      if (index !== -1) {
-        this.previousParents[index] = this.previousParents[this.previousParents.length - 1]
-        if (this.previousParents.pop() === undefined) {
-          this.previousParents = undefined
-        }
+      this.previousParents.delete(parent)
+      if (this.previousParents.size === 0) {
+        this.previousParents = undefined
       }
     }
 
-    if (parent.children.indexOf(this) === -1) {
-      parent.children.push(this)
+    if (!parent.children.has(this)) {
+      parent.children.add(this)
       if (parent.skipInvalidation) {
         parent.skipInvalidation = false
       }
@@ -382,11 +379,7 @@ class Node<A> {
   }
 
   removeChild(child: Node<any>): void {
-    const index = this.children.indexOf(child)
-    if (index !== -1) {
-      this.children[index] = this.children[this.children.length - 1]
-      this.children.pop()
-    }
+    this.children.delete(child)
   }
 
   invalidate(): void {
@@ -406,14 +399,14 @@ class Node<A> {
   }
 
   invalidateChildren(): void {
-    if (this.children.length === 0) {
+    if (this.children.size === 0) {
       return
     }
 
     const children = this.children
-    this.children = []
-    for (let i = 0; i < children.length; i++) {
-      children[i].invalidate()
+    this.children = new Set()
+    for (const child of children) {
+      child.invalidate()
     }
   }
 
@@ -431,9 +424,9 @@ class Node<A> {
       this.lifetime = undefined
     }
 
-    if (this.parents.length !== 0) {
+    if (this.parents.size !== 0) {
       this.previousParents = this.parents
-      this.parents = []
+      this.parents = new Set()
     }
   }
 
@@ -453,10 +446,10 @@ class Node<A> {
 
     const parents = this.previousParents
     this.previousParents = undefined
-    for (let i = 0; i < parents.length; i++) {
-      parents[i].removeChild(this)
-      if (parents[i].canBeRemoved) {
-        this.registry.removeNode(parents[i])
+    for (const parent of parents) {
+      parent.removeChild(this)
+      if (parent.canBeRemoved) {
+        this.registry.removeNode(parent)
       }
     }
   }
@@ -467,19 +460,18 @@ class Node<A> {
   }
 }
 
-function childrenAreActive(children: Array<Node<any>>): boolean {
-  if (children.length === 0) {
+function childrenAreActive(children: Set<Node<any>>): boolean {
+  if (children.size === 0) {
     return false
   }
-  let current: Array<Node<any>> | undefined = children
-  let stack: Array<Array<Node<any>>> | undefined
+  let current: Set<Node<any>> | undefined = children
+  let stack: Array<Set<Node<any>>> | undefined
   let stackIndex = 0
   while (current !== undefined) {
-    for (let i = 0, len = current.length; i < len; i++) {
-      const child = current[i]
+    for (const child of current) {
       if (!child.atom.lazy || child.listeners.size > 0) {
         return true
-      } else if (child.children.length > 0) {
+      } else if (child.children.size > 0) {
         if (stack === undefined) {
           stack = [child.children]
         } else {
@@ -806,8 +798,7 @@ function batchRebuildNode(node: Node<any>) {
     return
   }
 
-  for (let i = 0; i < node.parents.length; i++) {
-    const parent = node.parents[i]
+  for (const parent of node.parents) {
     if (parent.state !== NodeState.valid) {
       batchRebuildNode(parent)
     }

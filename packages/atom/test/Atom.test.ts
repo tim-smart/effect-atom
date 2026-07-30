@@ -1057,6 +1057,39 @@ describe("Atom", () => {
     assert.strictEqual(rebuilds, 2)
   })
 
+  it("keeps parent child links when a parent is read more than once", () => {
+    const flag = Atom.make(true)
+    const base = Atom.make(0)
+    const derived = Atom.make((get) => {
+      const value = get(base)
+      if (get(flag)) {
+        get(base)
+      }
+      return value
+    })
+    const registry = Registry.make()
+    const unsubscribe = registry.subscribe(derived, () => {
+    }, { immediate: true })
+    const nodes = registry.getNodes()
+    const baseNode = nodes.get(base) as unknown as { readonly children: Set<unknown> } | undefined
+    const derivedNode = nodes.get(derived) as unknown as { readonly parents: Set<unknown> } | undefined
+
+    assert(baseNode !== undefined)
+    assert(derivedNode !== undefined)
+    assert.strictEqual(baseNode.children.has(derivedNode), true)
+    assert.strictEqual(derivedNode.parents.has(baseNode), true)
+
+    registry.set(flag, false)
+
+    assert.strictEqual(baseNode.children.has(derivedNode), true)
+    assert.strictEqual(derivedNode.parents.has(baseNode), true)
+
+    registry.set(base, 1)
+
+    assert.strictEqual(registry.get(derived), 1)
+    unsubscribe()
+  })
+
   it("derived derived with with effect result", async () => {
     const r = Registry.make()
     const state = Atom.fn(Effect.succeed<number>)
