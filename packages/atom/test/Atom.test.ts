@@ -302,6 +302,39 @@ describe("Atom", () => {
     expect(rebuilds).toEqual(2)
   })
 
+  it("keeps parent child links when a parent is read more than once", () => {
+    const flag = Atom.make(true)
+    const base = Atom.make(0)
+    const derived = Atom.make((get) => {
+      const value = get(base)
+      if (get(flag)) {
+        get(base)
+      }
+      return value
+    })
+    const registry = Registry.make()
+    const unsubscribe = registry.subscribe(derived, () => {
+    }, { immediate: true })
+    const nodes = registry.getNodes()
+    const baseNode = nodes.get(base) as { readonly children: ReadonlySet<unknown> } | undefined
+    const derivedNode = nodes.get(derived) as { readonly parents: ReadonlySet<unknown> } | undefined
+
+    assert(baseNode !== undefined)
+    assert(derivedNode !== undefined)
+    assert.strictEqual(baseNode.children.has(derivedNode), true)
+    assert.strictEqual(derivedNode.parents.has(baseNode), true)
+
+    registry.set(flag, false)
+
+    assert.strictEqual(baseNode.children.has(derivedNode), true)
+    assert.strictEqual(derivedNode.parents.has(baseNode), true)
+
+    registry.set(base, 1)
+
+    assert.strictEqual(registry.get(derived), 1)
+    unsubscribe()
+  })
+
   it("refresh derived before mount resolves base effect", async () => {
     const baseAtom = Atom.make(
       Effect.succeed("value").pipe(Effect.delay(100))
