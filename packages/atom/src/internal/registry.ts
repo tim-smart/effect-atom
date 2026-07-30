@@ -289,6 +289,8 @@ class Node<A> {
   children = new Set<Node<any>>()
   listeners = new Set<() => void>()
   skipInvalidation = false
+  building = false
+  invalidatedDuringBuild = false
 
   get canBeRemoved(): boolean {
     return !this.atom.keepAlive && this.listeners.size === 0 && this.children.size === 0 &&
@@ -299,7 +301,9 @@ class Node<A> {
   value(): A {
     if ((this.state & NodeFlags.waitingForValue) !== 0) {
       this.lifetime = makeLifetime(this)
+      this.building = true
       const value = this.atom.read(this.lifetime)
+      this.building = false
       if ((this.state & NodeFlags.waitingForValue) !== 0) {
         this.setValue(value)
       }
@@ -383,6 +387,9 @@ class Node<A> {
   }
 
   invalidate(): void {
+    if (this.building && batchState.phase === BatchPhase.collect) {
+      this.invalidatedDuringBuild = true
+    }
     if (this.state === NodeState.valid) {
       this.state = NodeState.stale
       this.disposeLifetime()
@@ -512,8 +519,9 @@ const LifetimeProto: Omit<Lifetime<any>, "node" | "finalizers" | "disposed" | "i
       throw disposedError(this.node.atom)
     }
     const parent = this.node.registry.ensureNode(atom)
+    const value = parent.value()
     this.node.addParent(parent)
-    return parent.value()
+    return value
   },
 
   result<A, E>(this: Lifetime<any>, atom: Atom.Atom<Result.Result<A, E>>, options?: {
@@ -795,7 +803,12 @@ export function batch(f: () => void): void {
 
 function batchRebuildNode(node: Node<any>) {
   if (node.state === NodeState.valid) {
-    return
+    if (!node.invalidatedDuringBuild) {
+      return
+    }
+    node.invalidatedDuringBuild = false
+    node.state = NodeState.stale
+    node.disposeLifetime()
   }
 
   for (const parent of node.parents) {
