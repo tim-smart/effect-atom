@@ -1,5 +1,18 @@
 # @effect-rx/rx-react
 
+## 0.6.0
+
+### Minor Changes
+
+- [`ab4273b`](https://github.com/tim-smart/effect-atom/commit/ab4273b964d402cec9374577acdcd33c4a5b92b1) Thanks [@tim-smart](https://github.com/tim-smart)! - update effect
+
+### Patch Changes
+
+- [#420](https://github.com/tim-smart/effect-atom/pull/420) [`b54faf7`](https://github.com/tim-smart/effect-atom/commit/b54faf7de33ea2ba8b2832d70539612a0d979ff2) Thanks [@tim-smart](https://github.com/tim-smart)! - Scope suspense promises to their registry.
+
+- Updated dependencies [[`89cd267`](https://github.com/tim-smart/effect-atom/commit/89cd2677d112afe5b65fc9c222e8e26fc1bbe042), [`5190908`](https://github.com/tim-smart/effect-atom/commit/519090873564685c0ba73b40fb51e8e3e2269c6a), [`5a486fb`](https://github.com/tim-smart/effect-atom/commit/5a486fbd2a3ec4242d66d8d62d020bc71d99a779), [`ab4273b`](https://github.com/tim-smart/effect-atom/commit/ab4273b964d402cec9374577acdcd33c4a5b92b1)]:
+  - @effect-atom/atom@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

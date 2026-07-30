@@ -1,5 +1,19 @@
 # @effect-rx/rx
 
+## 0.6.0
+
+### Minor Changes
+
+- [`ab4273b`](https://github.com/tim-smart/effect-atom/commit/ab4273b964d402cec9374577acdcd33c4a5b92b1) Thanks [@tim-smart](https://github.com/tim-smart)! - update effect
+
+### Patch Changes
+
+- [#423](https://github.com/tim-smart/effect-atom/pull/423) [`89cd267`](https://github.com/tim-smart/effect-atom/commit/89cd2677d112afe5b65fc9c222e8e26fc1bbe042) Thanks [@tim-smart](https://github.com/tim-smart)! - Fix Atom dependency tracking and re-entrant invalidation during batch rebuilds.
+
+- [#419](https://github.com/tim-smart/effect-atom/pull/419) [`5190908`](https://github.com/tim-smart/effect-atom/commit/519090873564685c0ba73b40fb51e8e3e2269c6a) Thanks [@tim-smart](https://github.com/tim-smart)! - Preserve retention metadata on reactive AtomRpc and AtomHttpApi queries.
+
+- [#422](https://github.com/tim-smart/effect-atom/pull/422) [`5a486fb`](https://github.com/tim-smart/effect-atom/commit/5a486fbd2a3ec4242d66d8d62d020bc71d99a779) Thanks [@tim-smart](https://github.com/tim-smart)! - use Sets to track atom relationships
+
 ## 0.5.3
 
 ### Patch Changes
