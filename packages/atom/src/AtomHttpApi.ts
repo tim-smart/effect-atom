@@ -215,14 +215,15 @@ export const Tag =
           return client[opts.group][opts.endpoint](opts) as Effect.Effect<any>
         })
       )
+      if (opts.reactivityKeys) {
+        atom = self.runtime.factory.withReactivity(opts.reactivityKeys)(atom)
+      }
       if (opts.timeToLive) {
         atom = Duration.isFinite(opts.timeToLive)
           ? Atom.setIdleTTL(atom, opts.timeToLive)
           : Atom.keepAlive(atom)
       }
-      return opts.reactivityKeys
-        ? self.runtime.factory.withReactivity(opts.reactivityKeys)(atom)
-        : atom
+      return atom
     })
 
     self.query = ((

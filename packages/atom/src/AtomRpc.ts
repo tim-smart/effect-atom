@@ -169,14 +169,15 @@ export const Tag = <Self>() =>
         : self.runtime.atom(
           Effect.flatMap(self, (client) => client(tag, payload, { headers } as any))
         )
+      if (reactivityKeys) {
+        atom = self.runtime.factory.withReactivity(reactivityKeys)(atom)
+      }
       if (timeToLive) {
         atom = Duration.isFinite(timeToLive)
           ? Atom.setIdleTTL(atom, timeToLive)
           : Atom.keepAlive(atom)
       }
-      return reactivityKeys
-        ? self.runtime.factory.withReactivity(reactivityKeys)(atom)
-        : atom
+      return atom
     }
   )
 

@@ -3,7 +3,7 @@ import { Socket } from "@effect/platform"
 import { Rpc, RpcGroup, RpcSerialization } from "@effect/rpc"
 import { layerProtocolSocket } from "@effect/rpc/RpcClient"
 import { assert, describe, it } from "@effect/vitest"
-import { Layer } from "effect"
+import { Duration, Layer } from "effect"
 
 describe("AtomRpc", () => {
   describe("reactivityKeys", () => {
@@ -15,6 +15,20 @@ describe("AtomRpc", () => {
         reactivityKeys: { query: ["a"] }
       })
       assert.strictEqual(queryA, queryB)
+    })
+
+    it("preserves retention metadata", () => {
+      const atom = RpcClient.query("increment", void 0, {
+        reactivityKeys: ["counter"],
+        timeToLive: "1 minute"
+      })
+      const keepAliveAtom = RpcClient.query("increment", void 0, {
+        reactivityKeys: ["counter"],
+        timeToLive: Duration.infinity
+      })
+
+      assert.strictEqual(atom.idleTTL, 60_000)
+      assert.strictEqual(keepAliveAtom.keepAlive, true)
     })
   })
 })
