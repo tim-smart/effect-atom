@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.7.0
+
+### Minor Changes
+
+- [`42f466c`](https://github.com/tim-smart/effect-atom/commit/42f466ce22b3a0c9e115c49a97f1e8f544f5bf02) Thanks [@tim-smart](https://github.com/tim-smart)! - update dependencies
+
 ## 0.6.0
 
 ### Minor Changes
