@@ -136,7 +136,7 @@ export const fromExitWithPrevious = <A, E>(
  */
 export const waitingFrom = <A, E>(previous: Option.Option<Result<A, E>>): Result<A, E> => {
   if (previous._tag === "None") {
-    return initial(true)
+    return initial<A, E>(true)
   }
   return waiting(previous.value)
 }
@@ -413,7 +413,7 @@ export const map: {
  * @category combinators
  */
 export const flatMap: {
-  <A, E, B, E2>(f: (a: A, prev: Success<A, E>) => Result<A, E2>): (self: Result<A, E>) => Result<B, E | E2>
+  <A, E, B, E2>(f: (a: A, prev: Success<A, E>) => Result<B, E2>): (self: Result<A, E>) => Result<B, E | E2>
   <E, A, B, E2>(self: Result<A, E>, f: (a: A, prev: Success<A, E>) => Result<B, E2>): Result<B, E | E2>
 } = dual(2, <E, A, B, E2>(self: Result<A, E>, f: (a: A, prev: Success<A, E>) => Result<B, E2>): Result<B, E | E2> => {
   switch (self._tag) {
@@ -650,10 +650,6 @@ class BuilderImpl<Out, A, E> {
   when<B extends Result<A, E>, C>(
     refinement: Refinement<Result<A, E>, B>,
     f: (result: B) => Option.Option<C>
-  ): any
-  when<C>(
-    refinement: Predicate<Result<A, E>>,
-    f: (result: Result<A, E>) => Option.Option<C>
   ): any
   when<C>(
     refinement: Predicate<Result<A, E>>,
