@@ -2,6 +2,7 @@
 title: RegistryContext.ts
 nav_order: 3
 parent: "@effect-atom/atom-solid"
+grand_parent: "Reference"
 ---
 
 ## RegistryContext overview

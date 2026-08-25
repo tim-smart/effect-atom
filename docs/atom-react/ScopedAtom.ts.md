@@ -2,6 +2,7 @@
 title: ScopedAtom.ts
 nav_order: 5
 parent: "@effect-atom/atom-react"
+grand_parent: "Reference"
 ---
 
 ## ScopedAtom overview

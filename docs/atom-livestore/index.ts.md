@@ -2,6 +2,7 @@
 title: index.ts
 nav_order: 2
 parent: "@effect-atom/atom-livestore"
+grand_parent: "Reference"
 ---
 
 ## index overview

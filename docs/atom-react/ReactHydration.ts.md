@@ -2,6 +2,7 @@
 title: ReactHydration.ts
 nav_order: 3
 parent: "@effect-atom/atom-react"
+grand_parent: "Reference"
 ---
 
 ## ReactHydration overview

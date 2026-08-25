@@ -2,5 +2,6 @@
 title: "@effect-atom/atom-solid"
 has_children: true
 permalink: /docs/atom-solid
-nav_order: 5
+nav_order: 4
+parent: "Reference"
 ---
