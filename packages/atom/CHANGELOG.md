@@ -1,5 +1,11 @@
 # @effect-rx/rx
 
+## 0.7.1
+
+### Patch Changes
+
+- [#427](https://github.com/tim-smart/effect-atom/pull/427) [`5c4a0a9`](https://github.com/tim-smart/effect-atom/commit/5c4a0a995e1fbb86ffbce6d6f88fe24424e6b7da) Thanks [@janecakemaster](https://github.com/janecakemaster)! - Unlink a removed node from its parents when it was invalidated before removal, so the parents can be removed too.
+
 ## 0.7.0
 
 ### Minor Changes
