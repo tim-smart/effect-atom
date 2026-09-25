@@ -335,6 +335,22 @@ describe("Atom", () => {
     unsubscribe()
   })
 
+  it("removes parents of a node that was invalidated before removal", async () => {
+    const parent = Atom.make(0)
+    const source = Atom.make(0)
+    const child = Atom.make((get) => get(parent) + get(source))
+    const registry = Registry.make()
+    const unmount = registry.mount(child)
+
+    unmount()
+    registry.set(source, 1)
+    await new Promise((resolve) => resolve(null))
+
+    const nodes = registry.getNodes()
+    assert.strictEqual(nodes.has(child), false)
+    assert.strictEqual(nodes.has(parent), false)
+  })
+
   it("refresh derived before mount resolves base effect", async () => {
     const baseAtom = Atom.make(
       Effect.succeed("value").pipe(Effect.delay(100))

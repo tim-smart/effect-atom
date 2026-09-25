@@ -441,10 +441,6 @@ class Node<A> {
     this.state = NodeState.removed
     this.listeners.clear()
 
-    if (this.lifetime === undefined) {
-      return
-    }
-
     this.disposeLifetime()
 
     if (this.previousParents === undefined) {
