@@ -2,6 +2,7 @@
 title: index.ts
 nav_order: 1
 parent: "@effect-atom/atom-vue"
+grand_parent: "Reference"
 ---
 
 ## index overview

@@ -2,6 +2,7 @@
 title: Atom.ts
 nav_order: 1
 parent: "@effect-atom/atom"
+grand_parent: "Reference"
 ---
 
 ## Atom overview

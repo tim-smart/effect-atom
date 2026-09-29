@@ -2,6 +2,7 @@
 title: Result.ts
 nav_order: 8
 parent: "@effect-atom/atom"
+grand_parent: "Reference"
 ---
 
 ## Result overview

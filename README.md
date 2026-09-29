@@ -586,3 +586,30 @@ class MyService extends Effect.Service<MyService>()("MyService", {
   })
 }) {}
 ```
+
+
+# Documentation
+
+## Installation
+
+Docs are generated with docgen, and require jekyll to be run locally:
+
+Ensure jekyll and bundler is avaliable on your system. First, run
+```bash
+gem install bundler jekyll
+```
+
+or to install this in the gem user space:
+
+```bash
+gem install bundler jekyll --user-install
+```
+
+Next, navigate to the docs directory at `docs/` and run:
+
+```bash
+bundle install
+bundle exec jekyll serve --livereload
+```
+
+The docs will be available at `http://localhost:4000`.

@@ -2,6 +2,7 @@
 title: Registry.ts
 nav_order: 7
 parent: "@effect-atom/atom"
+grand_parent: "Reference"
 ---
 
 ## Registry overview

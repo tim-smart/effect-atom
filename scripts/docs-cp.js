@@ -31,7 +31,7 @@ function copyFiles(pkg) {
 
       const content = Fs.readFileSync(path, "utf8").replace(
         /^parent: Modules$/m,
-        `parent: "${name}"`
+        `parent: "${name}"\ngrand_parent: "Reference"`
       );
       Fs.writeFileSync(destPath, content);
     }
@@ -49,6 +49,7 @@ title: "${name}"
 has_children: true
 permalink: /docs/${pkg}
 nav_order: ${order}
+parent: "Reference"
 ---
 `;
 
@@ -59,5 +60,5 @@ packages().forEach((pkg, i) => {
   Fs.rmSync(Path.join("docs", pkg), { recursive: true, force: true });
   Fs.mkdirSync(Path.join("docs", pkg), { recursive: true });
   copyFiles(pkg);
-  generateIndex(pkg, i + 2);
+  generateIndex(pkg, i + 1);
 });

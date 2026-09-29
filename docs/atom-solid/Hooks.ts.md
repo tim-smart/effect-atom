@@ -2,6 +2,7 @@
 title: Hooks.ts
 nav_order: 1
 parent: "@effect-atom/atom-solid"
+grand_parent: "Reference"
 ---
 
 ## Hooks overview

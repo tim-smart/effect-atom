@@ -2,6 +2,7 @@
 title: AtomRpc.ts
 nav_order: 4
 parent: "@effect-atom/atom"
+grand_parent: "Reference"
 ---
 
 ## AtomRpc overview

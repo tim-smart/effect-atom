@@ -2,6 +2,7 @@
 title: AtomLivestore.ts
 nav_order: 1
 parent: "@effect-atom/atom-livestore"
+grand_parent: "Reference"
 ---
 
 ## AtomLivestore overview
