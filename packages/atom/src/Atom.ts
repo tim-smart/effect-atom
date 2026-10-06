@@ -13,6 +13,8 @@ import * as EffectContext from "effect/Context"
 import * as Duration from "effect/Duration"
 import * as Effect from "effect/Effect"
 import * as Either from "effect/Either"
+import * as Equal from "effect/Equal"
+import type * as Equivalence from "effect/Equivalence"
 import * as Exit from "effect/Exit"
 import * as Fiber from "effect/Fiber"
 import * as FiberId from "effect/FiberId"
@@ -55,6 +57,7 @@ export interface Atom<A> extends Pipeable, Inspectable.Inspectable {
   readonly refresh?: (f: <A>(atom: Atom<A>) => void) => void
   readonly label?: readonly [name: string, stack: string]
   readonly idleTTL?: number
+  readonly eq: Equivalence.Equivalence<A>
 }
 
 /**
@@ -172,8 +175,38 @@ export const setIdleTTL: {
 
 const removeTtl = setIdleTTL(0)
 
+/**
+ * Override the equivalence used to deduplicate writes to this atom.
+ *
+ * By default every atom uses `Equal.equals`, which short-circuits writes when
+ * the new value is structurally equal to the previous one. For plain objects
+ * and arrays that do not implement `Equal`, `Equal.equals` falls back to
+ * reference equality (`===`), causing every new reference — even a
+ * structurally identical one — to notify subscribers and invalidate
+ * downstream atoms.
+ *
+ * `dedupeWith` lets you supply a custom `Equivalence` (e.g. a deep-equality
+ * check, an id-based check, or a domain-specific comparison) so that writes
+ * yielding an "equivalent" value become no-ops.
+ *
+ * @since 1.0.0
+ * @category combinators
+ */
+export const dedupeWith: {
+  <A>(eq: Equivalence.Equivalence<A>): <Self extends Atom<A>>(self: Self) => Self
+  <Self extends Atom<any>>(self: Self, eq: Equivalence.Equivalence<Type<Self>>): Self
+} = dual<
+  <A>(eq: Equivalence.Equivalence<A>) => <Self extends Atom<A>>(self: Self) => Self,
+  <Self extends Atom<any>>(self: Self, eq: Equivalence.Equivalence<Type<Self>>) => Self
+>(2, (self, eq) =>
+  Object.assign(Object.create(Object.getPrototypeOf(self)), {
+    ...self,
+    eq
+  }))
+
 const AtomProto = {
   [TypeId]: TypeId,
+  eq: Equal.equals,
   pipe() {
     return pipeArguments(this, arguments)
   },
