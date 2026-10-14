@@ -688,6 +688,51 @@ describe("Atom", () => {
     }
   })
 
+  it("family finalizer does not evict a newer atom for the same key", () => {
+    // Simulate GC deterministically: atoms in `collected` are treated as
+    // garbage collected, and finalizer callbacks only run when invoked manually.
+    const collected = new Set<object>()
+    const registrations: Array<{ target: object; held: unknown; cleanup: (held: unknown) => void }> = []
+    class TestWeakRef<T extends object> {
+      constructor(readonly target: T) {}
+      deref(): T | undefined {
+        return collected.has(this.target) ? undefined : this.target
+      }
+    }
+    class TestFinalizationRegistry {
+      constructor(readonly cleanup: (held: unknown) => void) {}
+      register(target: object, held: unknown) {
+        registrations.push({ target, held, cleanup: this.cleanup })
+      }
+      unregister() {
+        return false
+      }
+    }
+    vitest.stubGlobal("WeakRef", TestWeakRef)
+    vitest.stubGlobal("FinalizationRegistry", TestFinalizationRegistry)
+    try {
+      const count = Atom.family((n: number) => Atom.make(n))
+
+      // atom A is created, released, and collected, but its finalizer is deferred
+      const a = count(1)
+      collected.add(a)
+
+      // a new lookup creates and caches atom B for the same key
+      const b = count(1)
+      assert.notStrictEqual(a, b)
+      assert.strictEqual(count(1), b)
+
+      // A's deferred finalizer runs after B has been cached
+      const stale = registrations.find((r) => r.target === a)!
+      stale.cleanup(stale.held)
+
+      // B is still alive, so the family must keep returning it
+      assert.strictEqual(count(1), b)
+    } finally {
+      vitest.unstubAllGlobals()
+    }
+  })
+
   it("label", async () => {
     expect(
       Atom.make(0).pipe(Atom.withLabel("counter")).label![1]
